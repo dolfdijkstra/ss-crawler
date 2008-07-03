@@ -25,16 +25,16 @@
         <appender-ref ref="filelog" />
 
     </logger>
-    <logger name="com.fatwire.cs.profiling.ss">
+    <logger name="com.fatwire.dta.sscrawler">
         <level value="info"></level>
     </logger>
 
     
-    <logger name="com.fatwire.cs.profiling.ss.handlers">
+    <logger name="com.fatwire.dta.sscrawler.handlers">
         <level value="info"></level>
 
     </logger>
-    <logger name="com.fatwire.cs.profiling.ss.util.SSUriHelper">
+    <logger name="com.fatwire.dta.sscrawler.util.SSUriHelper">
         <level value="info"></level>
     </logger>
 
