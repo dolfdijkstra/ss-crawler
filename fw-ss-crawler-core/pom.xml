@@ -11,7 +11,6 @@
     <groupId>com.fatwire.dta.ss-crawler</groupId>
     <artifactId>fw-ss-crawler-core</artifactId>
     <packaging>jar</packaging>
-    <version>${ss-crawler-version}</version>
     <name>Crawler emulating Satellite Server</name>
     <description>This is a crawler emulating SatelliteServer to request pagelets from ContentServer. It has a reporting engine for the different pagelets and pages,</description>
     <dependencies>

@@ -242,8 +242,7 @@
         </dependency>
     </dependencies>
     <properties>
-        <ss-crawler-version>1.0-SNAPSHOT</ss-crawler-version>
+        <ss-crawler-version>${pom.version}</ss-crawler-version>
         <junit-version>3.8.1</junit-version>
-        <maven-plugin.version>1.0.0</maven-plugin.version>
     </properties>
 </project>
