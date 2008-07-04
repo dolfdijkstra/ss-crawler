@@ -3,13 +3,13 @@
     http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.fatwire.ss-crawler</groupId>
+        <groupId>com.fatwire.dta.ss-crawler</groupId>
         <artifactId>fw-ss-crawler-project</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <groupId>com.fatwire.cs.monitoring</groupId>
-    <artifactId>fw-ss-crawler</artifactId>
+    <groupId>com.fatwire.dta.ss-crawler</groupId>
+    <artifactId>fw-ss-crawler-core</artifactId>
     <packaging>jar</packaging>
     <version>${ss-crawler-version}</version>
     <name>Crawler emulating Satellite Server</name>
@@ -36,7 +36,7 @@
                     <groupId>javax.servlet</groupId>
                     <artifactId>servlet-api</artifactId>
                 </exclusion>
-                
+
             </exclusions>
         </dependency>
         <dependency>
@@ -66,7 +66,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
+
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
@@ -86,7 +86,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
@@ -114,6 +113,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 </project>

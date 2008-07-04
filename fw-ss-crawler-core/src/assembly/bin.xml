@@ -2,6 +2,7 @@
     <id>bin</id>
     <formats>
         <format>zip</format>
+        <format>tar.gz</format>
     </formats>
     <dependencySets>
         <dependencySet>
@@ -13,16 +14,39 @@
             <directory>target</directory>
             <outputDirectory>/lib</outputDirectory>
             <includes>
-                <include>*.jar</include>
+                <include>*:jar:*</include>
             </includes>
+            <excludes>
+                <exclude>*:sources</exclude>
+            </excludes>
         </fileSet>
         <fileSet>
-            <directory>conf</directory>
+            <directory>src/main/conf</directory>
             <outputDirectory>/conf</outputDirectory>
             <includes>
                 <include>*.xml</include>
             </includes>
         </fileSet>
-
     </fileSets>
+    <files>
+        <file>
+            <source>src/main/bin/ss-crawler.sh</source>
+            <outputDirectory>/</outputDirectory>
+            <fileMode>700</fileMode>
+            <lineEnding>unix</lineEnding>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>src/main/bin/ss-crawler.bat</source>
+            <outputDirectory>/</outputDirectory>
+            <lineEnding>crlf</lineEnding>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>src/main/bin/README.txt</source>
+            <outputDirectory>/</outputDirectory>
+            <lineEnding>crlf</lineEnding>
+            <filtered>true</filtered>
+        </file>
+    </files>
 </assembly>

@@ -38,7 +38,7 @@ public class App {
      */
     public static void main(final String[] args) throws Exception {
 
-        if (args.length < 2) {
+        if (args.length < 1) {
             throw new IllegalArgumentException(
                     "Usage: java "
                             + App.class.getName()
@@ -50,9 +50,7 @@ public class App {
         String factory = null;
         URI startUri = null;
         for (int i = 0; i < args.length; i++) {
-            if ("-host".equals(args[i])) {
-                crawler.setHost(args[++i]);
-            } else if ("-startUri".equals(args[i])) {
+            if ("-startUri".equals(args[i])) {
                 startUri = URI.create(args[++i]);
             } else if ("-reportDir".equals(args[i])) {
                 path = new File(args[++i]);
@@ -65,8 +63,11 @@ public class App {
         }
         if (startUri == null)
             throw new IllegalArgumentException("startUri is not set");
-        int t = startUri.toASCIIString().indexOf("ContentServer");
-        crawler.setHost(startUri.toASCIIString().substring(0, t));
+        int t = startUri.toASCIIString().indexOf("/ContentServer");
+        if (t ==-1){
+            throw new IllegalArgumentException("/ContentServer is not found on the startUri.");
+        }
+        crawler.setHost(startUri.toASCIIString().substring(0, t-1));
         crawler.setStartUri(new URI(null, null, null, -1,
                 startUri.getRawPath(), startUri.getRawQuery(), startUri
                         .getFragment()));
