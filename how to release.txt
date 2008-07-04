@@ -1,0 +1,5 @@
+mvn clean
+(optional mvn release:prepare -Dss-crawler-version=1.0 -DdryRun=true)
+mvn release:prepare -Dss-crawler-version=1.0
+mvn release:perform
+mvn release:clean clean
