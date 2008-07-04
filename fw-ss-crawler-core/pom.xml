@@ -1,16 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-    http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0     http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.fatwire.dta.ss-crawler</groupId>
         <artifactId>fw-ss-crawler-project</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <groupId>com.fatwire.dta.ss-crawler</groupId>
     <artifactId>fw-ss-crawler-core</artifactId>
-    <version>${ss-crawler-version}</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
     <name>Crawler emulating Satellite Server</name>
     <description>This is a crawler emulating SatelliteServer to request pagelets from ContentServer. It has a reporting engine for the different pagelets and pages,</description>
