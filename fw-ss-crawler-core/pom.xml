@@ -13,7 +13,7 @@
     <packaging>jar</packaging>
     <version>${ss-crawler-version}</version>
     <name>Crawler emulating Satellite Server</name>
-    <url>http://www.nl.fatwire.com/dta/ss-crawler/</url>
+    <description>This is a crawler emulating SatelliteServer to request pagelets from ContentServer. It has a reporting engine for the different pagelets and pages,</description>
     <dependencies>
         <dependency>
             <groupId>commons-logging</groupId>
