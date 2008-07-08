@@ -67,7 +67,7 @@ public class App {
         if (t ==-1){
             throw new IllegalArgumentException("/ContentServer is not found on the startUri.");
         }
-        crawler.setHost(startUri.toASCIIString().substring(0, t-1));
+        crawler.setHost(startUri.toASCIIString().substring(0, t));
         crawler.setStartUri(new URI(null, null, null, -1,
                 startUri.getRawPath(), startUri.getRawQuery(), startUri
                         .getFragment()));
