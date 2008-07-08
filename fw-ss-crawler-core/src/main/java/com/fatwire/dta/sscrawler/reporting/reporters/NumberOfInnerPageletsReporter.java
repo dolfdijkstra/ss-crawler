@@ -7,9 +7,9 @@ public class NumberOfInnerPageletsReporter extends ReportDelegatingReporter {
 
     private final int threshold;
 
-    public NumberOfInnerPageletsReporter(final Report report, final int treshold) {
+    public NumberOfInnerPageletsReporter(final Report report, final int threshold) {
         super(report);
-        this.threshold = treshold;
+        this.threshold = threshold;
 
     }
 
@@ -28,7 +28,7 @@ public class NumberOfInnerPageletsReporter extends ReportDelegatingReporter {
     @Override
     public void startCollecting() {
         super.startCollecting();
-        report.addRow("treshold\t" + threshold);
+        report.addRow("threshold\t" + threshold);
         report.addRow("inner pagelets\turi");
 
     }
