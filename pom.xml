@@ -93,6 +93,7 @@
     </build>
     <modules>
         <module>fw-ss-crawler-core</module>
+        <module>maven-fw-ss-crawler-plugin</module>
     </modules>
     
     <reporting>
@@ -242,7 +243,7 @@
         </dependency>
     </dependencies>
     <properties>
-        <ss-crawler-version>1.0-SNAPSHOT</ss-crawler-version>
+        <ss-crawler-version>1.1-SNAPSHOT</ss-crawler-version>
         <junit-version>3.8.1</junit-version>
     </properties>
 </project>
