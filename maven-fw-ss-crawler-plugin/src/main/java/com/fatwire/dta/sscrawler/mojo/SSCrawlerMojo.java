@@ -12,9 +12,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 import com.fatwire.dta.sscrawler.Crawler;
 import com.fatwire.dta.sscrawler.RenderingThreadPool;
+import com.fatwire.dta.sscrawler.jobs.ProgressMonitor;
 import com.fatwire.dta.sscrawler.reporting.Reporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.DefaultArgumentsAsPageCriteriaReporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.InnerLinkReporter;
@@ -49,6 +51,7 @@ public class SSCrawlerMojo extends AbstractMojo {
      * 
      * @parameter expression="${project.build.directory}"
      * @required
+     * @since 1.0
      */
     private File outputDirectory;
 
@@ -56,35 +59,47 @@ public class SSCrawlerMojo extends AbstractMojo {
      * The starting url for the crawler. This should be a url that ContentServer can understand, not a assembled url and not pointing towards Satellite.
      * 
      * @parameter
-     * 
      * @required
+     * @since 1.0
      * 
      */
     private URL startUrl;
 
     /**
-     * @parameter
+     * Set this flag to true if you want the reports to show up in a subdirectory with a timestamp name.
+     * 
+     * @parameter default-value="true"
+     * @since 1.0
      */
 
     private boolean appendReportDirWithTimestamp = true;
 
     /**
-     * @parameter
+     * java.util.SimpleDateFormat style string for the name of the directory 
+     * if appendReportDirWithTimestamp is set to true.
+     * 
+     * @parameter default-value="yyyyMMdd_HHmm"
+     * @see SimpleDateFormat
+     * @since 1.0
      */
 
     private String reportDirDateFormat = "yyyyMMdd_HHmm";
 
     /**
      * 
-     * Maximum number of pages to crawl.
+     * Maximum number of pages (not pagelets) to crawl.
+     * 
      * @parameter
+     * @since 1.0
      */
 
     private int max = Integer.MAX_VALUE;
 
     /**
-     * 
+     * Class name for the factory for the UriHelper class. Should not be set under normal circumstances.  
+
      * @parameter
+     * @since 1.0
      */
 
     private String uriHelperFactory;
@@ -92,16 +107,16 @@ public class SSCrawlerMojo extends AbstractMojo {
     /**
      * The concurrency for simultaneuous download requests
      * 
-     * @parameter
+     * @parameter default-value="5"
+     * @since 1.0
      */
 
     private int concurrency = 5;
 
-    /**
-     * @parameter
+    /* (non-Javadoc)
+     * @see org.apache.maven.plugin.AbstractMojo#execute()
      */
-
-    public void execute() throws MojoExecutionException {
+    public void execute() throws MojoExecutionException, MojoFailureException {
 
         if (startUrl == null)
             throw new MojoExecutionException("startUrl is not set");
@@ -122,9 +137,10 @@ public class SSCrawlerMojo extends AbstractMojo {
 
         crawler.setHost(startUri.toASCIIString().substring(0, t));
         try {
-            crawler.setStartUri(new URI(null, null, null, -1, startUri
-                    .getRawPath(), startUri.getRawQuery(), startUri
-                    .getFragment()));
+            URI su = new URI(null, null, null, -1, startUri.getRawPath(),
+                    startUri.getRawQuery(), startUri.getFragment());
+            this.getLog().debug("startUri: " + su.toASCIIString());
+            crawler.setStartUri(su);
         } catch (URISyntaxException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
@@ -162,8 +178,53 @@ public class SSCrawlerMojo extends AbstractMojo {
         crawler.setReporters(createReporters(path, helper));
         crawler.setUriHelper(helper);
         crawler.setMaxPages(max);
+        crawler.setProgressMonitor(new ProgressMonitor(){
+
+            public void beginTask(String name, int totalWork) {
+                getLog().info(name);
+                
+            }
+
+            public void done() {
+                // TODO Auto-generated method stub
+                
+            }
+
+            public void internalWorked(double work) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            public boolean isCanceled() {
+                return false;
+            }
+
+            public void setCanceled(boolean value) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            public void setTaskName(String name) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            public void subTask(String name) {
+                getLog().debug(name);
+                
+            }
+
+            public void worked(int work) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+        });
         try {
             crawler.work();
+        } catch (Exception e) {
+            throw new MojoFailureException(this, e.getMessage(),
+                    "The crawler failed.");
         } finally {
             readerPool.shutdown();
         }
