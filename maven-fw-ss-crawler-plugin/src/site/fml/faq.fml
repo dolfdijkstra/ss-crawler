@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<faqs id="General FAQ">
+  <part id="General">
+    <faq id="where">
+      <question>Why did you cerate this plugin?</question>
+      <answer>
+        <p>
+        This plugin was created to give developers a quick way to test their caching strategy and to make this available
+        as part of a build cycle.
+        </p>
+      </answer>
+    </faq>
+  </part>
+</faqs>

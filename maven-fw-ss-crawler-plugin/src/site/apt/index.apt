@@ -1,0 +1,29 @@
+ ------
+ Introduction
+ ------
+ Dolf Dijkstra
+ ------
+ 08 July 2008
+ ------
+
+
+Plugin Name
+
+  This plugin crawls ContentServer and retrieves lots of information on pagelets and cache design.
+
+* Goals Overview
+
+  General information about the goals.
+
+  * {{{crawl-mojo.html}fw-ss-crawler:crawl}} Crawl ContentServer and generate reports on pagelets.
+
+* Usage
+
+  Instructions on how to use the Plugin Name can be found on the {{{usage.html}usage page}}.
+
+* Examples
+
+  To provide you with better understanding of some usages of the Plugin Name,
+  you can take a look into the following examples:
+
+  * {{{examples/crawl.html}Crawl a site}}
