@@ -6,6 +6,7 @@ import java.util.concurrent.Executor;
 
 import com.fatwire.dta.sscrawler.domain.HostConfig;
 import com.fatwire.dta.sscrawler.handlers.BodyHandler;
+import com.fatwire.dta.sscrawler.jobs.ProgressMonitor;
 import com.fatwire.dta.sscrawler.jobs.StdOutProgressMonitor;
 import com.fatwire.dta.sscrawler.reporting.Reporter;
 import com.fatwire.dta.sscrawler.reporting.ReportingListener;
@@ -24,6 +25,8 @@ public class Crawler {
     private SSUriHelper uriHelper;
 
     private Executor executor;
+
+    private ProgressMonitor progressMonitor;
 
     public void work() {
 
@@ -44,8 +47,10 @@ public class Crawler {
         for (Reporter reporter : reporters) {
             reporter.startCollecting();
         }
-
-        command.execute(new StdOutProgressMonitor());
+        if (this.progressMonitor == null) {
+            progressMonitor = new StdOutProgressMonitor();
+        }
+        command.execute(progressMonitor);
 
         for (Reporter reporter : reporters) {
             reporter.endCollecting();
@@ -90,6 +95,8 @@ public class Crawler {
      * @param maxPages the maxPages to set
      */
     public void setMaxPages(int max) {
+        if (max < 1)
+            throw new IllegalArgumentException("max should be greater then 0");
         this.maxPages = max;
     }
 
@@ -147,6 +154,20 @@ public class Crawler {
      */
     public void setUriHelper(SSUriHelper uriHelper) {
         this.uriHelper = uriHelper;
+    }
+
+    /**
+     * @return the progressMonitor
+     */
+    public ProgressMonitor getProgressMonitor() {
+        return progressMonitor;
+    }
+
+    /**
+     * @param progressMonitor the progressMonitor to set
+     */
+    public void setProgressMonitor(ProgressMonitor progressMonitor) {
+        this.progressMonitor = progressMonitor;
     }
 
 }
