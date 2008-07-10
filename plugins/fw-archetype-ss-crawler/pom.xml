@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.fatwire.dta.ss-crawler.plugins</groupId>
+  <artifactId>fw-archetype-ss-crawler</artifactId>
+  <packaging>maven-archetype</packaging>
+  <name>fw-archetype-ss-crawler</name>
+  <version>1</version>
+  <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.archetype</groupId>
+        <artifactId>archetype-packaging</artifactId>
+        <version>2.0-alpha-3</version>
+      </extension>
+    </extensions>
+    <plugins>
+      <plugin>
+        <artifactId>maven-archetype-plugin</artifactId>
+        <version>2.0-alpha-3</version>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
