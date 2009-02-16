@@ -10,6 +10,7 @@ public class TempDir {
         return new File(System.getProperty("java.io.tmpdir"));
     }
 
+    @SuppressWarnings("unchecked")
     public static File getTempDir(Class c) {
         final File f = new File(getTempDir(), c.getName());
         f.mkdirs();
