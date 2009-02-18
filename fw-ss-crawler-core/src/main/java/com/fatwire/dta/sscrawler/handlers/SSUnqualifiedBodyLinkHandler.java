@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import com.fatwire.dta.sscrawler.Link;
-import com.fatwire.dta.sscrawler.QueryString;
 import com.fatwire.dta.sscrawler.ResultPage;
 import com.fatwire.dta.sscrawler.util.SSUriHelper;
 
