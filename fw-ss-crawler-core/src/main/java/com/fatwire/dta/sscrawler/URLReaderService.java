@@ -112,7 +112,7 @@ public class URLReaderService {
 
         private final AtomicInteger scheduledCounter = new AtomicInteger();
 
-        private volatile int count = 0;
+        private AtomicInteger count = new AtomicInteger();
 
         private ProgressMonitor monitor;
 
@@ -130,8 +130,8 @@ public class URLReaderService {
             }
 
             if (qs instanceof Link) {
-                if (++count > maxPages) {
-                    return;
+                if (count.incrementAndGet() > maxPages) {
+                    return; // do not schedule beyond max number of pages
                 }
             }
             urlsDone.add(qs);
@@ -147,7 +147,7 @@ public class URLReaderService {
                     priority = 5;
                 }
                 executor.execute(new Harvester(downloader, qs.toString(),
-                        monitor, priority));
+                        monitor, priority, count.get()));
 
             } catch (final Exception e) {
                 log.error(e.getMessage(), e);
@@ -236,17 +236,20 @@ public class URLReaderService {
 
         private final int priority;
 
+        private final int orderNumber;
+
         /**
          * @param downloader
          */
         public Harvester(final UrlRenderingCallable downloader,
                 final String taskInfo, final ProgressMonitor monitor,
-                final int priority) {
+                final int priority, int orderNumber) {
             super();
             this.downloader = downloader;
             this.taskInfo = taskInfo;
             this.monitor = monitor;
             this.priority = priority;
+            this.orderNumber = orderNumber;
         }
 
         public void run() {
@@ -270,10 +273,13 @@ public class URLReaderService {
         }
 
         public int compareTo(Harvester o) {
+            //comparing on priority and orderNumber, with same priority, the lower order number comes first.
             if (priority != o.priority) {
-                return new Integer(priority).compareTo(o.priority);
+                return (priority < o.priority ? -1 : 1);
+            } else if (this.orderNumber == o.orderNumber) {
+                return 0;
             } else {
-                return downloader.getUri().compareTo(o.downloader.getUri());
+                return this.orderNumber < o.orderNumber ? -1 : 1;
             }
 
         }
