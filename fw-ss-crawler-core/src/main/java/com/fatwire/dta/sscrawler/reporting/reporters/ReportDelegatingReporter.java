@@ -17,11 +17,11 @@ public abstract class ReportDelegatingReporter implements Reporter {
         this.report = report;
     }
 
-    public void endCollecting() {
+    public synchronized void endCollecting() {
         report.finishReport();
     }
 
-    public void startCollecting() {
+    public synchronized void startCollecting() {
         report.startReport();
     }
 

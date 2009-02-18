@@ -12,17 +12,17 @@ public class NestingTracker {
 
     private final Map<QueryString, List<QueryString>> pages = new HashMap<QueryString, List<QueryString>>();
 
-    public void add(ResultPage page) {
+    public synchronized void add(ResultPage page) {
         if (!pages.containsKey(page.getUri())) {
             pages.put(page.getUri(), page.getMarkers());
         }
     }
 
-    public Set<QueryString> getKeys() {
+    public synchronized Set<QueryString> getKeys() {
         return pages.keySet();
     }
 
-    public int getNestingLevel(QueryString qs) {
+    public synchronized int getNestingLevel(QueryString qs) {
         int level = 0;
         if (qs == null)
             return 0;

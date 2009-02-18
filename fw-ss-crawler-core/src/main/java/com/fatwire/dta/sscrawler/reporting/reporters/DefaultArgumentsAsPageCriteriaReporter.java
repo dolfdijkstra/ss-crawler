@@ -25,7 +25,7 @@ public class DefaultArgumentsAsPageCriteriaReporter extends
 
     }
 
-    public void addToReport(ResultPage page) {
+    public synchronized void addToReport(ResultPage page) {
         if (page.getResponseCode() == 200) {
             if (pagenamesDone.contains(page.getPageName())) {
                 return;

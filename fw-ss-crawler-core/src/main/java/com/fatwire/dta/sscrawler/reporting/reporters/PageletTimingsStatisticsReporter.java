@@ -46,7 +46,7 @@ public class PageletTimingsStatisticsReporter extends ReportDelegatingReporter {
     }
 
     @Override
-    public void endCollecting() {
+    public synchronized void endCollecting() {
         report.startReport();
         //report.addRow("reporting on " + pagesDone.get() + " pages");
         final DecimalFormat df = new DecimalFormat("###0.00");
@@ -87,7 +87,7 @@ public class PageletTimingsStatisticsReporter extends ReportDelegatingReporter {
     }
 
     @Override
-    public void startCollecting() {
+    public synchronized void startCollecting() {
         stats.clear();
         pagesDone.set(0);
         total.clear();

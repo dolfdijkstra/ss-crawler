@@ -23,7 +23,9 @@ public class PageCollectingReporter implements Reporter {
     private static final char[] CRLF = "\r\n".toCharArray();
 
     private final File dir;
-private String path;
+
+    private String path;
+
     private final AtomicLong idGen = new AtomicLong(System.currentTimeMillis());
 
     private PrintWriter pwriter;
@@ -43,9 +45,11 @@ private String path;
 
         try {
             final String p = (page.getPageName() != null ? page.getPageName()
-                    : "") + "-" + id + ".txt" ;
-            final File pFile = new File(dir, p );
-            pwriter.println(page.getUri() + "\t" + path + File.separator+ p.replace('/', File.separatorChar));
+                    : "")
+                    + "-" + id + ".txt";
+            final File pFile = new File(dir, p);
+            pwriter.println(page.getUri() + "\t" + path + File.separator
+                    + p.replace('/', File.separatorChar));
             pwriter.flush();
             pFile.getAbsoluteFile().getParentFile().mkdirs();
             writer = new FileWriter(pFile);
