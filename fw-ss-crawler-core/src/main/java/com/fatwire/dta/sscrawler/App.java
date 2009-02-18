@@ -24,8 +24,11 @@ import com.fatwire.dta.sscrawler.reporting.reporters.PageCollectingReporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.PageCriteriaReporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.PageRenderTimeReporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.PageletOnlyReporter;
+import com.fatwire.dta.sscrawler.reporting.reporters.PageletReuseReporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.PageletTimingsStatisticsReporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.RootElementReporter;
+import com.fatwire.dta.sscrawler.reporting.reporters.SameContentPageletReporter;
+import com.fatwire.dta.sscrawler.reporting.reporters.SuspiciousContextParamReporter;
 import com.fatwire.dta.sscrawler.reporting.reports.FileReport;
 import com.fatwire.dta.sscrawler.util.SSUriHelper;
 import com.fatwire.dta.sscrawler.util.UriHelperFactory;
@@ -140,11 +143,22 @@ public class App {
                 "nesting.txt"), 10));
         reporters.add(new PageletOnlyReporter(new FileReport(outputDir,
                 "pagelet-only.txt")));
+        reporters.add(new PageletReuseReporter(new FileReport(outputDir,
+        "pagelet-reuse.txt"),0));
+        
         reporters.add(new NotCachedReporter(new FileReport(outputDir,
                 "not-cached.txt")));
         reporters.add(new DefaultArgumentsAsPageCriteriaReporter(
                 new FileReport(outputDir,
-                        "defaultArgumentsAsPageCriteriaReporter.txt")));
+                        "defaultArguments-as-pagecriteria.txt")));
+        reporters.add(new SameContentPageletReporter(
+                new FileReport(outputDir,
+                        "same-content-pagelet.txt")));
+        reporters.add(new SuspiciousContextParamReporter(
+                new FileReport(outputDir,
+                        "suspicious-context-parameters.txt")));
+        
+        
         return reporters;
     }
 
