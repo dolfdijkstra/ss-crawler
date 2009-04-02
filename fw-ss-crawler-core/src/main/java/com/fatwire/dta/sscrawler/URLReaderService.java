@@ -62,8 +62,16 @@ public class URLReaderService {
                 .setDefaultMaxConnectionsPerHost(15);
         client.getHostConfiguration().setHost(hostConfig.getHostname(),
                 hostConfig.getPort());
+        String proxyHost = System.getProperty("http.proxyhost");
+        String port = System.getProperty("http.proxyport");
+        if (proxyHost != null && port != null && proxyHost.length() > 0
+                && port.length() > 0) {
+            client.getHostConfiguration().setProxy(proxyHost,
+                    Integer.parseInt(port));
+        }
+
         client.getParams().setParameter(HttpMethodParams.USER_AGENT,
-                "SS-Crawler-0.9");
+                "ss-crawler-0.9");
 
         // RFC 2101 cookie management spec is used per default
         // to parse, validate, format & match cookies
@@ -150,7 +158,9 @@ public class URLReaderService {
                         monitor, priority, count.get()));
 
             } catch (final Exception e) {
+                scheduledCounter.decrementAndGet();
                 log.error(e.getMessage(), e);
+
             }
 
         }
