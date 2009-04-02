@@ -94,7 +94,9 @@
     </build>
     <modules>
         <module>fw-ss-crawler-core</module>
+<!--
         <module>plugins</module>
+-->
       </modules>
     
     <reporting>
@@ -120,9 +122,18 @@
                     <aggregate>true</aggregate>
                 </configuration>
             </plugin>
+		  <plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-surefire-report-plugin</artifactId>
+			<version>2.4.2</version>
+			<configuration>
+				<aggregate>true</aggregate>
+			</configuration>
+		  </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
+                <!--
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -130,6 +141,7 @@
                         </reports>
                     </reportSet>
                 </reportSets>
+                -->
             </plugin>
             <!--
                 <plugin>
@@ -147,10 +159,6 @@
                 <artifactId>maven-pmd-plugin</artifactId>
                 </plugin>
             -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>changelog-maven-plugin</artifactId>
