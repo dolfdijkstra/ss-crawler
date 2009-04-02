@@ -70,7 +70,9 @@ public class UrlRenderingCallable implements Callable<ResultPage> {
                 log.error("reponse code is " + responseCode + " for "
                         + httpGet.getURI().toString());
             }
-
+        } catch(Exception e){
+            httpGet.abort();
+            throw e;
         } finally {
             httpGet.releaseConnection();
         }
