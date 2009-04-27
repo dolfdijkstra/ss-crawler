@@ -82,14 +82,13 @@ public class URLReaderService {
         //client.getParams().makeStrict();
         client.getParams().getDefaults().setBooleanParameter(
                 HttpMethodParams.SINGLE_COOKIE_HEADER, true);
-        final HttpState initialState = new HttpState();
 
-        initialState.addCookie(new Cookie(hostConfig.getHostname(),
-                HelperStrings.SS_CLIENT_INDICATOR, Boolean.TRUE.toString(),
-                hostConfig.getDomain(), -1, false));
-
-        // set state
-        client.setState(initialState);
+        client.getState()
+                .addCookie(
+                        new Cookie(hostConfig.getHostname(),
+                                HelperStrings.SS_CLIENT_INDICATOR, Boolean.TRUE
+                                        .toString(), hostConfig.getDomain(),
+                                -1, false));
 
     }
 
