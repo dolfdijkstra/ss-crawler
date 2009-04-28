@@ -28,14 +28,13 @@ public class NestingReporter extends ReportDelegatingReporter {
     @Override
     public void endCollecting() {
         super.startCollecting();
-        report.addRow("threshold\t" + threshold);
-        report.addRow("uri\tnesting");
+        report.addHeader("threshold", Integer.toString(threshold));
+        report.addHeader("uri", "nesting");
 
         for (QueryString qs : tracker.getKeys()) {
             int level = tracker.getNestingLevel(qs);
             if (level >= threshold) {
-                report.addRow(qs.toString() + "\t"
-                        + level);
+                report.addRow(qs.toString(), Integer.toString(level));
             }
         }
 
@@ -48,6 +47,11 @@ public class NestingReporter extends ReportDelegatingReporter {
     @Override
     public void startCollecting() {
         //do nothing, all is handled in the endCollecting call
+    }
+
+    @Override
+    protected String[] getHeader() {
+        return new String[0];
     }
 
 }

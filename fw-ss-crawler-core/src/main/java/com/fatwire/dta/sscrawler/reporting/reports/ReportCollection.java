@@ -27,20 +27,32 @@ public class ReportCollection implements Report {
     public void addReport(Report reporter) {
         reports.add(reporter);
     }
-
-    public void addRow(String line) {
+    public void addHeader(String... columns) {
         for (Iterator<Report> i = reports.iterator(); i.hasNext();) {
             Report report = i.next();
             try {
-                report.addRow(line);
+                report.addHeader(columns);
+            } catch (Throwable e) {
+                log.error(e, e);
+            }
+        }
+        
+    }
+
+    public void addRow(String... values) {
+        for (Iterator<Report> i = reports.iterator(); i.hasNext();) {
+            Report report = i.next();
+            try {
+                report.addRow(values);
             } catch (Throwable e) {
                 log.error(e, e);
                 i.remove(); //remove reporter if we can't use it
             }
         }
-
+        
     }
-
+    
+    
     public void finishReport() {
         for (Iterator<Report> i = reports.iterator(); i.hasNext();) {
             Report report = i.next();
@@ -65,5 +77,6 @@ public class ReportCollection implements Report {
         }
 
     }
+
 
 }

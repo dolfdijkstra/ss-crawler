@@ -22,12 +22,16 @@ public class RawLinkReporter extends ReportDelegatingReporter {
 
                 Matcher m = this.rawLinkPattern.matcher(body);
                 while (m.find()) {
-                    report.addRow(page.getUri() + "\thas a raw link\t"
-                            + m.group());
+                    report.addRow(page.getUri().toString(), m.group());
                 }
             }
         }
 
+    }
+
+    @Override
+    protected String[] getHeader() {
+        return new String[]{"uri","link"};
     }
 
 }

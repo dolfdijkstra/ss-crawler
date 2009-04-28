@@ -14,7 +14,7 @@ import com.fatwire.dta.sscrawler.reporting.Reporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.DefaultArgumentsAsPageCriteriaReporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.InnerLinkReporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.InnerPageletReporter;
-import com.fatwire.dta.sscrawler.reporting.reporters.LinkCollectingReporter;
+import com.fatwire.dta.sscrawler.reporting.reporters.PageletUriCollectingReporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.NestingReporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.Non200ResponseCodeReporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.NotCachedReporter;
@@ -112,51 +112,51 @@ public class App {
             SSUriHelper helper) {
 
         List<Reporter> reporters = new ArrayList<Reporter>();
-        reporters.add(new LinkCollectingReporter(new FileReport(outputDir,
-                "pagelets.txt")));
+        reporters.add(new PageletUriCollectingReporter(new FileReport(outputDir,
+                "pagelets.tsv",'\t')));
         reporters.add(new OuterLinkCollectingReporter(new FileReport(outputDir,
-                "browsable-links.txt"), helper));
+                "browsable-links.tsv",'\t'), helper));
 
         reporters.add(new PageCollectingReporter(new File(outputDir, "pages")));
 
         reporters.add(new PageletTimingsStatisticsReporter(new FileReport(
-                outputDir, "pagelet-stats.xls")));
+                outputDir, "pagelet-stats.tsv",'\t')));
 
         reporters.add(new PageCriteriaReporter(new FileReport(outputDir,
-                "pagecriteria.txt")));
+                "pagecriteria.tsv",'\t')));
         reporters.add(new PageRenderTimeReporter(new FileReport(outputDir,
-                "pagelet-timings.txt")));
+                "pagelet-timings.tsv",'\t')));
 
         reporters.add(new RootElementReporter(new FileReport(outputDir,
-                "root-elements.txt")));
+                "root-elements.tsv",'\t')));
         reporters.add(new NumberOfInnerPageletsReporter(new FileReport(
-                outputDir, "num-inner-pagelets.txt"), 12));
+                outputDir, "num-inner-pagelets.tsv",'\t'), 12));
         reporters.add(new Non200ResponseCodeReporter(new FileReport(outputDir,
-                "non-200-repsonse.txt")));
+                "non-200-repsonse.tsv",'\t')));
         reporters.add(new InnerPageletReporter(new FileReport(outputDir,
-                "inner-pagelets.txt")));
+                "inner-pagelets.tsv",'\t')));
 
         reporters.add(new InnerLinkReporter(new FileReport(outputDir,
-                "inner-links.txt")));
+                "inner-links.tsv",'\t')));
 
         reporters.add(new NestingReporter(new FileReport(outputDir,
-                "nesting.txt"), 10));
+                "nesting.tsv",'\t'), 10));
         reporters.add(new PageletOnlyReporter(new FileReport(outputDir,
-                "pagelet-only.txt")));
+                "pagelet-only.tsv",'\t')));
         reporters.add(new PageletReuseReporter(new FileReport(outputDir,
-        "pagelet-reuse.txt"),0));
+        "pagelet-reuse.tsv",'\t'),0));
         
         reporters.add(new NotCachedReporter(new FileReport(outputDir,
-                "not-cached.txt")));
+                "not-cached.tsv",'\t')));
         reporters.add(new DefaultArgumentsAsPageCriteriaReporter(
                 new FileReport(outputDir,
-                        "defaultArguments-as-pagecriteria.txt")));
+                        "defaultArguments-as-pagecriteria.tsv",'\t')));
         reporters.add(new SameContentPageletReporter(
                 new FileReport(outputDir,
-                        "same-content-pagelet.txt")));
+                        "same-content-pagelet.tsv",'\t')));
         reporters.add(new SuspiciousContextParamReporter(
                 new FileReport(outputDir,
-                        "suspicious-context-parameters.txt")));
+                        "suspicious-context-parameters.tsv",'\t')));
         
         
         return reporters;

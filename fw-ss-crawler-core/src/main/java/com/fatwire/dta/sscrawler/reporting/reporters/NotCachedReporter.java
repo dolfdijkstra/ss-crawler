@@ -27,14 +27,12 @@ public class NotCachedReporter extends ReportDelegatingReporter {
 
         if (CacheHelper.shouldCache(page.getResponseHeaders())) {
             if (page.getBody().endsWith(HelperStrings.STATUS_NOTCACHED)) {
-                report.addRow("not caching while we should\t" + page.getUri());
+                report.addRow("not caching while we should" , page.getUri().toString());
             } else {
                 //report.addRow("caching as expected\t" + page.getUri());
             }
         } else {
             pages.add(page.getPageName());
-            //report.addRow("not caching as per SiteCatalog\t" + page.getUri());
-
         }
         
     }
@@ -45,11 +43,16 @@ public class NotCachedReporter extends ReportDelegatingReporter {
      */
     @Override
     public synchronized void endCollecting() {
-        report.addRow("not caching as per SiteCatalog");
         for (String p : pages){
-            report.addRow(p);
+            report.addRow("not caching as per SiteCatalog",p);
         }
         super.endCollecting();
+    }
+
+
+    @Override
+    protected String[] getHeader() {
+        return new String[]{"reason","uri"};
     }
 
 

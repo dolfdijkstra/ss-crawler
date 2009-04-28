@@ -12,25 +12,32 @@ public class FileReport implements Report {
 
     private final File file;
 
+    private final DelimitedLineConstructor dlc;
+
     /**
      * @param file
      
      */
-    public FileReport(final File file) {
+    public FileReport(final File file, char delimiter) {
         super();
         this.file = file;
+        this.dlc = new DelimitedLineConstructor(delimiter);
 
     }
 
-    public FileReport(final File parentDir, String name) {
-        super();
-        this.file = new File(parentDir, name);
+    public FileReport(final File parentDir, String name, char delimiter) {
+        this(new File(parentDir, name), delimiter);
 
     }
 
-    public synchronized void addRow(String line) {
-        writer.println(line);
+    public synchronized void addHeader(String... columns) {
+        if (columns != null && columns.length > 0) {
+            writer.println(dlc.construct(columns));
+        }
+    }
 
+    public synchronized void addRow(String... values) {
+        writer.println(dlc.construct(values));
     }
 
     public void finishReport() {

@@ -23,4 +23,9 @@ public class OuterLinkCollectingReporter extends ReportDelegatingReporter {
         }
     }
 
+    @Override
+    protected String[] getHeader() {
+        return new String[0];
+    }
+
 }

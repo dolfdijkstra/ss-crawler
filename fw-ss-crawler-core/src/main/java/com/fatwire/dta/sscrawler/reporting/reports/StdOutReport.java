@@ -4,9 +4,14 @@ import com.fatwire.dta.sscrawler.reporting.Report;
 
 public class StdOutReport implements Report {
 
-    public void addRow(String line) {
-        System.out.println(line);
+    private final DelimitedLineConstructor dlc = new DelimitedLineConstructor(',');
 
+    public synchronized void addHeader(String... columns) {
+        System.out.println(dlc.construct(columns));
+    }
+
+    public synchronized void addRow(String... values) {
+        System.out.println(dlc.construct(values));
     }
 
     public void finishReport() {

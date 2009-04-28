@@ -5,7 +5,6 @@ import java.util.List;
 import com.fatwire.dta.sscrawler.QueryString;
 import com.fatwire.dta.sscrawler.ResultPage;
 import com.fatwire.dta.sscrawler.reporting.Report;
-import com.fatwire.dta.sscrawler.util.HelperStrings;
 
 public class InnerPageletReporter extends ReportDelegatingReporter {
 
@@ -17,19 +16,21 @@ public class InnerPageletReporter extends ReportDelegatingReporter {
         if (page.getResponseCode() == 200) {
             final List<QueryString> markers = page.getMarkers();
             if (!markers.isEmpty()) {
+                synchronized (this) {
+                    report.addRow(page.getUri().toString());
+                    for (final QueryString qs : markers) {
+                        report.addRow("#", qs.toString());
 
-                final StringBuilder b = new StringBuilder("inner pagelets on ");
-                b.append(page.getUri().toString());
-                for (final QueryString qs : markers) {
-                    b.append(HelperStrings.CRLF);
-                    b.append("# ");
-                    b.append(qs.toString());
-
+                    }
                 }
-                report.addRow(b.toString());
             }
         }
 
+    }
+
+    @Override
+    protected String[] getHeader() {
+        return new String[]{"page", "marker"};
     }
 
 }

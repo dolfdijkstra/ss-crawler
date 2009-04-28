@@ -17,7 +17,7 @@ public class NumberOfInnerPageletsReporter extends ReportDelegatingReporter {
         if (page.getResponseCode() == 200) {
             final int num = page.getMarkers().size();
             if (num >= threshold) {
-                report.addRow(num + "\t" + page.getUri());
+                report.addRow(Integer.toString(num)  ,  page.getUri().toString());
             }
         }
     }
@@ -28,9 +28,14 @@ public class NumberOfInnerPageletsReporter extends ReportDelegatingReporter {
     @Override
     public void startCollecting() {
         super.startCollecting();
-        report.addRow("threshold\t" + threshold);
-        report.addRow("inner pagelets\turi");
+        report.addHeader("threshold: " +threshold);
+        report.addHeader(getHeader());
 
+    }
+
+    @Override
+    protected String[] getHeader() {
+        return new String[]{"inner pagelets","uri"};
     }
 
 }

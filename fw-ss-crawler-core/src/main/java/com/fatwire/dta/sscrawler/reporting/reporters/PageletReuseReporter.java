@@ -10,14 +10,15 @@ import com.fatwire.dta.sscrawler.reporting.Report;
 public class PageletReuseReporter extends ReportDelegatingReporter {
 
     private final int threshold;
-
+    private final PageletTracker tracker = new PageletTracker();
+    
     public PageletReuseReporter(Report report, final int threshold) {
         super(report);
         this.threshold = threshold;
 
     }
 
-    private final PageletTracker tracker = new PageletTracker();
+
 
     public synchronized void addToReport(ResultPage page) {
         if (page.getResponseCode() == 200) {
@@ -30,17 +31,16 @@ public class PageletReuseReporter extends ReportDelegatingReporter {
      */
     @Override
     public synchronized void endCollecting() {
-        super.startCollecting();
-        report.addRow("threshold\t" + threshold);
-        report.addRow("uri\treuse");
+        report.startReport();
+        report.addHeader("threshold: " + threshold);
+        report.addHeader(getHeader());
 
-        for ( Entry<QueryString, AtomicInteger> e: tracker.getEntries()) {
+        for (Entry<QueryString, AtomicInteger> e : tracker.getEntries()) {
             QueryString qs = e.getKey();
-            
+
             int level = e.getValue().get();
             if (level >= threshold) {
-                report.addRow(qs.toString() + "\t"
-                        + level);
+                report.addRow(qs.toString(), Integer.toString(level));
             }
         }
 
@@ -53,6 +53,10 @@ public class PageletReuseReporter extends ReportDelegatingReporter {
     @Override
     public void startCollecting() {
         //do nothing, all is handled in the endCollecting call
+    }
+    @Override
+    protected String[] getHeader() {
+        return new String[] { "uri", "reuse" };
     }
 
 }

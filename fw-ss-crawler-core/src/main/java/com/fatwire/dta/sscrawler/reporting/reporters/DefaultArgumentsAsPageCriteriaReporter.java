@@ -12,6 +12,12 @@ import com.fatwire.dta.sscrawler.ResultPage;
 import com.fatwire.dta.sscrawler.reporting.Report;
 import com.fatwire.dta.sscrawler.util.HelperStrings;
 
+/**
+ * List default arguments not defined as pagecriteria
+ * @author Dolf.Dijkstra
+ * 
+ */
+
 public class DefaultArgumentsAsPageCriteriaReporter extends
         ReportDelegatingReporter {
 
@@ -35,13 +41,10 @@ public class DefaultArgumentsAsPageCriteriaReporter extends
                     .getResponseHeaders());
             for (final Header header : page.getResponseHeaders()) {
                 if (header.getName().startsWith(DEFAULT_ARGUMENTS)) {
-                    String v = header.getValue().split("\\|",2)[0];
+                    String v = header.getValue().split("\\|", 2)[0];
                     if (!pageCriteria.contains(v)) {
-                        report
-                                .addRow(page.getPageName()
-                                        + " has '"
-                                        + v
-                                        + "' defined as a default argument but not defined as pagecriteria");
+                        report.addRow(new String[] { page.getPageName(), v,
+                                pageCriteria.toString() });
                     }
                 }
 
@@ -61,6 +64,11 @@ public class DefaultArgumentsAsPageCriteriaReporter extends
             }
         }
         return Collections.emptyList();
+    }
+
+    @Override
+    public String[] getHeader() {
+        return new String[] { "pagename", "default argument", "page criteria" };
     }
 
     /*

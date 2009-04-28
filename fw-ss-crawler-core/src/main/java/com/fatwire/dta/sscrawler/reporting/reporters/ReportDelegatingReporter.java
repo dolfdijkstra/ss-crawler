@@ -23,6 +23,10 @@ public abstract class ReportDelegatingReporter implements Reporter {
 
     public synchronized void startCollecting() {
         report.startReport();
+        String[] h = getHeader();
+        report.addHeader(h);
     }
+
+    protected abstract String[] getHeader();
 
 }

@@ -15,6 +15,13 @@ import com.fatwire.dta.sscrawler.reporting.Report;
 import com.fatwire.dta.sscrawler.util.CacheHelper;
 import com.fatwire.dta.sscrawler.util.HelperStrings;
 
+/**
+ * Reports passed in arguments that are not part of the pageCriteria
+ * 
+ * 
+ * @author Dolf.Dijkstra
+ * @since Apr 3, 2009
+ */
 public class PageCriteriaReporter extends ReportDelegatingReporter {
     public PageCriteriaReporter(final Report report) {
         super(report);
@@ -29,7 +36,7 @@ public class PageCriteriaReporter extends ReportDelegatingReporter {
         //check if this pagelet should be cached (is cacheable)
         if (page.getBody().endsWith(HelperStrings.STATUS_NOTCACHED)) {
             return;
-        }else {
+        } else {
             if (!CacheHelper.shouldCache(page.getResponseHeaders())) {
                 return; //page should not be cached based on SiteCatalog info 
             }
@@ -49,16 +56,20 @@ public class PageCriteriaReporter extends ReportDelegatingReporter {
                 params.remove(HelperStrings.SS_PAGEDATA_REQUEST);
                 for (final String param : params.keySet()) {
                     if (!pageCriteria.contains(param)) {
-                        report.addRow(page.getPageName() + "(" + page.getUri()
-                                + ") has parameter '" + param
-                                + "' that is not part of the pageCriteria: "
-                                + header.getValue());
+                        report.addRow(page.getPageName(), page.getUri()
+                                .toString(), param, header.getValue());
 
                     }
                 }
                 break;
             }
         }
+    }
+
+    @Override
+    protected String[] getHeader() {
+        return new String[] { "pagename", "uri", "illegal parameter",
+                "page criteria" };
     }
 
 }

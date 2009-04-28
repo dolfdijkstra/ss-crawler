@@ -20,7 +20,7 @@ public class RootElementReporter extends ReportDelegatingReporter {
 
     }
 
-    public synchronized void addToReport(final ResultPage page) {
+    public void addToReport(final ResultPage page) {
         if (page.getResponseCode() == 200) {
             for (final Header header : page.getResponseHeaders()) {
                 if (RootElementReporter.HEADER_NAME.equals(header.getName())) {
@@ -35,6 +35,11 @@ public class RootElementReporter extends ReportDelegatingReporter {
 
         }
 
+    }
+
+    @Override
+    protected String[] getHeader() {
+        return new String[]{"elemenname"};
     }
 
 }

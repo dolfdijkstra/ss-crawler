@@ -51,16 +51,15 @@ public class PageletTimingsStatisticsReporter extends ReportDelegatingReporter {
         //report.addRow("reporting on " + pagesDone.get() + " pages");
         final DecimalFormat df = new DecimalFormat("###0.00");
         final DecimalFormat lf = new DecimalFormat("##0");
-   //     final DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
+        //     final DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
         int l = 0;
         for (final String s : stats.keySet()) {
             l = Math.max(s.length(), l);
         }
         final char[] blank = new char[l];
         Arrays.fill(blank, ' ');
-        final String header = "pagename" + new String(blank, 0, l - 8)
-                + "\tinvocations\taverage\tmin\tmax\tstandard-deviation";
-        report.addRow(header);
+        report.addHeader("pagename" + new String(blank, 0, l - 8),
+                "invocations", "average", "min", "max", "standard-deviation");
 
         for (final Map.Entry<String, SynchronizedSummaryStatistics> e : stats
                 .entrySet()) {
@@ -68,23 +67,25 @@ public class PageletTimingsStatisticsReporter extends ReportDelegatingReporter {
 
             final String n = e.getKey()
                     + new String(blank, 0, l - e.getKey().length());
-            final String line = n + "\t" + s.getN() + "\t"
-                    + df.format(s.getMean()) + "\t" + lf.format(s.getMin())
-                    + "\t" + lf.format(s.getMax()) + "\t"
-                    + df.format(s.getStandardDeviation());
-            report.addRow(line);
+            report.addRow(n, Long.toString(s.getN()), df.format(s.getMean()),
+                    lf.format(s.getMin()), lf.format(s.getMax()), df.format(s
+                            .getStandardDeviation()));
+
         }
         final String n = "total" + new String(blank, 0, l - "total".length());
-        final String line = n + "\t" + total.getN() + "\t"
-                + df.format(total.getMean()) + "\t"
-                //+ dateFormat.format(new Date(total.getFirstDate())) + "\t"
-                + lf.format(total.getMin()) + "\t" + lf.format(total.getMax())
-                + "\t" + df.format(total.getStandardDeviation());
-        report.addRow(line);
+        report.addRow(n, Long.toString(total.getN()), df
+                .format(total.getMean()), lf.format(total.getMin()), lf
+                .format(total.getMax()), df
+                .format(total.getStandardDeviation()));
 
         report.finishReport();
 
     }
+    @Override
+    protected String[] getHeader() {
+        return new String[0];
+    }
+
 
     @Override
     public synchronized void startCollecting() {

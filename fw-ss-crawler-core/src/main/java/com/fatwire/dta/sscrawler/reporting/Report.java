@@ -4,7 +4,9 @@ public interface Report {
 
     void startReport();
 
-    void addRow(String line);
+    void addRow(String... values);
+    
+    void addHeader(String... columns);
 
     void finishReport();
 

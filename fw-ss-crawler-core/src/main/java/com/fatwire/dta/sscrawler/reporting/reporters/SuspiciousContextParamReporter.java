@@ -25,8 +25,8 @@ public class SuspiciousContextParamReporter implements Reporter {
 
                     String context = qs.getParameters().get("context");
                     if (context != null && context.indexOf(';') != -1) {
-                        report.addRow(page.getPageName() + "\t" + page.getUri()
-                                + "\t" + qs);
+                        report.addRow(page.getPageName(), context, page
+                                .getUri().toString(), qs.toString());
                     }
 
                 }
@@ -40,7 +40,8 @@ public class SuspiciousContextParamReporter implements Reporter {
 
     public void startCollecting() {
         report.startReport();
-        report.addRow("pagename\tcalling pagelet\tcall to pagelet");
+        report.addHeader("pagename", "context", "calling pagelet",
+                "call to pagelet");
     }
 
 }

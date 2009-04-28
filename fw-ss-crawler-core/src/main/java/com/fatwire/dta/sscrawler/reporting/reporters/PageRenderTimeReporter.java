@@ -17,21 +17,16 @@ public class PageRenderTimeReporter extends ReportDelegatingReporter {
     }
 
     public void addToReport(final ResultPage page) {
-        report.addRow(page.getPageName() + "\t"
-                + page.getReadTime() + "\t"
-                + page.getResponseCode() + "\t" + page.getUri());
+        report.addRow(page.getPageName(), Long.toString(page.getReadTime()),
+                Integer.toString(page.getResponseCode()), page.getUri()
+                        .toString());
 
     }
 
-    /* (non-Javadoc)
-     * @see com.fatwire.dta.sscrawler.reporting.reporters.ReportDelegatingReporter#startCollecting()
-     */
     @Override
-    public void startCollecting() {
-        super.startCollecting();
-        report.addRow("pagename\tdownload time\tstatuscode\targuments");
-                
-        
+    protected String[] getHeader() {
+        return new String[] { "pagename", "download time", "statuscode",
+                "arguments" };
     }
 
 }

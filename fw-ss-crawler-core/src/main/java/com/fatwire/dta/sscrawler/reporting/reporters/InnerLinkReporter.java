@@ -17,8 +17,7 @@ public class InnerLinkReporter extends ReportDelegatingReporter {
         if (page.getResponseCode() == 200) {
             final List<QueryString> links = page.getLinks();
             if (!links.isEmpty()) {
-
-                final StringBuilder b = new StringBuilder("links on ");
+                final StringBuilder b = new StringBuilder();
                 b.append(page.getUri().toString());
                 for (final QueryString qs : links) {
                     b.append(HelperStrings.CRLF);
@@ -30,6 +29,11 @@ public class InnerLinkReporter extends ReportDelegatingReporter {
             }
         }
 
+    }
+
+    @Override
+    protected String[] getHeader() {
+        return new String[0];
     }
 
 }

@@ -11,10 +11,14 @@ public class Non200ResponseCodeReporter extends ReportDelegatingReporter {
 
     public void addToReport(final ResultPage page) {
         if (page.getResponseCode() != 200) {
-            report.addRow(page.getUri().toString()
-                    + " reported a response status " + page.getResponseCode());
+            report.addRow(page.getUri().toString(), Integer.toString(page.getResponseCode()));
         }
 
+    }
+
+    @Override
+    protected String[] getHeader() {
+        return new String[]{"uri","responsecode"};
     }
 
 }
