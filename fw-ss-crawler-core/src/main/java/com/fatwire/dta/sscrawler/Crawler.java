@@ -1,13 +1,14 @@
 package com.fatwire.dta.sscrawler;
 
 import java.net.URI;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executor;
 
 import com.fatwire.dta.sscrawler.domain.HostConfig;
 import com.fatwire.dta.sscrawler.handlers.BodyHandler;
+import com.fatwire.dta.sscrawler.jobs.NullProgressMonitor;
 import com.fatwire.dta.sscrawler.jobs.ProgressMonitor;
-import com.fatwire.dta.sscrawler.jobs.StdOutProgressMonitor;
 import com.fatwire.dta.sscrawler.reporting.Reporter;
 import com.fatwire.dta.sscrawler.reporting.ReportingListener;
 import com.fatwire.dta.sscrawler.util.SSUriHelper;
@@ -20,7 +21,7 @@ public class Crawler {
 
     private int maxPages = Integer.MAX_VALUE;
 
-    private List<Reporter> reporters;
+    private List<Reporter> reporters = new LinkedList<Reporter>();;
 
     private SSUriHelper uriHelper;
 
@@ -48,7 +49,7 @@ public class Crawler {
             reporter.startCollecting();
         }
         if (this.progressMonitor == null) {
-            progressMonitor = new StdOutProgressMonitor();
+            progressMonitor = new NullProgressMonitor();
         }
         command.execute(progressMonitor);
 

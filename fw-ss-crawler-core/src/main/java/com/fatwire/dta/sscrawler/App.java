@@ -52,6 +52,7 @@ public class App {
         File path = null;
         String factory = null;
         URI startUri = null;
+int threads=5;
         for (int i = 0; i < args.length; i++) {
             if ("-startUri".equals(args[i])) {
                 startUri = URI.create(args[++i]);
@@ -61,6 +62,9 @@ public class App {
                 crawler.setMaxPages(Integer.parseInt(args[++i]));
             } else if ("-uriHelperFactory".equals(args[i])) {
                 factory = args[++i];
+            } else if ("-threads".equals(args[i])) {
+                threads = Integer.parseInt(args[++i]);
+                
             }
 
         }
@@ -91,7 +95,7 @@ public class App {
         } else {
             helper = new SSUriHelper(crawler.getStartUri().getPath());
         }
-        final ThreadPoolExecutor readerPool = new RenderingThreadPool(5);
+        final ThreadPoolExecutor readerPool = new RenderingThreadPool(threads);
 
         crawler.setExecutor(readerPool);
         crawler.setReporters(createReporters(path, helper));

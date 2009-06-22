@@ -7,15 +7,16 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.concurrent.Callable;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.fatwire.dta.sscrawler.URLReaderService.HttpClientService;
+
 public class UrlRenderingCallable implements Callable<ResultPage> {
     private final Log log = LogFactory.getLog(getClass());
 
-    private final HttpClient client;
+    private final HttpClientService httpClientService;
 
     private final String uri;
     
@@ -25,9 +26,9 @@ public class UrlRenderingCallable implements Callable<ResultPage> {
      * @param client
      * @param uri
      */
-    public UrlRenderingCallable(final HttpClient client, final String uri,final QueryString qs) {
+    public UrlRenderingCallable(final HttpClientService httpClientService, final String uri,final QueryString qs) {
         super();
-        this.client = client;
+        this.httpClientService=httpClientService;
         this.uri = uri;
         this.qs=qs;
     }
@@ -41,7 +42,7 @@ public class UrlRenderingCallable implements Callable<ResultPage> {
         httpGet.setFollowRedirects(true);
 
         try {
-            final int responseCode = client.executeMethod(httpGet);
+            final int responseCode = this.httpClientService.get().executeMethod(httpGet);
             page.setResponseCode(responseCode);
             //log.info(iGetResultCode);
             page.setResponseHeaders(httpGet.getResponseHeaders());

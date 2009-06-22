@@ -6,9 +6,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
@@ -37,7 +40,25 @@ public class URLReaderService {
 
     private BodyHandler handler;
 
-    private HttpClient client;
+    private MultiThreadedHttpConnectionManager connectionManager;
+
+    private HttpClientService httpClientService = new HttpClientService() {
+        private ThreadLocal<HttpClient> tl = new ThreadLocal<HttpClient>() {
+
+            /* (non-Javadoc)
+             * @see java.lang.ThreadLocal#initialValue()
+             */
+            @Override
+            protected HttpClient initialValue() {
+                return initClient();
+            }
+
+        };
+
+        public HttpClient get() {
+            return tl.get();
+        }
+    };
 
     private int maxPages = Integer.MAX_VALUE;
 
@@ -53,12 +74,12 @@ public class URLReaderService {
 
     }
 
-    protected void initClient() {
-        client = new HttpClient(new MultiThreadedHttpConnectionManager());
-        client.getHttpConnectionManager().getParams().setConnectionTimeout(
-                30000);
-        client.getHttpConnectionManager().getParams()
-                .setDefaultMaxConnectionsPerHost(15);
+    interface HttpClientService {
+        HttpClient get();
+    }
+
+    protected HttpClient initClient() {
+        HttpClient client = new HttpClient(connectionManager);
         client.getHostConfiguration().setHost(hostConfig.getHostname(),
                 hostConfig.getPort());
         String proxyHost = System.getProperty("http.proxyhost");
@@ -88,11 +109,24 @@ public class URLReaderService {
                                 HelperStrings.SS_CLIENT_INDICATOR, Boolean.TRUE
                                         .toString(), hostConfig.getDomain(),
                                 -1, false));
-
+        return client;
     }
 
     public void start(final ProgressMonitor monitor) {
-        initClient();
+
+        connectionManager = new MultiThreadedHttpConnectionManager();
+        connectionManager.getParams().setConnectionTimeout(30000);
+        connectionManager.getParams().setDefaultMaxConnectionsPerHost(1500);
+        connectionManager.getParams().setMaxTotalConnections(30000);
+        MBeanServer platform = java.lang.management.ManagementFactory
+                .getPlatformMBeanServer();
+        try {
+            platform.registerMBean(new ReaderService(scheduler,
+                    connectionManager), new ObjectName(
+                    "com.fatwire.monitoring:name=scheduler"));
+        } catch (Throwable t) {
+            log.error(t.getMessage(), t);
+        }
 
         monitor.beginTask("Crawling on " + hostConfig.toString(),
                 maxPages == Integer.MAX_VALUE ? -1 : maxPages);
@@ -102,6 +136,18 @@ public class URLReaderService {
             scheduler.schedulePage(thingToDo);
         }
         scheduler.waitForlAllTasksToFinish();
+        try {
+            this.connectionManager.shutdown();
+        } catch (Throwable t) {
+            log.error(t.getMessage(), t);
+        }
+        try {
+            platform.unregisterMBean(new ObjectName(
+                    "com.fatwire.monitoring:name=scheduler"));
+        } catch (Throwable t) {
+            log.error(t.getMessage(), t);
+        }
+
         monitor.done();
 
     }
@@ -112,13 +158,13 @@ public class URLReaderService {
 
         private final Executor executor;
 
-        private final AtomicBoolean complete = new AtomicBoolean(false);
-
-        private final Object lock = new Object();
+        private final CountDownLatch complete = new CountDownLatch(1);
 
         private final AtomicInteger scheduledCounter = new AtomicInteger();
 
         private AtomicInteger count = new AtomicInteger();
+
+        private AtomicInteger completeCount = new AtomicInteger();
 
         private ProgressMonitor monitor;
 
@@ -145,7 +191,7 @@ public class URLReaderService {
 
             scheduledCounter.incrementAndGet();
             final UrlRenderingCallable downloader = new UrlRenderingCallable(
-                    client, uri, qs);
+                    httpClientService, uri, qs);
 
             try {
                 int priority = 0;
@@ -183,7 +229,9 @@ public class URLReaderService {
         }
 
         void pageComplete(final ResultPage page) {
+
             synchronized (this) {
+                completeCount.incrementAndGet();
                 for (final QueryString ssUri : page.getMarkers()) {
 
                     if (!urlsDone.contains(ssUri)) {
@@ -196,7 +244,6 @@ public class URLReaderService {
                 for (final QueryString ssUri : page.getLinks()) {
                     if (!urlsDone.contains(ssUri)) {
                         if (log.isDebugEnabled()) {
-                            //String url = uriHelper.toLink(ssUri);
                             log.debug("adding " + ssUri);
                         }
                         schedulePage(ssUri);
@@ -212,27 +259,32 @@ public class URLReaderService {
         public void taskFinished() {
             log.debug("Active workers: " + scheduledCounter.get());
             if (scheduledCounter.decrementAndGet() == 0) {
-                complete.set(true);
-                synchronized (lock) {
-                    lock.notifyAll();
-                }
+                complete.countDown();
             }
 
         }
 
         void waitForlAllTasksToFinish() {
-            synchronized (lock) {
-                while (!complete.get()) {
-                    try {
-                        lock.wait();
-                    } catch (final InterruptedException e) {
-                        log.warn(e, e);
-                    }
-                }
-
+            try {
+                complete.await();
+            } catch (final InterruptedException e) {
+                log.warn(e, e);
             }
 
         }
+
+        public int getCount() {
+            return this.count.get();
+        }
+
+        public int getScheduledCount() {
+            return this.scheduledCounter.get();
+        }
+
+        public int getCompleteCount() {
+            return this.completeCount.get();
+        }
+
     }
 
     class Harvester implements Runnable, Comparable<Harvester> {

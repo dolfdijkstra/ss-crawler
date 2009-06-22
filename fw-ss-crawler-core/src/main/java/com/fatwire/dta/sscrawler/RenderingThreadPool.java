@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class RenderingThreadPool extends ThreadPoolExecutor {
+public class RenderingThreadPool extends ThreadPoolExecutor implements RenderingThreadPoolMBean{
     private final Log log = LogFactory.getLog(getClass());
 
     private final Set<FinishedListener> listeners = new CopyOnWriteArraySet<FinishedListener>();
