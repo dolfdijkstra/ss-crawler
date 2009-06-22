@@ -4,7 +4,7 @@ import com.fatwire.dta.sscrawler.reporting.Report;
 
 public class StdOutReport implements Report {
 
-    private final DelimitedLineConstructor dlc = new DelimitedLineConstructor(',');
+    private final DelimitedLineConstructor dlc = new DelimitedLineConstructor('\t');
 
     public synchronized void addHeader(String... columns) {
         System.out.println(dlc.construct(columns));
