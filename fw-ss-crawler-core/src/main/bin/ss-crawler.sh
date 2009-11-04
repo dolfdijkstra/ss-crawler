@@ -1,6 +1,6 @@
 #!/bin/sh
 
-BASEDIR=`dirname $0`/..
+BASEDIR=`dirname $0`/
 BASEDIR=`(cd "$BASEDIR"; pwd)`
 
 if [ -z "$REPO" ]
