@@ -24,6 +24,9 @@ command line arguments are space seperated (-a val1 -b val2)
 -max (OPTIONAL) <maximum number of full pages to be crawled>. If not specified 
 -uriHelperFactory (OPTIONAL) <a classname extending com.fatwire.dta.sscrawler.util.UriHelperFactory if you need a special implementation for uri parsing>. Normally no need to set this. For CS6.2 you need to set it tocom.fatwire.dta.sscrawler.util.DecodingUriHelperFactory.
 
+PROXY SUPPORT
+Add to the start script, with the correct values for your environment. At this moment there is no support for proxu authentication. 
+set JAVA_OPTS=-Dhttp.proxyhost=myproxy -Dhttp.proxyport=8080
 
 
 REPORTS:

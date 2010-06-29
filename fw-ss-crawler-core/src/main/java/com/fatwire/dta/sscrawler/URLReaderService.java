@@ -81,7 +81,8 @@ public class URLReaderService {
     protected HttpClient initClient() {
         HttpClient client = new HttpClient(connectionManager);
         client.getHostConfiguration().setHost(hostConfig.getHostname(),
-                hostConfig.getPort());
+                hostConfig.getPort(), hostConfig.getProtocol());
+        
         String proxyHost = System.getProperty("http.proxyhost");
         String port = System.getProperty("http.proxyport");
         if (proxyHost != null && port != null && proxyHost.length() > 0

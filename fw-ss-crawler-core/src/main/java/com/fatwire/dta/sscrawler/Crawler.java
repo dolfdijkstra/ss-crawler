@@ -66,6 +66,7 @@ public class Crawler {
 
         hostConfig.setPort(uri.getPort() == -1 ? 80 : uri.getPort());
         hostConfig.setDomain(uri.getPath());
+        hostConfig.setProtocol(uri.getScheme());
 
         return hostConfig;
 

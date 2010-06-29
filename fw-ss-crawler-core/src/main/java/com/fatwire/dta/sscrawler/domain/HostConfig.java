@@ -1,11 +1,16 @@
 package com.fatwire.dta.sscrawler.domain;
+
+import com.fatwire.dta.sscrawler.EasySSLProtocolSocketFactory;
+
+import org.apache.commons.httpclient.protocol.Protocol;
+
 /**
  * Describing the host we connect to
  * 
  * @author Dolf.Dijkstra
  * @since Nov 1, 2007
  */
-        
+
 public class HostConfig {
 
     private long id;
@@ -15,6 +20,8 @@ public class HostConfig {
     private int port;
 
     private String domain;
+
+    private Protocol protocol;
 
     /**
      * @return the domain
@@ -72,12 +79,29 @@ public class HostConfig {
         this.port = port;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return hostname +":" + port +domain;
+        return hostname + ":" + port + domain;
+    }
+
+    public Protocol getProtocol() {
+        return protocol;
+    }
+
+    /**
+     * @param protocol the protocol to set
+     */
+    public void setProtocol(String protocol) {
+        if (protocol.equalsIgnoreCase("https")) {
+            this.protocol = new Protocol("https", new EasySSLProtocolSocketFactory(), 443);
+        } else {
+            this.protocol = Protocol.getProtocol(protocol);
+        }
     }
 
 }
