@@ -13,9 +13,16 @@ import com.fatwire.dta.sscrawler.reporting.Reporter;
 import com.fatwire.dta.sscrawler.reporting.ReportingListener;
 import com.fatwire.dta.sscrawler.util.SSUriHelper;
 
+/**
+ * 
+ * 
+ * @author Dolf Dijkstra
+ * 
+ */
 public class Crawler {
 
-    private String host;
+    
+    private HostConfig hostConfig;
 
     private URI startUri;
 
@@ -31,8 +38,7 @@ public class Crawler {
 
     public void work() {
 
-        final HostConfig hc = createHostConfig(URI.create(host));
-        final RenderCommand command = new RenderCommand(hc, maxPages, executor);
+        final RenderCommand command = new RenderCommand(hostConfig, maxPages, executor);
         command.addStartUri(uriHelper.uriToQueryString(startUri));
         command.setUriHelper(uriHelper);
         command.setHandler(new BodyHandler(uriHelper));
@@ -59,32 +65,6 @@ public class Crawler {
 
     }
 
-    private HostConfig createHostConfig(final URI uri) {
-        final HostConfig hostConfig = new HostConfig();
-
-        hostConfig.setHostname(uri.getHost());
-
-        hostConfig.setPort(uri.getPort() == -1 ? 80 : uri.getPort());
-        hostConfig.setDomain(uri.getPath());
-        hostConfig.setProtocol(uri.getScheme());
-
-        return hostConfig;
-
-    }
-
-    /**
-     * @return the host
-     */
-    public String getHost() {
-        return host;
-    }
-
-    /**
-     * @param host the host to set
-     */
-    public void setHost(String host) {
-        this.host = host;
-    }
 
     /**
      * @return the maxPages
@@ -171,5 +151,14 @@ public class Crawler {
     public void setProgressMonitor(ProgressMonitor progressMonitor) {
         this.progressMonitor = progressMonitor;
     }
+
+    public void setHostConfig(HostConfig hostConfig) {
+        this.hostConfig = hostConfig;
+    }
+
+    public HostConfig getHostConfig() {
+        return hostConfig;
+    }
+
 
 }

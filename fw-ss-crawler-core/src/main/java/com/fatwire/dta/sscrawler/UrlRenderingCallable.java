@@ -13,8 +13,15 @@ import org.apache.commons.logging.LogFactory;
 
 import com.fatwire.dta.sscrawler.URLReaderService.HttpClientService;
 
+/**
+ * Callable that downloads the pagelet
+ * 
+ * @author Dolf Dijkstra
+ * 
+ */
+
 public class UrlRenderingCallable implements Callable<ResultPage> {
-    private final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(UrlRenderingCallable.class);
 
     private final HttpClientService httpClientService;
 

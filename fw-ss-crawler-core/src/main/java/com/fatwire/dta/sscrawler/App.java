@@ -9,14 +9,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.httpclient.ProxyHost;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.xml.DOMConfigurator;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
+import com.fatwire.dta.sscrawler.domain.HostConfig;
 import com.fatwire.dta.sscrawler.reporting.Reporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.DefaultArgumentsAsPageCriteriaReporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.InnerLinkReporter;
@@ -39,6 +35,12 @@ import com.fatwire.dta.sscrawler.reporting.reporters.SuspiciousContextParamRepor
 import com.fatwire.dta.sscrawler.reporting.reports.FileReport;
 import com.fatwire.dta.sscrawler.util.SSUriHelper;
 import com.fatwire.dta.sscrawler.util.UriHelperFactory;
+
+import org.apache.commons.httpclient.ProxyHost;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.xml.DOMConfigurator;
 
 public class App {
 
@@ -66,23 +68,41 @@ public class App {
         if ("crawler".equals(cmd)) {
             String[] a = new String[args.length - startpos];
             System.arraycopy(args, startpos, a, 0, a.length);
-            crawlerMain(a);
+            new App().crawlerMain(a);
         } else if ("warmer".equals(cmd)) {
             String[] a = new String[args.length - startpos];
             System.arraycopy(args, startpos, a, 0, a.length);
-            CacheWarmer.main(a);
+            new CacheWarmer().crawlerMain(a);
 
         }
 
     }
 
-    private static void crawlerMain(final String[] args) throws NumberFormatException, IllegalArgumentException,
-            URISyntaxException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+    private HostConfig createHostConfig(final URI uri) {
+        final HostConfig hostConfig = new HostConfig();
+
+        hostConfig.setHostname(uri.getHost());
+
+        hostConfig.setPort(uri.getPort() == -1 ? 80 : uri.getPort());
+        hostConfig.setDomain(uri.getPath());
+        hostConfig.setProtocol(uri.getScheme());
+
+        return hostConfig;
+
+    }
+
+    protected void crawlerMain(final String[] args) throws NumberFormatException,
+            IllegalArgumentException, URISyntaxException, InstantiationException, IllegalAccessException,
+            ClassNotFoundException {
         Crawler crawler = new Crawler();
         File path = null;
         String factory = null;
         URI startUri = null;
         int threads = 5;
+        String proxyUsername = null;
+        String proxyPassword = null;
+        String proxyHost = null;
+        int proxyPort = -1;
 
         for (int i = 0; i < args.length; i++) {
             if ("-startUri".equals(args[i])) {
@@ -95,7 +115,14 @@ public class App {
                 factory = args[++i];
             } else if ("-threads".equals(args[i])) {
                 threads = Integer.parseInt(args[++i]);
-
+            } else if ("-proxyUsername".equals(args[i])) {
+                proxyUsername = args[++i];
+            } else if ("-proxyPassword".equals(args[i])) {
+                proxyPassword = args[++i];
+            } else if ("-proxyHost".equals(args[i])) {
+                proxyHost = args[++i];
+            } else if ("-proxyPort".equals(args[i])) {
+                proxyPort = Integer.parseInt(args[++i]);
             }
 
         }
@@ -105,33 +132,24 @@ public class App {
         if (t == -1) {
             throw new IllegalArgumentException("/ContentServer is not found on the startUri.");
         }
-        crawler.setHost(startUri.toASCIIString().substring(0, t));
+
         crawler.setStartUri(new URI(null, null, null, -1, startUri.getRawPath(), startUri.getRawQuery(), startUri
                 .getFragment()));
+        final HostConfig hc = createHostConfig(URI.create(startUri.toASCIIString().substring(0, t)));
 
-        /*
-         * String proxyUsername=null; String proxyPassword=null; String
-         * proxyHost=null; int proxyPort=-1;
-         * 
-         * HttpState state = new HttpState(); if
-         * (!StringUtils.isBlank(proxyUsername) &&
-         * !StringUtils.isBlank(proxyUsername)) { Credentials credentials = new
-         * UsernamePasswordCredentials(proxyUsername, proxyPassword);
-         * crawler.setProxyCredential(credentials);
-         * 
-         * state.setProxyCredentials(AuthScope.ANY, credentials); }
-         * 
-         * ProxyHost proxyHost1 = StringUtils.isNotBlank(proxyHost) ? new
-         * ProxyHost(proxyHost, proxyPort) : null;
-         * crawler.setProxyHost(proxyHost1);
-         */
-        if (path == null) {
-            path = App.getOutputDir();
+        if (StringUtils.isNotBlank(proxyUsername) && StringUtils.isNotBlank(proxyUsername)) {
+            hc.setProxyCredentials(new UsernamePasswordCredentials(proxyUsername, proxyPassword));
         }
 
-        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmm");
-        path = new File(path, df.format(new Date()));
-        path.mkdirs();
+        if (StringUtils.isNotBlank(proxyHost)) {
+            hc.setProxyHost(new ProxyHost(proxyHost, proxyPort));
+        } else if (StringUtils.isNotBlank(System.getProperty("http.proxyhost"))
+                && StringUtils.isNotBlank(System.getProperty("http.proxyport"))) {
+            hc.setProxyHost(new ProxyHost(System.getProperty("http.proxyhost"), Integer.parseInt(System
+                    .getProperty("http.proxyport"))));
+
+        }
+
         SSUriHelper helper = null;
 
         if (factory != null) {
@@ -141,22 +159,41 @@ public class App {
             helper = new SSUriHelper(crawler.getStartUri().getPath());
         }
         final ThreadPoolExecutor readerPool = new RenderingThreadPool(threads);
+        MBeanServer platform = java.lang.management.ManagementFactory.getPlatformMBeanServer();
+        try {
+            platform.registerMBean(readerPool, new ObjectName("com.fatwire.crawler:name=readerpool"));
+        } catch (Throwable x) {
+            LogFactory.getLog(App.class).error(x.getMessage(), x);
+        }
 
         crawler.setExecutor(readerPool);
+        if (path == null) {
+            path = getOutputDir();
+        }
+        if (path != null) {
+            SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmm");
+            path = new File(path, df.format(new Date()));
+            path.mkdirs();
+        }
         crawler.setReporters(createReporters(path, helper));
         crawler.setUriHelper(helper);
         crawler.work();
         readerPool.shutdown();
+        try {
+            platform.unregisterMBean(new ObjectName("com.fatwire.crawler:name=readerpool"));
+        } catch (Throwable x) {
+            LogFactory.getLog(App.class).error(x.getMessage(), x);
+        }
     }
 
-    private static File getOutputDir() {
+    protected File getOutputDir() {
 
         final File outputDir = new File("./reports");// TempDir.getTempDir(App.class);
         outputDir.mkdirs();
         return outputDir;
     }
 
-    private static List<Reporter> createReporters(File outputDir, SSUriHelper helper) {
+    protected List<Reporter> createReporters(File outputDir, SSUriHelper helper) {
 
         List<Reporter> reporters = new ArrayList<Reporter>();
         reporters.add(new PageletUriCollectingReporter(new FileReport(outputDir, "pagelets.tsv", '\t')));

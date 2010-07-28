@@ -2,6 +2,8 @@ package com.fatwire.dta.sscrawler.domain;
 
 import com.fatwire.dta.sscrawler.EasySSLProtocolSocketFactory;
 
+import org.apache.commons.httpclient.Credentials;
+import org.apache.commons.httpclient.ProxyHost;
 import org.apache.commons.httpclient.protocol.Protocol;
 
 /**
@@ -22,6 +24,8 @@ public class HostConfig {
     private String domain;
 
     private Protocol protocol;
+    private Credentials proxyCredentials;
+    private ProxyHost proxyHost;
 
     /**
      * @return the domain
@@ -96,12 +100,35 @@ public class HostConfig {
     /**
      * @param protocol the protocol to set
      */
+    @SuppressWarnings("deprecation")
     public void setProtocol(String protocol) {
         if (protocol.equalsIgnoreCase("https")) {
             this.protocol = new Protocol("https", new EasySSLProtocolSocketFactory(), 443);
         } else {
             this.protocol = Protocol.getProtocol(protocol);
         }
+    }
+
+    public void setProxyCredentials(Credentials credentials) {
+        this.proxyCredentials = credentials;
+    }
+
+    public Credentials getProxyCredentials() {
+        return proxyCredentials;
+    }
+
+    /**
+     * @return the proxyHost
+     */
+    public ProxyHost getProxyHost() {
+        return proxyHost;
+    }
+
+    /**
+     * @param proxyHost the proxyHost to set
+     */
+    public void setProxyHost(ProxyHost proxyHost) {
+        this.proxyHost = proxyHost;
     }
 
 }
