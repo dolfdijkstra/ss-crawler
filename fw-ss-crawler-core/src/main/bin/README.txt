@@ -18,15 +18,21 @@ for instance: crawl FSII at localhost
 ss-crawler -startUri 'http://localhost:8080/cs/ContentServer?pagename=FSIIWrapper&cid=1118867611403&c=Page&p=1118867611403&childpagename=FirstSiteII/FSIILayout'
 
 COMMAND LINE ARGUMENTS
+
 command line arguments are space seperated (-a val1 -b val2)
+
+If the first command-line argument is 'warmer' it will start a cache warmer tool. It does the same as the crawler except for the reporting.
+
 -startUri (REQUIRED> <full url to ContentServer with querystring containing parameters for staring page>
 -reportDir <OPTIONAL> <directory where the reports are written>. If not specified ./reports will be used. The directory with be appended with a subdir for the timestamp when the program was started. 
 -max (OPTIONAL) <maximum number of full pages to be crawled>. If not specified 
 -uriHelperFactory (OPTIONAL) <a classname extending com.fatwire.dta.sscrawler.util.UriHelperFactory if you need a special implementation for uri parsing>. Normally no need to set this. For CS6.2 you need to set it tocom.fatwire.dta.sscrawler.util.DecodingUriHelperFactory.
+-threads <OPTIONAL> <Number of parallel threads to start>
+-proxyUsername <OPTIONAL> <Username for proxy if authentication is required>
+-proxyPassword <OPTIONAL> <Password for proxy if authentication is required>
+-proxyHost <OPTIONAL> <Proxy host>
+-proxyPort <OPTIONAL> <Proxy port>
 
-PROXY SUPPORT
-Add to the start script, with the correct values for your environment. At this moment there is no support for proxu authentication. 
-set JAVA_OPTS=-Dhttp.proxyhost=myproxy -Dhttp.proxyport=8080
 
 
 REPORTS:
