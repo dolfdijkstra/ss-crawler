@@ -149,6 +149,7 @@ public class App {
                     .getProperty("http.proxyport"))));
 
         }
+        crawler.setHostConfig(hc);
 
         SSUriHelper helper = null;
 
