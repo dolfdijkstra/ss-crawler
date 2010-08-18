@@ -2,7 +2,6 @@ package com.fatwire.dta.sscrawler;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,6 +10,12 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+
+import org.apache.commons.httpclient.ProxyHost;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.xml.DOMConfigurator;
 
 import com.fatwire.dta.sscrawler.domain.HostConfig;
 import com.fatwire.dta.sscrawler.reporting.Reporter;
@@ -36,12 +41,6 @@ import com.fatwire.dta.sscrawler.reporting.reports.FileReport;
 import com.fatwire.dta.sscrawler.util.SSUriHelper;
 import com.fatwire.dta.sscrawler.util.UriHelperFactory;
 
-import org.apache.commons.httpclient.ProxyHost;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.xml.DOMConfigurator;
-
 public class App {
 
     /**
@@ -51,10 +50,8 @@ public class App {
     public static void main(final String[] args) throws Exception {
 
         if (args.length < 1) {
-            throw new IllegalArgumentException(
-                    "Usage: java "
-                            + App.class.getName()
-                            + " -startUri \"http://localhost:8080/cs/ContentServer?pagename=...\" -reportDir <report dir> -max <max pages>");
+            printUsage();
+            System.exit(1);
         }
         DOMConfigurator.configure("conf/log4j.xml");
 
@@ -78,6 +75,27 @@ public class App {
 
     }
 
+    static void printUsage() {
+        StringBuilder u = new StringBuilder("Usage: java ");
+        u.append(App.class.getName());
+        u.append("[crawler or warmer]");
+        u.append(" -startUri \"http://localhost:8080/cs/ContentServer?pagename=...\"");
+        u.append(" -reportDir <report dir>");
+        u.append(" -max <max pages>");
+        u.append(" -uriHelperFactory <classname>");
+        u.append(" -threads <num>");
+        u.append(" -proxyUsername <username>");
+        u.append(" -proxyPassword <password>");
+        u.append(" -proxyHost <host>");
+        u.append(" -proxyPort <port>");
+        
+        u.append("\n");
+        u.append("For more into see http://www.nl.fatwire.com/dta/ss-crawler/");
+        u.append("\n");
+        System.err.println(u.toString());
+
+    }
+
     private HostConfig createHostConfig(final URI uri) {
         final HostConfig hostConfig = new HostConfig();
 
@@ -91,9 +109,7 @@ public class App {
 
     }
 
-    protected void crawlerMain(final String[] args) throws NumberFormatException,
-            IllegalArgumentException, URISyntaxException, InstantiationException, IllegalAccessException,
-            ClassNotFoundException {
+    protected void crawlerMain(final String[] args) throws Exception {
         Crawler crawler = new Crawler();
         File path = null;
         String factory = null;
