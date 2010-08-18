@@ -31,7 +31,7 @@ public class EsiIncludeHandler extends AbstractBodyHandler {
 
     public final void visit(ResultPage page) {
         final Matcher m = getPagePattern().matcher(page.getBody());
-        //<esi:include src=“object” attr1="val1" attr2="val2" etc./>
+        //<esi:include src="object" attr1="val1" attr2="val2" etc./>
         while (m.find()) {
             if (log.isDebugEnabled()) {
                 log.debug(m.group());
