@@ -161,7 +161,7 @@ public class URLReaderService {
 
         private ProgressMonitor monitor;
 
-        private boolean requestPageData=true;
+        private boolean requestPageData = true;
 
         /**
          * @param executor
@@ -336,14 +336,14 @@ public class URLReaderService {
     }
 
     /**
-     * @return the stopped
+     * @return true if the service is stopped
      */
     public boolean isStopped() {
         return stopped;
     }
 
     /**
-     * @param stopped the stopped to set
+     * stop the service
      */
     public void stop() {
         stopped = true;

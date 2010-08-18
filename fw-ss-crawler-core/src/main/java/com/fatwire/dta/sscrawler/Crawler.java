@@ -74,7 +74,7 @@ public class Crawler {
     }
 
     /**
-     * @param maxPages the maxPages to set
+     * @param max the maxPages to set
      */
     public void setMaxPages(int max) {
         if (max < 1)
