@@ -27,6 +27,18 @@ import java.util.concurrent.ThreadPoolExecutor;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.commons.cli.AlreadySelectedException;
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.MissingArgumentException;
+import org.apache.commons.cli.MissingOptionException;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.UnrecognizedOptionException;
 import org.apache.commons.httpclient.ProxyHost;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.lang.StringUtils;
@@ -59,6 +71,57 @@ import com.fatwire.dta.sscrawler.util.UriHelperFactory;
 
 public class App {
 
+    @SuppressWarnings("static-access")
+    public static Options setUpCmd() {
+        // create Options object
+        Options options = new Options();
+
+        // add t option
+        options.addOption("h", "help", false, "print this message.");
+        /*
+         * Option startUri =
+         * OptionBuilder.withArgName("uri").hasArg().withDescription(
+         * "Starting uri in the form of 'http://localhost:8080/cs/ContentServer?pagename=...'"
+         * ).withLongOpt("startUri").create("u"); startUri.setRequired(true);
+         * 
+         * options.addOption(startUri);
+         */
+        Option reportDir = OptionBuilder.withArgName("dir").hasArg().withDescription(
+                "Directory where reports are stored").withLongOpt("reportDir").create("d");
+        options.addOption(reportDir);
+
+        Option max = OptionBuilder.withArgName("num").hasArg().withDescription(
+                "Maximum number of pages, default is unlimited").withLongOpt("max").create("m");
+        options.addOption(max);
+
+        Option uriHelperFactory = OptionBuilder.withArgName("classname").hasArg().withDescription(
+                "Class for constructing urls").withLongOpt("uriHelperFactory").create("f");
+        uriHelperFactory.setType(UriHelperFactory.class);
+        options.addOption(uriHelperFactory);
+
+        Option threads = OptionBuilder.withArgName("num").hasArg().withDescription(
+                "Number of concurrent threads that are reading from ContentServer").withLongOpt("threads").create("t");
+        options.addOption(threads);
+
+        Option proxyUsername = OptionBuilder.withArgName("username").hasArg().withDescription("Proxy Username")
+                .withLongOpt("proxyUsername").create("pu");
+        options.addOption(proxyUsername);
+
+        Option proxyPassword = OptionBuilder.withArgName("password").hasArg().withDescription("Proxy Password")
+                .withLongOpt("proxyPassword").create("pw");
+        options.addOption(proxyPassword);
+
+        Option proxyHost = OptionBuilder.withArgName("host").hasArg().withDescription("Proxy hostname").withLongOpt(
+                "proxyHost").create("ph");
+        options.addOption(proxyHost);
+
+        Option proxyPort = OptionBuilder.withArgName("port").hasArg().withDescription("Proxy port number").withLongOpt(
+                "proxyPort").create("pp");
+        options.addOption(proxyPort);
+        return options;
+
+    }
+
     /**
      * @param args
      * @throws Exception
@@ -70,45 +133,52 @@ public class App {
             System.exit(1);
         }
         DOMConfigurator.configure("conf/log4j.xml");
+        Options o = App.setUpCmd();
+        CommandLineParser p = new BasicParser();
+        // BasicParser, GnuParser, Parser, PosixParser
+        try {
+            CommandLine s = p.parse(o, args);
+            System.out.println(s.hasOption("h"));
+            System.out.println(s.hasOption("pu"));
+            System.out.println(s.getOptionValue("pu"));
+            System.out.println(s.getArgList());
+            String cmd = "crawler";
+            int startpos = 0;
+            if (!args[0].startsWith("-")) {
+                startpos = 1;
+                cmd = args[0];
 
-        String cmd = "crawler";
-        int startpos = 0;
-        if (!args[0].startsWith("-")) {
-            startpos = 1;
-            cmd = args[0];
+            }
+            if (s.getArgList().contains("crawler")) {
+                new App().doWork(s);
+            } else if (s.getArgList().contains("warmer")) {
+                new CacheWarmer().doWork(s);
+            } else {
+                System.err.println("no subcommand found");
+                printUsage();
+                System.exit(1);
+            }
 
-        }
-        if ("crawler".equals(cmd)) {
-            String[] a = new String[args.length - startpos];
-            System.arraycopy(args, startpos, a, 0, a.length);
-            new App().crawlerMain(a);
-        } else if ("warmer".equals(cmd)) {
-            String[] a = new String[args.length - startpos];
-            System.arraycopy(args, startpos, a, 0, a.length);
-            new CacheWarmer().crawlerMain(a);
-
+        } catch (ParseException e) {
+            System.err.println(e.getMessage());
+            printUsage();
+            System.exit(1);
         }
 
     }
 
-    static void printUsage() {
-        StringBuilder u = new StringBuilder("Usage: java ");
-        u.append(App.class.getName());
-        u.append("[crawler or warmer]");
-        u.append(" -startUri \"http://localhost:8080/cs/ContentServer?pagename=...\"");
-        u.append(" -reportDir <report dir>");
-        u.append(" -max <max pages>");
-        u.append(" -uriHelperFactory <classname>");
-        u.append(" -threads <num>");
-        u.append(" -proxyUsername <username>");
-        u.append(" -proxyPassword <password>");
-        u.append(" -proxyHost <host>");
-        u.append(" -proxyPort <port>");
-        
-        u.append("\n");
-        u.append("For more into see http://www.nl.fatwire.com/dta/ss-crawler/");
-        u.append("\n");
-        System.err.println(u.toString());
+    public static void printUsage() {
+        Options options = App.setUpCmd();
+        HelpFormatter formatter = new HelpFormatter();
+        // formatter.setLongOptPrefix("--");
+        // formatter.setOptPrefix("#");
+        formatter
+                .printHelp(
+                        "java " + App.class.getName() + " <subcommand> [options] [argument]",
+                        "Tool to retrieve page from ContentServer as-if SatelliteServer is rendering them.\n"
+                                + "Argument a the start uri in the form of 'http://localhost:8080/cs/ContentServer?pagename=...'.\n"
+                                + "Available subcommands:\n    crawler: extensive reporting on the discovered pagelets.\n    warmer:  warm the cache.\n\n",
+                        options, "For more into see http://www.nl.fatwire.com/dta/ss-crawler/", true);
 
     }
 
@@ -125,39 +195,18 @@ public class App {
 
     }
 
-    protected void crawlerMain(final String[] args) throws Exception {
+    protected void doWork(CommandLine cmd) throws Exception {
         Crawler crawler = new Crawler();
-        File path = null;
-        String factory = null;
+
         URI startUri = null;
-        int threads = 5;
-        String proxyUsername = null;
-        String proxyPassword = null;
-        String proxyHost = null;
-        int proxyPort = -1;
 
-        for (int i = 0; i < args.length; i++) {
-            if ("-startUri".equals(args[i])) {
-                startUri = URI.create(args[++i]);
-            } else if ("-reportDir".equals(args[i])) {
-                path = new File(args[++i]);
-            } else if ("-max".equals(args[i])) {
-                crawler.setMaxPages(Integer.parseInt(args[++i]));
-            } else if ("-uriHelperFactory".equals(args[i])) {
-                factory = args[++i];
-            } else if ("-threads".equals(args[i])) {
-                threads = Integer.parseInt(args[++i]);
-            } else if ("-proxyUsername".equals(args[i])) {
-                proxyUsername = args[++i];
-            } else if ("-proxyPassword".equals(args[i])) {
-                proxyPassword = args[++i];
-            } else if ("-proxyHost".equals(args[i])) {
-                proxyHost = args[++i];
-            } else if ("-proxyPort".equals(args[i])) {
-                proxyPort = Integer.parseInt(args[++i]);
-            }
-
+        startUri = URI.create(cmd.getArgs()[1]);
+        if (cmd.hasOption('m')) {
+            crawler.setMaxPages(Integer.parseInt(cmd.getOptionValue('m')));
         }
+
+        int threads = Integer.parseInt(cmd.getOptionValue('t', "5"));
+
         if (startUri == null)
             throw new IllegalArgumentException("startUri is not set");
         int t = startUri.toASCIIString().indexOf("/ContentServer");
@@ -169,6 +218,12 @@ public class App {
                 .getFragment()));
         final HostConfig hc = createHostConfig(URI.create(startUri.toASCIIString().substring(0, t)));
 
+        String proxyUsername = cmd.getOptionValue("pu");
+        String proxyPassword = cmd.getOptionValue("pw");
+        String proxyHost = cmd.getOptionValue("ph");
+        int proxyPort = Integer.parseInt(cmd.getOptionValue("", "8080"));
+        
+        
         if (StringUtils.isNotBlank(proxyUsername) && StringUtils.isNotBlank(proxyUsername)) {
             hc.setProxyCredentials(new UsernamePasswordCredentials(proxyUsername, proxyPassword));
         }
@@ -185,8 +240,8 @@ public class App {
 
         SSUriHelper helper = null;
 
-        if (factory != null) {
-            UriHelperFactory f = (UriHelperFactory) (Class.forName(factory).newInstance());
+        if (cmd.hasOption('f')) {
+            UriHelperFactory f = (UriHelperFactory) (Class.forName(cmd.getOptionValue('f')).newInstance());
             helper = f.create(crawler.getStartUri().getPath());
         } else {
             helper = new SSUriHelper(crawler.getStartUri().getPath());
@@ -200,7 +255,10 @@ public class App {
         }
 
         crawler.setExecutor(readerPool);
-        if (path == null) {
+        File path = null;
+        if (cmd.hasOption('d')) {
+            path = new File(cmd.getOptionValue("d"));
+        } else {
             path = getOutputDir();
         }
         if (path != null) {
@@ -221,7 +279,7 @@ public class App {
 
     protected File getOutputDir() {
 
-        final File outputDir = new File("./reports");// TempDir.getTempDir(App.class);
+        final File outputDir = new File("./reports");
         outputDir.mkdirs();
         return outputDir;
     }
