@@ -27,18 +27,14 @@ import java.util.concurrent.ThreadPoolExecutor;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.commons.cli.AlreadySelectedException;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.MissingArgumentException;
-import org.apache.commons.cli.MissingOptionException;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.UnrecognizedOptionException;
 import org.apache.commons.httpclient.ProxyHost;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.lang.StringUtils;
@@ -73,19 +69,10 @@ public class App {
 
     @SuppressWarnings("static-access")
     public static Options setUpCmd() {
-        // create Options object
         Options options = new Options();
 
-        // add t option
         options.addOption("h", "help", false, "print this message.");
-        /*
-         * Option startUri =
-         * OptionBuilder.withArgName("uri").hasArg().withDescription(
-         * "Starting uri in the form of 'http://localhost:8080/cs/ContentServer?pagename=...'"
-         * ).withLongOpt("startUri").create("u"); startUri.setRequired(true);
-         * 
-         * options.addOption(startUri);
-         */
+
         Option reportDir = OptionBuilder.withArgName("dir").hasArg().withDescription(
                 "Directory where reports are stored").withLongOpt("reportDir").create("d");
         options.addOption(reportDir);
@@ -135,26 +122,16 @@ public class App {
         DOMConfigurator.configure("conf/log4j.xml");
         Options o = App.setUpCmd();
         CommandLineParser p = new BasicParser();
-        // BasicParser, GnuParser, Parser, PosixParser
         try {
             CommandLine s = p.parse(o, args);
-            System.out.println(s.hasOption("h"));
-            System.out.println(s.hasOption("pu"));
-            System.out.println(s.getOptionValue("pu"));
-            System.out.println(s.getArgList());
-            String cmd = "crawler";
-            int startpos = 0;
-            if (!args[0].startsWith("-")) {
-                startpos = 1;
-                cmd = args[0];
-
-            }
-            if (s.getArgList().contains("crawler")) {
+            if (s.hasOption('h')) {
+                printUsage();
+            } else if (s.getArgList().contains("crawler") && s.getArgList().size() > 1) {
                 new App().doWork(s);
-            } else if (s.getArgList().contains("warmer")) {
+            } else if (s.getArgList().contains("warmer") && s.getArgList().size() > 1) {
                 new CacheWarmer().doWork(s);
             } else {
-                System.err.println("no subcommand found");
+                System.err.println("no subcommand and/or URI found on " + s.getArgList());
                 printUsage();
                 System.exit(1);
             }
@@ -170,8 +147,6 @@ public class App {
     public static void printUsage() {
         Options options = App.setUpCmd();
         HelpFormatter formatter = new HelpFormatter();
-        // formatter.setLongOptPrefix("--");
-        // formatter.setOptPrefix("#");
         formatter
                 .printHelp(
                         "java " + App.class.getName() + " <subcommand> [options] [argument]",
@@ -222,8 +197,7 @@ public class App {
         String proxyPassword = cmd.getOptionValue("pw");
         String proxyHost = cmd.getOptionValue("ph");
         int proxyPort = Integer.parseInt(cmd.getOptionValue("", "8080"));
-        
-        
+
         if (StringUtils.isNotBlank(proxyUsername) && StringUtils.isNotBlank(proxyUsername)) {
             hc.setProxyCredentials(new UsernamePasswordCredentials(proxyUsername, proxyPassword));
         }
