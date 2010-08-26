@@ -150,9 +150,9 @@ public class App {
         HelpFormatter formatter = new HelpFormatter();
         formatter
                 .printHelp(
-                        "java " + App.class.getName() + " <subcommand> [options] [argument]",
-                        "Tool to retrieve page from ContentServer as-if SatelliteServer is rendering them.\n"
-                                + "Argument a the start uri in the form of 'http://localhost:8080/cs/ContentServer?pagename=...'.\n"
+                        "java " + App.class.getName() + " <subcommand> [options] [argument]\n",
+                        "Tool to retrieve pages from ContentServer as-if SatelliteServer is rendering them.\nVarious reports on the implemented caching strategy are produced."
+                                + "Argument: the start uri in the form of 'http://localhost:8080/cs/ContentServer?pagename=...'.\n"
                                 + "Available subcommands:\n    crawler: extensive reporting on the discovered pagelets.\n    warmer:  warm the cache.\n\n",
                         options, "For more into see http://www.nl.fatwire.com/dta/ss-crawler/", true);
 
