@@ -20,7 +20,7 @@ import com.fatwire.dta.sscrawler.events.EventObject;
 
 public class JobScheduledEvent extends EventObject<Job> {
 
-    public JobScheduledEvent(Job source) {
+    public JobScheduledEvent(final Job source) {
         super(source);
     }
 

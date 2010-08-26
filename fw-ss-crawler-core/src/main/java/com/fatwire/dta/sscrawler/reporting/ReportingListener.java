@@ -36,47 +36,47 @@ public class ReportingListener implements PageletRenderingListener, JobChangeLis
 
     private final List<Reporter> reporters = new CopyOnWriteArrayList<Reporter>();
 
-    public void addReporter(Reporter reporter) {
+    public void addReporter(final Reporter reporter) {
         reporters.add(reporter);
     }
 
-    public void renderPerformed(PageletRenderedEvent event) {
+    public void renderPerformed(final PageletRenderedEvent event) {
         final ResultPage page = event.getPage();
-        for (Iterator<Reporter> i = reporters.iterator(); i.hasNext();) {
-            Reporter reporter = i.next();
+        for (final Iterator<Reporter> i = reporters.iterator(); i.hasNext();) {
+            final Reporter reporter = i.next();
             try {
                 reporter.addToReport(page);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 log.error(e, e);
-                //i.remove(); //remove reporter if we can't use it
+                // i.remove(); //remove reporter if we can't use it
             }
         }
 
     }
 
-    public void jobFinished(JobFinishedEvent event) {
-        for (Reporter reporter : reporters) {
+    public void jobFinished(final JobFinishedEvent event) {
+        for (final Reporter reporter : reporters) {
             try {
                 reporter.endCollecting();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 log.error(e, e);
             }
         }
 
     }
 
-    public void jobScheduled(JobScheduledEvent event) {
+    public void jobScheduled(final JobScheduledEvent event) {
 
     }
 
-    public void jobStarted(JobStartedEvent event) {
-        for (Iterator<Reporter> i = reporters.iterator(); i.hasNext();) {
-            Reporter reporter = i.next();
+    public void jobStarted(final JobStartedEvent event) {
+        for (final Iterator<Reporter> i = reporters.iterator(); i.hasNext();) {
+            final Reporter reporter = i.next();
             try {
                 reporter.startCollecting();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 log.error(e, e);
-                i.remove(); //remove reporter if we can't use it
+                i.remove(); // remove reporter if we can't use it
             }
         }
 

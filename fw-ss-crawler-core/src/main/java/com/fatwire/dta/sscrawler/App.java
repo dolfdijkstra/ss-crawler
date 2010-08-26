@@ -70,41 +70,41 @@ public class App {
 
     @SuppressWarnings("static-access")
     public static Options setUpCmd() {
-        Options options = new Options();
+        final Options options = new Options();
 
         options.addOption("h", "help", false, "print this message.");
 
-        Option reportDir = OptionBuilder.withArgName("dir").hasArg().withDescription(
+        final Option reportDir = OptionBuilder.withArgName("dir").hasArg().withDescription(
                 "Directory where reports are stored").withLongOpt("reportDir").create("d");
         options.addOption(reportDir);
 
-        Option max = OptionBuilder.withArgName("num").hasArg().withDescription(
+        final Option max = OptionBuilder.withArgName("num").hasArg().withDescription(
                 "Maximum number of pages, default is unlimited").withLongOpt("max").create("m");
         options.addOption(max);
 
-        Option uriHelperFactory = OptionBuilder.withArgName("classname").hasArg().withDescription(
+        final Option uriHelperFactory = OptionBuilder.withArgName("classname").hasArg().withDescription(
                 "Class for constructing urls").withLongOpt("uriHelperFactory").create("f");
         uriHelperFactory.setType(UriHelperFactory.class);
         options.addOption(uriHelperFactory);
 
-        Option threads = OptionBuilder.withArgName("num").hasArg().withDescription(
+        final Option threads = OptionBuilder.withArgName("num").hasArg().withDescription(
                 "Number of concurrent threads that are reading from ContentServer").withLongOpt("threads").create("t");
         options.addOption(threads);
 
-        Option proxyUsername = OptionBuilder.withArgName("username").hasArg().withDescription("Proxy Username")
+        final Option proxyUsername = OptionBuilder.withArgName("username").hasArg().withDescription("Proxy Username")
                 .withLongOpt("proxyUsername").create("pu");
         options.addOption(proxyUsername);
 
-        Option proxyPassword = OptionBuilder.withArgName("password").hasArg().withDescription("Proxy Password")
+        final Option proxyPassword = OptionBuilder.withArgName("password").hasArg().withDescription("Proxy Password")
                 .withLongOpt("proxyPassword").create("pw");
         options.addOption(proxyPassword);
 
-        Option proxyHost = OptionBuilder.withArgName("host").hasArg().withDescription("Proxy hostname").withLongOpt(
-                "proxyHost").create("ph");
+        final Option proxyHost = OptionBuilder.withArgName("host").hasArg().withDescription("Proxy hostname")
+                .withLongOpt("proxyHost").create("ph");
         options.addOption(proxyHost);
 
-        Option proxyPort = OptionBuilder.withArgName("port").hasArg().withDescription("Proxy port number").withLongOpt(
-                "proxyPort").create("pp");
+        final Option proxyPort = OptionBuilder.withArgName("port").hasArg().withDescription("Proxy port number")
+                .withLongOpt("proxyPort").create("pp");
         options.addOption(proxyPort);
         return options;
 
@@ -121,10 +121,10 @@ public class App {
             System.exit(1);
         }
         DOMConfigurator.configure("conf/log4j.xml");
-        Options o = App.setUpCmd();
-        CommandLineParser p = new BasicParser();
+        final Options o = App.setUpCmd();
+        final CommandLineParser p = new BasicParser();
         try {
-            CommandLine s = p.parse(o, args);
+            final CommandLine s = p.parse(o, args);
             if (s.hasOption('h')) {
                 printUsage();
             } else if (s.getArgList().contains("crawler") && s.getArgList().size() > 1) {
@@ -137,7 +137,7 @@ public class App {
                 System.exit(1);
             }
 
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             System.err.println(e.getMessage());
             printUsage();
             System.exit(1);
@@ -146,8 +146,8 @@ public class App {
     }
 
     public static void printUsage() {
-        Options options = App.setUpCmd();
-        HelpFormatter formatter = new HelpFormatter();
+        final Options options = App.setUpCmd();
+        final HelpFormatter formatter = new HelpFormatter();
         formatter
                 .printHelp(
                         "java " + App.class.getName() + " <subcommand> [options] [argument]\n",
@@ -171,8 +171,8 @@ public class App {
 
     }
 
-    protected void doWork(CommandLine cmd) throws Exception {
-        Crawler crawler = new Crawler();
+    protected void doWork(final CommandLine cmd) throws Exception {
+        final Crawler crawler = new Crawler();
 
         URI startUri = null;
 
@@ -181,11 +181,12 @@ public class App {
             crawler.setMaxPages(Integer.parseInt(cmd.getOptionValue('m')));
         }
 
-        int threads = Integer.parseInt(cmd.getOptionValue('t', "5"));
+        final int threads = Integer.parseInt(cmd.getOptionValue('t', "5"));
 
-        if (startUri == null)
+        if (startUri == null) {
             throw new IllegalArgumentException("startUri is not set");
-        int t = startUri.toASCIIString().indexOf("/ContentServer");
+        }
+        final int t = startUri.toASCIIString().indexOf("/ContentServer");
         if (t == -1) {
             throw new IllegalArgumentException("/ContentServer is not found on the startUri.");
         }
@@ -194,10 +195,10 @@ public class App {
                 .getFragment()));
         final HostConfig hc = createHostConfig(URI.create(startUri.toASCIIString().substring(0, t)));
 
-        String proxyUsername = cmd.getOptionValue("pu");
-        String proxyPassword = cmd.getOptionValue("pw");
-        String proxyHost = cmd.getOptionValue("ph");
-        int proxyPort = Integer.parseInt(cmd.getOptionValue("", "8080"));
+        final String proxyUsername = cmd.getOptionValue("pu");
+        final String proxyPassword = cmd.getOptionValue("pw");
+        final String proxyHost = cmd.getOptionValue("ph");
+        final int proxyPort = Integer.parseInt(cmd.getOptionValue("", "8080"));
 
         if (StringUtils.isNotBlank(proxyUsername) && StringUtils.isNotBlank(proxyUsername)) {
             hc.setProxyCredentials(new UsernamePasswordCredentials(proxyUsername, proxyPassword));
@@ -216,16 +217,16 @@ public class App {
         SSUriHelper helper = null;
 
         if (cmd.hasOption('f')) {
-            UriHelperFactory f = (UriHelperFactory) (Class.forName(cmd.getOptionValue('f')).newInstance());
+            final UriHelperFactory f = (UriHelperFactory) Class.forName(cmd.getOptionValue('f')).newInstance();
             helper = f.create(crawler.getStartUri().getPath());
         } else {
             helper = new SSUriHelper(crawler.getStartUri().getPath());
         }
         final ThreadPoolExecutor readerPool = new RenderingThreadPool(threads);
-        MBeanServer platform = java.lang.management.ManagementFactory.getPlatformMBeanServer();
+        final MBeanServer platform = java.lang.management.ManagementFactory.getPlatformMBeanServer();
         try {
             platform.registerMBean(readerPool, new ObjectName("com.fatwire.crawler:name=readerpool"));
-        } catch (Throwable x) {
+        } catch (final Throwable x) {
             LogFactory.getLog(App.class).error(x.getMessage(), x);
         }
 
@@ -237,7 +238,7 @@ public class App {
             path = getOutputDir();
         }
         if (path != null) {
-            SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmm");
+            final SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmm");
             path = new File(path, df.format(new Date()));
             path.mkdirs();
         }
@@ -249,7 +250,7 @@ public class App {
             readerPool.shutdown();
             try {
                 platform.unregisterMBean(new ObjectName("com.fatwire.crawler:name=readerpool"));
-            } catch (Throwable x) {
+            } catch (final Throwable x) {
                 LogFactory.getLog(App.class).error(x.getMessage(), x);
             }
         }
@@ -262,9 +263,9 @@ public class App {
         return outputDir;
     }
 
-    protected List<Reporter> createReporters(File outputDir, SSUriHelper helper) {
+    protected List<Reporter> createReporters(final File outputDir, final SSUriHelper helper) {
 
-        List<Reporter> reporters = new ArrayList<Reporter>();
+        final List<Reporter> reporters = new ArrayList<Reporter>();
         reporters.add(new PageletUriCollectingReporter(new FileReport(outputDir, "pagelets.tsv", '\t')));
         reporters.add(new PageCollectingReporter(new File(outputDir, "pages")));
         reporters.add(new OuterLinkCollectingReporter(new FileReport(outputDir, "browsable-links.tsv", '\t'), helper));
@@ -299,7 +300,6 @@ public class App {
 
         /*
          * TODO - inner uncached pagelets, is inner uncached good? Too many
-         * 
          */
 
         return reporters;

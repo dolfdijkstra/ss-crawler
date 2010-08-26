@@ -28,18 +28,18 @@ public class PageletReuseReporter extends ReportDelegatingReporter {
 
     private final int threshold;
     private final PageletTracker tracker = new PageletTracker();
-    private AtomicInteger count = new AtomicInteger();
-    private AtomicInteger total = new AtomicInteger();
+    private final AtomicInteger count = new AtomicInteger();
+    private final AtomicInteger total = new AtomicInteger();
 
-    public PageletReuseReporter(Report report, final int threshold) {
+    public PageletReuseReporter(final Report report, final int threshold) {
         super(report);
         this.threshold = threshold;
 
     }
 
-    public void addToReport(ResultPage page) {
+    public void addToReport(final ResultPage page) {
         if (page.getResponseCode() == 200 && CacheHelper.shouldCache(page.getResponseHeaders())) {
-            //track pages that should be cached
+            // track pages that should be cached
             tracker.add(page);
         }
     }
@@ -57,10 +57,10 @@ public class PageletReuseReporter extends ReportDelegatingReporter {
         report.addHeader("threshold: " + threshold);
         report.addHeader(getHeader());
 
-        for (Entry<QueryString, AtomicInteger> e : tracker.getEntries()) {
-            QueryString qs = e.getKey();
+        for (final Entry<QueryString, AtomicInteger> e : tracker.getEntries()) {
+            final QueryString qs = e.getKey();
             total.incrementAndGet();
-            int level = e.getValue().get();
+            final int level = e.getValue().get();
             if (level >= threshold) {
                 count.incrementAndGet();
                 report.addRow(qs.toString(), Integer.toString(level));

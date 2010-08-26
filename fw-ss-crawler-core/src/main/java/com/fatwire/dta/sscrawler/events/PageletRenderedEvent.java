@@ -20,7 +20,7 @@ import com.fatwire.dta.sscrawler.ResultPage;
 
 public class PageletRenderedEvent extends EventObject<ResultPage> {
 
-    public PageletRenderedEvent(ResultPage page) {
+    public PageletRenderedEvent(final ResultPage page) {
         super(page);
     }
 

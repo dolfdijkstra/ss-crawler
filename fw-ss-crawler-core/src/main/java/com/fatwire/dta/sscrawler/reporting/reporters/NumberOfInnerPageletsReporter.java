@@ -30,7 +30,7 @@ import com.fatwire.dta.sscrawler.reporting.Report;
 public class NumberOfInnerPageletsReporter extends ReportDelegatingReporter {
 
     private final int threshold;
-    private AtomicInteger count = new AtomicInteger();
+    private final AtomicInteger count = new AtomicInteger();
 
     public NumberOfInnerPageletsReporter(final Report report, final int threshold) {
         super(report);

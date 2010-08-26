@@ -18,7 +18,7 @@ package com.fatwire.dta.sscrawler.jobs;
 
 public class JobManagerImpl implements JobManager {
 
-    protected void run(Job job) {
+    protected void run(final Job job) {
         job.run(createMonitor());
     }
 

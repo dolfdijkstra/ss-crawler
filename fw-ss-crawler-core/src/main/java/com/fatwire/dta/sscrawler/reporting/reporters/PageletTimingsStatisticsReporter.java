@@ -82,10 +82,11 @@ public class PageletTimingsStatisticsReporter extends ReportDelegatingReporter {
                 "standard-deviation");
 
         for (final Map.Entry<String, SynchronizedSummaryStatistics> e : stats.entrySet()) {
-            SynchronizedSummaryStatistics s = e.getValue();
+            final SynchronizedSummaryStatistics s = e.getValue();
 
-            final String n = e.getKey() + new String(blank, 0, l - e.getKey().length())+ (Boolean.FALSE.equals(cached.get(e.getKey()))?" * ": "   ");
-            
+            final String n = e.getKey() + new String(blank, 0, l - e.getKey().length())
+                    + (Boolean.FALSE.equals(cached.get(e.getKey())) ? " * " : "   ");
+
             report.addRow(n, Long.toString(s.getN()), df.format(s.getMean()), lf.format(s.getMin()), lf.format(s
                     .getMax()), df.format(s.getStandardDeviation()));
 

@@ -24,16 +24,15 @@ public class SimpleUriValidator implements UriValidator {
 
     private String domainWithCS;
 
-    public boolean validate(String uri) {
-        return this.validateForDomainStart(uri)
-                && this.validateForPageDataRequest(uri);
+    public boolean validate(final String uri) {
+        return validateForDomainStart(uri) && validateForPageDataRequest(uri);
     }
 
-    protected boolean validateForDomainStart(String uri) {
+    protected boolean validateForDomainStart(final String uri) {
         return !uri.startsWith(domainWithCS);
     }
 
-    protected boolean validateForPageDataRequest(String uri) {
+    protected boolean validateForPageDataRequest(final String uri) {
         return uri.indexOf(HelperStrings.SS_PAGEDATA_REQUEST) < 1;
     }
 
@@ -47,9 +46,9 @@ public class SimpleUriValidator implements UriValidator {
     /**
      * @param domain the domain to set
      */
-    public void setDomain(String domain) {
+    public void setDomain(final String domain) {
         this.domain = domain;
-        this.domainWithCS = domain + HelperStrings.CONTENTSERVER;
+        domainWithCS = domain + HelperStrings.CONTENTSERVER;
     }
 
 }

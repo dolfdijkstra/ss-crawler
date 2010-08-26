@@ -34,8 +34,8 @@ public class CacheWarmer extends App {
      * com.fatwire.dta.sscrawler.util.SSUriHelper)
      */
     @Override
-    protected List<Reporter> createReporters(File outputDir, SSUriHelper helper) {
-        List<Reporter> reporters = new ArrayList<Reporter>();
+    protected List<Reporter> createReporters(final File outputDir, final SSUriHelper helper) {
+        final List<Reporter> reporters = new ArrayList<Reporter>();
         reporters.add(new PageletTimingsStatisticsReporter(new StdOutReport()));
 
         return reporters;

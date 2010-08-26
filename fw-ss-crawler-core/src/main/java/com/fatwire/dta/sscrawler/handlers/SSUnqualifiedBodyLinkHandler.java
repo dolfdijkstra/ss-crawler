@@ -29,9 +29,8 @@ import com.fatwire.dta.sscrawler.util.SSUriHelper;
 
 public class SSUnqualifiedBodyLinkHandler extends AbstractBodyHandler {
 
-    //ssUnqualifiedLink ended by quote, double quote or whitespace
-    private final Pattern linkPattern = Pattern
-            .compile("ssUnqualifiedLink\\?.*?['\\\" ]");
+    // ssUnqualifiedLink ended by quote, double quote or whitespace
+    private final Pattern linkPattern = Pattern.compile("ssUnqualifiedLink\\?.*?['\\\" ]");
 
     /**
      * @param uriHelper
@@ -40,7 +39,7 @@ public class SSUnqualifiedBodyLinkHandler extends AbstractBodyHandler {
         super(uriHelper);
     }
 
-    public void visit(ResultPage page) {
+    public void visit(final ResultPage page) {
         final Matcher m = linkPattern.matcher(page.getBody());
 
         while (m.find()) {
@@ -53,12 +52,13 @@ public class SSUnqualifiedBodyLinkHandler extends AbstractBodyHandler {
 
     }
 
-    void doLink(final String link, ResultPage page) {
+    void doLink(final String link, final ResultPage page) {
         log.trace(link);
         try {
-            //<a href='ssUnqualifiedLink?op=CM_Actualidad_FA&c=Page&op2=1142352029508&paginaActual=0&pagename=ComunidadMadrid%2FEstructura&subMenuP=subMenuPresidenta&language=es&cid=1109266752498'
+            // <a
+            // href='ssUnqualifiedLink?op=CM_Actualidad_FA&c=Page&op2=1142352029508&paginaActual=0&pagename=ComunidadMadrid%2FEstructura&subMenuP=subMenuPresidenta&language=es&cid=1109266752498'
             final URI uri = new URI(StringEscapeUtils.unescapeXml(link));
-            //final URI uri = new URI(link);
+            // final URI uri = new URI(link);
             log.trace(uri.getQuery());
             final String[] val = uri.getQuery().split("&");
             final Link map = new Link();
@@ -68,8 +68,7 @@ public class SSUnqualifiedBodyLinkHandler extends AbstractBodyHandler {
                     break;
                 } else {
                     final int t = v.indexOf('=');
-                    map.addParameter(v.substring(0, t), v.substring(t + 1, v
-                            .length()));
+                    map.addParameter(v.substring(0, t), v.substring(t + 1, v.length()));
 
                 }
             }

@@ -40,7 +40,7 @@ public class PageCollectingReporter implements Reporter {
 
     private final File dir;
 
-    private String path;
+    private final String path;
 
     private final AtomicLong idGen = new AtomicLong(System.currentTimeMillis());
 
@@ -54,18 +54,15 @@ public class PageCollectingReporter implements Reporter {
 
     public void addToReport(final ResultPage page) {
         if (page.getResponseCode() != 200) {
-            return; //bail out
+            return; // bail out
         }
         final long id = idGen.incrementAndGet();
         FileWriter writer = null;
 
         try {
-            final String p = (page.getPageName() != null ? page.getPageName()
-                    : "")
-                    + "-" + id + ".txt";
+            final String p = (page.getPageName() != null ? page.getPageName() : "") + "-" + id + ".txt";
             final File pFile = new File(dir, p);
-            pwriter.println(page.getUri() + "\t" + path + File.separator
-                    + p.replace('/', File.separatorChar));
+            pwriter.println(page.getUri() + "\t" + path + File.separator + p.replace('/', File.separatorChar));
             pwriter.flush();
             pFile.getAbsoluteFile().getParentFile().mkdirs();
             writer = new FileWriter(pFile);
@@ -85,7 +82,7 @@ public class PageCollectingReporter implements Reporter {
                 try {
                     writer.close();
                 } catch (final IOException ignored) {
-                    //ignored
+                    // ignored
                 }
             }
         }
@@ -99,9 +96,8 @@ public class PageCollectingReporter implements Reporter {
 
     public void startCollecting() {
         try {
-            pwriter = new PrintWriter(new File(this.dir.getParentFile(),
-                    "pages-list.txt"));
-        } catch (FileNotFoundException e) {
+            pwriter = new PrintWriter(new File(dir.getParentFile(), "pages-list.txt"));
+        } catch (final FileNotFoundException e) {
             throw new RuntimeException(e);
         }
 

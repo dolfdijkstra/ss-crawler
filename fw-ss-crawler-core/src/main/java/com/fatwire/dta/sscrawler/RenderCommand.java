@@ -33,7 +33,6 @@ import com.fatwire.dta.sscrawler.util.SSUriHelper;
 
 public class RenderCommand implements Command {
 
-
     private final List<QueryString> queue = new ArrayList<QueryString>();
 
     private int maxPages;
@@ -52,16 +51,14 @@ public class RenderCommand implements Command {
      * @param hostConfig
      * @param maxPages
      */
-    public RenderCommand(final HostConfig hostConfig, final int maxPages,
-            final Executor executor) {
+    public RenderCommand(final HostConfig hostConfig, final int maxPages, final Executor executor) {
         super();
         this.hostConfig = hostConfig;
         this.maxPages = maxPages;
         this.executor = executor;
     }
 
-    public RenderCommand(final HostConfig hostConfig,
-            final ThreadPoolExecutor readerPool) {
+    public RenderCommand(final HostConfig hostConfig, final ThreadPoolExecutor readerPool) {
         this(hostConfig, Integer.MAX_VALUE, readerPool);
     }
 
@@ -69,34 +66,26 @@ public class RenderCommand implements Command {
         queue.add(uri);
     }
 
-    public void execute(ProgressMonitor monitor) {
+    public void execute(final ProgressMonitor monitor) {
         if (executor == null) {
-            throw new IllegalStateException(
-                    "executor is null");
+            throw new IllegalStateException("executor is null");
         }
-        if (hostConfig == null)
-           {
-            throw new IllegalStateException(
-                    "hostConfig is null");
+        if (hostConfig == null) {
+            throw new IllegalStateException("hostConfig is null");
         }
         if (handler == null) {
-            throw new IllegalStateException(
-                    "BodyHandler is null");
+            throw new IllegalStateException("BodyHandler is null");
         }
         if (uriHelper == null) {
-            throw new IllegalStateException(
-                    "uriHelper is null");
+            throw new IllegalStateException("uriHelper is null");
         }
         if (maxPages < 1) {
-            throw new IllegalStateException(
-                    "Number of pages to crawl is less than 1");
+            throw new IllegalStateException("Number of pages to crawl is less than 1");
         }
         if (queue.isEmpty()) {
-            throw new IllegalStateException(
-                    "Queue is empty");
+            throw new IllegalStateException("Queue is empty");
         }
 
-        
         final URLReaderService reader = new URLReaderService(executor);
 
         reader.setHostConfig(hostConfig);

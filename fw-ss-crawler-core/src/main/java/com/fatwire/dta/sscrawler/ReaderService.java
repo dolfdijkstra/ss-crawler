@@ -24,37 +24,31 @@ public class ReaderService implements ReaderServiceMBean {
 
     private final Scheduler service;
     private final MultiThreadedHttpConnectionManager connectionManager;
-    
+
     /**
      * @param service
      * @param connectionManager
      */
-    public ReaderService(Scheduler service,
-            MultiThreadedHttpConnectionManager connectionManager) {
+    public ReaderService(final Scheduler service, final MultiThreadedHttpConnectionManager connectionManager) {
         super();
         this.service = service;
         this.connectionManager = connectionManager;
     }
 
-
     public int getCount() {
         return service.getCount();
     }
 
-
     public int getConnectionsInPool() {
-        return this.connectionManager.getConnectionsInPool();
+        return connectionManager.getConnectionsInPool();
     }
-
 
     public int getScheduledCount() {
-        return this.service.getScheduledCount();
+        return service.getScheduledCount();
     }
-
 
     public int getCompleteCount() {
         return service.getCompleteCount();
     }
 
-    
 }

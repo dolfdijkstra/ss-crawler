@@ -39,9 +39,10 @@ public abstract class AbstractBodyMarkerHandler extends AbstractBodyHandler {
         super(uriHelper);
     }
 
-    public final void visit(ResultPage page) {
+    public final void visit(final ResultPage page) {
         final Matcher m = getPagePattern().matcher(page.getBody());
-        //"<com.fatwire.satellite.page pagename="FirstSiteII/FSIILayout" cid="1118867611403" locale="1154551493541" rendermode="live" p="1118867611403" c="Page" /com.fatwire.satellite.page>
+        // "<com.fatwire.satellite.page pagename="FirstSiteII/FSIILayout" cid="1118867611403" locale="1154551493541" rendermode="live" p="1118867611403" c="Page"
+        // /com.fatwire.satellite.page>
         while (m.find()) {
             if (log.isDebugEnabled()) {
                 log.debug(m.group());
@@ -51,7 +52,7 @@ public abstract class AbstractBodyMarkerHandler extends AbstractBodyHandler {
 
     }
 
-    private void doTag(final String tag, ResultPage page) {
+    private void doTag(final String tag, final ResultPage page) {
         final Matcher m = getTagPattern().matcher(tag);
         final Pagelet map = new Pagelet();
         while (m.find()) {
@@ -62,11 +63,11 @@ public abstract class AbstractBodyMarkerHandler extends AbstractBodyHandler {
             final int t = x.indexOf('=');
             final String key = x.substring(0, t).trim();
             if (filter(key)) {
-                String value = x.substring(t + 2, x.length() - 1);
+                final String value = x.substring(t + 2, x.length() - 1);
                 try {
-                    String v = URLDecoder.decode(value, "UTF-8");
+                    final String v = URLDecoder.decode(value, "UTF-8");
                     map.addParameter(key, v);
-                } catch (UnsupportedEncodingException e) {
+                } catch (final UnsupportedEncodingException e) {
                     log.warn("can not urldecode '" + value + "'", e);
                 }
 
@@ -77,7 +78,7 @@ public abstract class AbstractBodyMarkerHandler extends AbstractBodyHandler {
 
     }
 
-    protected boolean filter(String key) {
+    protected boolean filter(final String key) {
         return !"cachecontrol".equalsIgnoreCase(key);
     }
 

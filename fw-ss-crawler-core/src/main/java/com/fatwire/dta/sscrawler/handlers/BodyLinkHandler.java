@@ -25,8 +25,7 @@ import com.fatwire.dta.sscrawler.util.SSUriHelper;
 
 public class BodyLinkHandler extends AbstractBodyHandler {
 
-    private final Pattern linkPattern = Pattern
-            .compile("satellitescheme://SSURI/.*?#satellitefragment");
+    private final Pattern linkPattern = Pattern.compile("satellitescheme://SSURI/.*?#satellitefragment");
 
     /**
      * @param uriHelper
@@ -35,14 +34,16 @@ public class BodyLinkHandler extends AbstractBodyHandler {
         super(uriHelper);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.fatwire.dta.sscrawler.handlers.Visitor#visit(java.lang.Object)
      */
-    public void visit(ResultPage page) {
+    public void visit(final ResultPage page) {
         final Matcher m = linkPattern.matcher(page.getBody());
         while (m.find()) {
             log.debug(m.group());
-            Link map = uriHelper.linkToMap(m.group());
+            final Link map = uriHelper.linkToMap(m.group());
             if (map.isOK()) {
                 page.addLink(map);
             }

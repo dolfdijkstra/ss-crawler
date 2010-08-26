@@ -36,7 +36,7 @@ public class CommandJob implements Job {
     public void schedule() {
     }
 
-    public void run(ProgressMonitor monitor) {
+    public void run(final ProgressMonitor monitor) {
         final JobStartedEvent event = new JobStartedEvent(this);
         for (final JobChangeListener listener : listeners) {
             listener.jobStarted(event);

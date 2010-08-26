@@ -39,10 +39,10 @@ public abstract class ReportDelegatingReporter implements Reporter {
 
     public synchronized void startCollecting() {
         report.startReport();
-        String[] h = getHeader();
+        final String[] h = getHeader();
         report.addHeader(h);
     }
-    
+
     /**
      * 
      * 
@@ -50,10 +50,9 @@ public abstract class ReportDelegatingReporter implements Reporter {
      */
 
     protected abstract String[] getHeader();
-    
+
     public String getTitle() {
         return this.getClass().getSimpleName();
     }
-
 
 }

@@ -29,9 +29,8 @@ import com.fatwire.dta.sscrawler.util.SSUriHelper;
 public class EsiIncludeHandler extends AbstractBodyHandler {
 
     private static final Pattern tagPattern = Pattern.compile(" .*?=\".*?\"");
-    
-    private static final Pattern pattern = Pattern.compile("(<esi:include"
-            + ")(\\s(\\w*=\".*?\")?)*(/" + "/>)");
+
+    private static final Pattern pattern = Pattern.compile("(<esi:include" + ")(\\s(\\w*=\".*?\")?)*(/" + "/>)");
 
     public EsiIncludeHandler(final SSUriHelper uriHelper) {
         super(uriHelper);
@@ -45,9 +44,9 @@ public class EsiIncludeHandler extends AbstractBodyHandler {
         return pattern;
     }
 
-    public final void visit(ResultPage page) {
+    public final void visit(final ResultPage page) {
         final Matcher m = getPagePattern().matcher(page.getBody());
-        //<esi:include src="object" attr1="val1" attr2="val2" etc./>
+        // <esi:include src="object" attr1="val1" attr2="val2" etc./>
         while (m.find()) {
             if (log.isDebugEnabled()) {
                 log.debug(m.group());
@@ -57,7 +56,7 @@ public class EsiIncludeHandler extends AbstractBodyHandler {
 
     }
 
-    private void doTag(final String tag, ResultPage page) {
+    private void doTag(final String tag, final ResultPage page) {
         final Matcher m = getTagPattern().matcher(tag);
         final Pagelet map = new Pagelet();
         while (m.find()) {
@@ -68,11 +67,11 @@ public class EsiIncludeHandler extends AbstractBodyHandler {
             final int t = x.indexOf('=');
             final String key = x.substring(0, t).trim();
             if (filter(key)) {
-                String value = x.substring(t + 2, x.length() - 1);
+                final String value = x.substring(t + 2, x.length() - 1);
                 try {
-                    String v = URLDecoder.decode(value, "UTF-8");
+                    final String v = URLDecoder.decode(value, "UTF-8");
                     map.addParameter(key, v);
-                } catch (UnsupportedEncodingException e) {
+                } catch (final UnsupportedEncodingException e) {
                     log.warn("can not urldecode '" + value + "'", e);
                 }
 
@@ -83,7 +82,7 @@ public class EsiIncludeHandler extends AbstractBodyHandler {
 
     }
 
-    protected boolean filter(String key) {
+    protected boolean filter(final String key) {
         return !"cachecontrol".equalsIgnoreCase(key);
     }
 

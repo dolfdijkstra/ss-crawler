@@ -21,9 +21,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.math.stat.descriptive.SynchronizedSummaryStatistics;
 
+import com.fatwire.dta.sscrawler.Link;
 import com.fatwire.dta.sscrawler.QueryString;
 import com.fatwire.dta.sscrawler.ResultPage;
-import com.fatwire.dta.sscrawler.Link;
 import com.fatwire.dta.sscrawler.reporting.Report;
 
 public class NestingReporter extends ReportDelegatingReporter {
@@ -31,24 +31,26 @@ public class NestingReporter extends ReportDelegatingReporter {
     private final int threshold;
     private final int avg;
 
-    private AtomicInteger count = new AtomicInteger();
+    private final AtomicInteger count = new AtomicInteger();
     private final SynchronizedSummaryStatistics total = new SynchronizedSummaryStatistics();
     private final NestingTracker tracker = new NestingTracker();
 
     /**
-     * @param report to send the data to 
+     * @param report to send the data to
      * @param threshold max number of nested pagelets allowed
      * @param avg maximum average number of pagelets allowed
      */
-    public NestingReporter(Report report, final int threshold, final int avg) {
+    public NestingReporter(final Report report, final int threshold, final int avg) {
         super(report);
         this.threshold = threshold;
         this.avg = avg;
-        if (threshold <= avg) throw new IllegalStateException("threshold cannot be equal or smaller than avg.");
+        if (threshold <= avg) {
+            throw new IllegalStateException("threshold cannot be equal or smaller than avg.");
+        }
 
     }
 
-    public void addToReport(ResultPage page) {
+    public void addToReport(final ResultPage page) {
         if (page.getResponseCode() == 200) {
             tracker.add(page);
         }
@@ -67,9 +69,9 @@ public class NestingReporter extends ReportDelegatingReporter {
         report.addHeader("threshold", Integer.toString(threshold));
         report.addHeader("uri", "nesting");
 
-        for (QueryString qs : tracker.getKeys()) {
+        for (final QueryString qs : tracker.getKeys()) {
             if (qs instanceof Link) {
-                int level = tracker.getNestingLevel(qs);
+                final int level = tracker.getNestingLevel(qs);
                 total.addValue(level);
                 if (level >= threshold) {
                     count.incrementAndGet();
@@ -88,12 +90,12 @@ public class NestingReporter extends ReportDelegatingReporter {
     }
 
     /**
-     * If on average more than averageThreshold nested pagelets are found, turn red 
-     * if one pagelet is found over threshold, turn orange
+     * If on average more than averageThreshold nested pagelets are found, turn
+     * red if one pagelet is found over threshold, turn orange
      * 
      */
     public Verdict getVerdict() {
-        return  total.getMean() > avg ? Verdict.RED : count.get() > 1 ? Verdict.AMBER : Verdict.GREEN;
+        return total.getMean() > avg ? Verdict.RED : count.get() > 1 ? Verdict.AMBER : Verdict.GREEN;
     }
 
     /*

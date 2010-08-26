@@ -26,7 +26,7 @@ import com.fatwire.dta.sscrawler.reporting.Reporter;
 public class SuspiciousContextParamReporter implements Reporter {
 
     private final Report report;
-    private AtomicInteger count = new AtomicInteger();
+    private final AtomicInteger count = new AtomicInteger();
 
     /**
      * @param report
@@ -39,10 +39,10 @@ public class SuspiciousContextParamReporter implements Reporter {
     public void addToReport(final ResultPage page) {
 
         if (page.getResponseCode() == 200) {
-            for (QueryString qs : page.getMarkers()) {
+            for (final QueryString qs : page.getMarkers()) {
                 if (qs.isOK()) {
 
-                    String context = qs.getParameters().get("context");
+                    final String context = qs.getParameters().get("context");
                     if (context != null && context.indexOf(';') != -1) {
                         count.incrementAndGet();
                         report.addRow(page.getPageName(), context, page.getUri().toString(), qs.toString());

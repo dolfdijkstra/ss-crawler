@@ -36,9 +36,9 @@ public class PageNameDecorator extends TreeMap<String, List<QueryString>> {
     public PageNameDecorator(final Collection<? extends QueryString> c) {
         super();
         for (final QueryString s : c) {
-            String pageName = s.getParameters().get(HelperStrings.PAGENAME);
+            final String pageName = s.getParameters().get(HelperStrings.PAGENAME);
             if (pageName != null) {
-                String p = "pagename=" + pageName;
+                final String p = "pagename=" + pageName;
                 List<QueryString> l = null;
                 if (containsKey(p)) {
                     l = get(p);

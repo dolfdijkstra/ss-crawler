@@ -25,12 +25,12 @@ public class WarningLevelLoggingReport implements Report {
 
     protected final Log log;
 
-    public WarningLevelLoggingReport(String loggerName) {
+    public WarningLevelLoggingReport(final String loggerName) {
         log = LogFactory.getLog(loggerName);
     }
 
-    public void addRow(String... line) {
-        for (String l : line) {
+    public void addRow(final String... line) {
+        for (final String l : line) {
             log.warn(l);
         }
     }
@@ -45,7 +45,7 @@ public class WarningLevelLoggingReport implements Report {
 
     }
 
-    public void addHeader(String... columns) {
+    public void addHeader(final String... columns) {
         // TODO Auto-generated method stub
 
     }

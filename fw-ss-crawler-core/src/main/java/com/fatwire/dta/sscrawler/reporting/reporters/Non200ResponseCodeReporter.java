@@ -25,11 +25,12 @@ import com.fatwire.dta.sscrawler.reporting.Report;
  * Reports all pages that return with a non-200 status code
  * 
  * @author Dolf Dijkstra
- *
+ * 
  */
 
 public class Non200ResponseCodeReporter extends ReportDelegatingReporter {
-    private AtomicInteger count = new AtomicInteger();
+    private final AtomicInteger count = new AtomicInteger();
+
     public Non200ResponseCodeReporter(final Report report) {
         super(report);
     }
@@ -41,12 +42,14 @@ public class Non200ResponseCodeReporter extends ReportDelegatingReporter {
         }
 
     }
+
     public Verdict getVerdict() {
         return count.get() > 1 ? Verdict.RED : Verdict.GREEN;
     }
+
     @Override
     protected String[] getHeader() {
-        return new String[]{"uri","responsecode"};
+        return new String[] { "uri", "responsecode" };
     }
 
 }

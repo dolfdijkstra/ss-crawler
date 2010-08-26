@@ -101,27 +101,27 @@ public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory
 
     private static SSLContext createEasySSLContext() {
         try {
-            SSLContext context = SSLContext.getInstance("SSL");
+            final SSLContext context = SSLContext.getInstance("SSL");
             context.init(null, new TrustManager[] { new EasyX509TrustManager(null) }, null);
             return context;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOG.error(e.getMessage(), e);
             throw new HttpClientError(e.toString());
         }
     }
 
     private SSLContext getSSLContext() {
-        if (this.sslcontext == null) {
-            this.sslcontext = createEasySSLContext();
+        if (sslcontext == null) {
+            sslcontext = createEasySSLContext();
         }
-        return this.sslcontext;
+        return sslcontext;
     }
 
     /**
      * @see SecureProtocolSocketFactory#createSocket(java.lang.String,int,java.net.InetAddress,int)
      */
-    public Socket createSocket(String host, int port, InetAddress clientHost, int clientPort) throws IOException,
-            UnknownHostException {
+    public Socket createSocket(final String host, final int port, final InetAddress clientHost, final int clientPort)
+            throws IOException, UnknownHostException {
 
         return getSSLContext().getSocketFactory().createSocket(host, port, clientHost, clientPort);
     }
@@ -154,14 +154,14 @@ public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory
         if (params == null) {
             throw new IllegalArgumentException("Parameters may not be null");
         }
-        int timeout = params.getConnectionTimeout();
-        SocketFactory socketfactory = getSSLContext().getSocketFactory();
+        final int timeout = params.getConnectionTimeout();
+        final SocketFactory socketfactory = getSSLContext().getSocketFactory();
         if (timeout == 0) {
             return socketfactory.createSocket(host, port, localAddress, localPort);
         } else {
-            Socket socket = socketfactory.createSocket();
-            SocketAddress localaddr = new InetSocketAddress(localAddress, localPort);
-            SocketAddress remoteaddr = new InetSocketAddress(host, port);
+            final Socket socket = socketfactory.createSocket();
+            final SocketAddress localaddr = new InetSocketAddress(localAddress, localPort);
+            final SocketAddress remoteaddr = new InetSocketAddress(host, port);
             socket.bind(localaddr);
             socket.connect(remoteaddr, timeout);
             return socket;
@@ -171,22 +171,24 @@ public class EasySSLProtocolSocketFactory implements SecureProtocolSocketFactory
     /**
      * @see SecureProtocolSocketFactory#createSocket(java.lang.String,int)
      */
-    public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+    public Socket createSocket(final String host, final int port) throws IOException, UnknownHostException {
         return getSSLContext().getSocketFactory().createSocket(host, port);
     }
 
     /**
      * @see SecureProtocolSocketFactory#createSocket(java.net.Socket,java.lang.String,int,boolean)
      */
-    public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException,
-            UnknownHostException {
+    public Socket createSocket(final Socket socket, final String host, final int port, final boolean autoClose)
+            throws IOException, UnknownHostException {
         return getSSLContext().getSocketFactory().createSocket(socket, host, port, autoClose);
     }
 
-    public boolean equals(Object obj) {
-        return ((obj != null) && obj.getClass().equals(EasySSLProtocolSocketFactory.class));
+    @Override
+    public boolean equals(final Object obj) {
+        return obj != null && obj.getClass().equals(EasySSLProtocolSocketFactory.class);
     }
 
+    @Override
     public int hashCode() {
         return EasySSLProtocolSocketFactory.class.hashCode();
     }

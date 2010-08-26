@@ -28,8 +28,11 @@ public class DecodingSSUriHelper extends SSUriHelper {
         super(domain);
     }
 
-    /* (non-Javadoc)
-     * @see com.fatwire.dta.sscrawler.util.SSUriHelper#uriToQueryString(java.net.URI)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.fatwire.dta.sscrawler.util.SSUriHelper#uriToQueryString(java.net.URI)
      */
     @Override
     public Link uriToQueryString(final URI uri) {
@@ -43,9 +46,8 @@ public class DecodingSSUriHelper extends SSUriHelper {
             if (!v.startsWith("SSURI")) {
                 final int t = v.indexOf('=');
                 try {
-                    String key = URLDecoder.decode(v.substring(0, t), "UTF-8");
-                    String value = URLDecoder.decode(v.substring(t + 1, v
-                            .length()), "UTF-8");
+                    final String key = URLDecoder.decode(v.substring(0, t), "UTF-8");
+                    final String value = URLDecoder.decode(v.substring(t + 1, v.length()), "UTF-8");
                     map.addParameter(key, value);
                 } catch (final UnsupportedEncodingException e) {
                     log.error(e, e);

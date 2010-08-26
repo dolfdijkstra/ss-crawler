@@ -29,7 +29,7 @@ public class NestingTracker {
 
     private final ConcurrentMap<QueryString, List<QueryString>> pages = new ConcurrentHashMap<QueryString, List<QueryString>>();
 
-    public void add(ResultPage page) {
+    public void add(final ResultPage page) {
         pages.putIfAbsent(page.getUri(), page.getMarkers());
     }
 
@@ -37,12 +37,13 @@ public class NestingTracker {
         return pages.keySet();
     }
 
-    public int getNestingLevel(QueryString qs) {
+    public int getNestingLevel(final QueryString qs) {
         int level = 0;
-        if (qs == null)
+        if (qs == null) {
             return 0;
+        }
         if (pages.containsKey(qs)) {
-            for (QueryString inner : pages.get(qs)) {
+            for (final QueryString inner : pages.get(qs)) {
                 level++;
                 level = level + getNestingLevel(inner);
             }
@@ -50,10 +51,10 @@ public class NestingTracker {
         return level;
 
     }
-    
-    List<QueryString> getMarkers(QueryString qs){
-        List<QueryString> markers = pages.get(qs);
-        return markers !=null?markers: Collections.<QueryString>emptyList();
-        
+
+    List<QueryString> getMarkers(final QueryString qs) {
+        final List<QueryString> markers = pages.get(qs);
+        return markers != null ? markers : Collections.<QueryString> emptyList();
+
     }
 }

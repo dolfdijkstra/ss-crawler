@@ -16,12 +16,11 @@
 
 package com.fatwire.dta.sscrawler;
 
-
 /**
  * A Link is an outer pagelet.
  * 
  * @author Dolf Dijkstra
- *
+ * 
  */
 public class Link extends QueryString {
 

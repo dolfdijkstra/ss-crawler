@@ -24,8 +24,8 @@ public class ShortBodyMarkerHandler extends AbstractBodyMarkerHandler {
 
     private static final String tagName = "page";
 
-    private static final Pattern pattern = Pattern.compile("(<" + tagName
-            + ")(\\s(\\w*=\".*?\")?)*(/" + tagName + ">)");
+    private static final Pattern pattern = Pattern
+            .compile("(<" + tagName + ")(\\s(\\w*=\".*?\")?)*(/" + tagName + ">)");
 
     private static final Pattern tagPattern = Pattern.compile(" .*?=\".*?\"");
 

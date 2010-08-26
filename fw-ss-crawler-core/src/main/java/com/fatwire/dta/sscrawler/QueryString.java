@@ -24,8 +24,8 @@ public abstract class QueryString {
 
     private final Map<String, String> map = new TreeMap<String, String>();
 
-    public void addParameter(String key, String value) {
-        this.map.put(key, value);
+    public void addParameter(final String key, final String value) {
+        map.put(key, value);
     }
 
     public Map<String, String> getParameters() {
@@ -40,41 +40,50 @@ public abstract class QueryString {
         return !map.isEmpty();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
     public int hashCode() {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + ((map == null) ? 0 : map.hashCode());
+        result = PRIME * result + (map == null ? 0 : map.hashCode());
         return result;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         final QueryString other = (QueryString) obj;
         if (map == null) {
-            if (other.map != null)
+            if (other.map != null) {
                 return false;
-        } else if (!map.equals(other.map))
+            }
+        } else if (!map.equals(other.map)) {
             return false;
+        }
         return true;
     }
 
+    @Override
     public String toString() {
         final StringBuilder qs = new StringBuilder();
-        for (final Iterator<Map.Entry<String, String>> i = map.entrySet()
-                .iterator(); i.hasNext();) {
+        for (final Iterator<Map.Entry<String, String>> i = map.entrySet().iterator(); i.hasNext();) {
             final Map.Entry<String, String> entry = i.next();
             qs.append(entry.getKey());
             qs.append("=");

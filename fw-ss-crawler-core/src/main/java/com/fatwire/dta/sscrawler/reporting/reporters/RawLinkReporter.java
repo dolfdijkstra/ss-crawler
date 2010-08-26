@@ -24,8 +24,7 @@ import com.fatwire.dta.sscrawler.reporting.Report;
 
 public class RawLinkReporter extends ReportDelegatingReporter {
 
-    private final Pattern rawLinkPattern = Pattern
-            .compile("Satellite\\?.*?[\"']");
+    private final Pattern rawLinkPattern = Pattern.compile("Satellite\\?.*?[\"']");
 
     public RawLinkReporter(final Report report) {
         super(report);
@@ -33,10 +32,10 @@ public class RawLinkReporter extends ReportDelegatingReporter {
 
     public void addToReport(final ResultPage page) {
         if (page.getResponseCode() != 200) {
-            String body = page.getBody();
+            final String body = page.getBody();
             if (body != null) {
 
-                Matcher m = this.rawLinkPattern.matcher(body);
+                final Matcher m = rawLinkPattern.matcher(body);
                 while (m.find()) {
                     report.addRow(page.getUri().toString(), m.group());
                 }
@@ -47,8 +46,9 @@ public class RawLinkReporter extends ReportDelegatingReporter {
 
     @Override
     protected String[] getHeader() {
-        return new String[]{"uri","link"};
+        return new String[] { "uri", "link" };
     }
+
     public Verdict getVerdict() {
         return Verdict.NONE;
     }

@@ -18,11 +18,9 @@ package com.fatwire.dta.sscrawler.jobs;
 
 import com.fatwire.dta.sscrawler.events.EventObject;
 
-
-
 public class JobFinishedEvent extends EventObject<Job> {
 
-    public JobFinishedEvent(Job source) {
+    public JobFinishedEvent(final Job source) {
         super(source);
     }
 

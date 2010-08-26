@@ -42,7 +42,7 @@ public class UrlRenderingCallable implements Callable<ResultPage> {
     private final HttpClientService httpClientService;
 
     private final String uri;
-    
+
     private final QueryString qs;
 
     /**
@@ -50,34 +50,34 @@ public class UrlRenderingCallable implements Callable<ResultPage> {
      * @param uri
      * @param qs
      */
-    public UrlRenderingCallable(final HttpClientService httpClientService, final String uri,final QueryString qs) {
+    public UrlRenderingCallable(final HttpClientService httpClientService, final String uri, final QueryString qs) {
         super();
-        this.httpClientService=httpClientService;
+        this.httpClientService = httpClientService;
         this.uri = uri;
-        this.qs=qs;
+        this.qs = qs;
     }
 
     public ResultPage call() throws Exception {
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug("downloading " + uri);
+        }
         final long startTime = System.currentTimeMillis();
         final ResultPage page = new ResultPage(qs);
         final GetMethod httpGet = new GetMethod(uri);
         httpGet.setFollowRedirects(true);
 
         try {
-            final int responseCode = this.httpClientService.get().executeMethod(httpGet);
+            final int responseCode = httpClientService.get().executeMethod(httpGet);
             page.setResponseCode(responseCode);
-            //log.info(iGetResultCode);
+            // log.info(iGetResultCode);
             page.setResponseHeaders(httpGet.getResponseHeaders());
             if (responseCode == 200) {
                 final String charSet = httpGet.getResponseCharSet();
-                //log.info(charSet);
+                // log.info(charSet);
 
                 final InputStream in = httpGet.getResponseBodyAsStream();
                 if (in != null) {
-                    final Reader reader = new InputStreamReader(in, Charset
-                            .forName(charSet));
+                    final Reader reader = new InputStreamReader(in, Charset.forName(charSet));
                     final String responseBody = copy(reader);
                     in.close();
                     page.setReadTime(System.currentTimeMillis() - startTime);
@@ -90,12 +90,11 @@ public class UrlRenderingCallable implements Callable<ResultPage> {
 
                 }
             } else {
-                
+
                 page.setReadTime(System.currentTimeMillis() - startTime);
-                log.error("reponse code is " + responseCode + " for "
-                        + httpGet.getURI().toString());
+                log.error("reponse code is " + responseCode + " for " + httpGet.getURI().toString());
             }
-        } catch(Exception e){
+        } catch (final Exception e) {
             httpGet.abort();
             throw e;
         } finally {

@@ -39,7 +39,9 @@ public class BodyHandler implements Visitor<ResultPage> {
 
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.fatwire.dta.sscrawler.handlers.Visitor#visit(java.lang.Object)
      */
     public void visit(final ResultPage page) {

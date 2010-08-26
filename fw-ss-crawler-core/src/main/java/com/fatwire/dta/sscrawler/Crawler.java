@@ -37,7 +37,6 @@ import com.fatwire.dta.sscrawler.util.SSUriHelper;
  */
 public class Crawler {
 
-    
     private HostConfig hostConfig;
 
     private URI startUri;
@@ -61,26 +60,25 @@ public class Crawler {
 
         final ReportingListener reportingListener = new ReportingListener();
 
-        for (Reporter reporter : reporters) {
+        for (final Reporter reporter : reporters) {
             reportingListener.addReporter(reporter);
         }
 
         command.addListener(reportingListener);
 
-        for (Reporter reporter : reporters) {
+        for (final Reporter reporter : reporters) {
             reporter.startCollecting();
         }
-        if (this.progressMonitor == null) {
+        if (progressMonitor == null) {
             progressMonitor = new NullProgressMonitor();
         }
         command.execute(progressMonitor);
 
-        for (Reporter reporter : reporters) {
-                reporter.endCollecting();
+        for (final Reporter reporter : reporters) {
+            reporter.endCollecting();
         }
 
     }
-
 
     /**
      * @return the maxPages
@@ -92,10 +90,11 @@ public class Crawler {
     /**
      * @param max the maxPages to set
      */
-    public void setMaxPages(int max) {
-        if (max < 1)
+    public void setMaxPages(final int max) {
+        if (max < 1) {
             throw new IllegalArgumentException("max should be greater then 0");
-        this.maxPages = max;
+        }
+        maxPages = max;
     }
 
     /**
@@ -108,7 +107,7 @@ public class Crawler {
     /**
      * @param startUri the startUri to set
      */
-    public void setStartUri(URI startUri) {
+    public void setStartUri(final URI startUri) {
         this.startUri = startUri;
     }
 
@@ -122,7 +121,7 @@ public class Crawler {
     /**
      * @param reporters the reporters to set
      */
-    public void setReporters(List<Reporter> reporters) {
+    public void setReporters(final List<Reporter> reporters) {
         this.reporters = reporters;
     }
 
@@ -136,7 +135,7 @@ public class Crawler {
     /**
      * @param executor the executor to set
      */
-    public void setExecutor(Executor executor) {
+    public void setExecutor(final Executor executor) {
         this.executor = executor;
     }
 
@@ -150,7 +149,7 @@ public class Crawler {
     /**
      * @param uriHelper the uriHelper to set
      */
-    public void setUriHelper(SSUriHelper uriHelper) {
+    public void setUriHelper(final SSUriHelper uriHelper) {
         this.uriHelper = uriHelper;
     }
 
@@ -164,17 +163,16 @@ public class Crawler {
     /**
      * @param progressMonitor the progressMonitor to set
      */
-    public void setProgressMonitor(ProgressMonitor progressMonitor) {
+    public void setProgressMonitor(final ProgressMonitor progressMonitor) {
         this.progressMonitor = progressMonitor;
     }
 
-    public void setHostConfig(HostConfig hostConfig) {
+    public void setHostConfig(final HostConfig hostConfig) {
         this.hostConfig = hostConfig;
     }
 
     public HostConfig getHostConfig() {
         return hostConfig;
     }
-
 
 }

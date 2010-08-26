@@ -26,19 +26,19 @@ public class StdOutProgressMonitor implements ProgressMonitor {
 
     private String subTask;
 
-    public void beginTask(String name, int totalWork) {
-        this.taskName = name;
+    public void beginTask(final String name, final int totalWork) {
+        taskName = name;
         this.totalWork = totalWork;
         System.out.println(name);
 
     }
 
     public void done() {
-        System.out.println(taskName +" is finished");
+        System.out.println(taskName + " is finished");
 
     }
 
-    public void internalWorked(double work) {
+    public void internalWorked(final double work) {
         System.out.print("#");
 
     }
@@ -47,24 +47,24 @@ public class StdOutProgressMonitor implements ProgressMonitor {
         return cancelled;
     }
 
-    public void setCanceled(boolean value) {
-        this.cancelled = value;
+    public void setCanceled(final boolean value) {
+        cancelled = value;
 
     }
 
-    public void setTaskName(String name) {
-        this.taskName = name;
+    public void setTaskName(final String name) {
+        taskName = name;
         System.out.println(name);
 
     }
 
-    public void subTask(String name) {
-        this.subTask = name;
+    public void subTask(final String name) {
+        subTask = name;
         System.out.println(name);
 
     }
 
-    public void worked(int work) {
+    public void worked(final int work) {
         System.out.print("#");
 
     }

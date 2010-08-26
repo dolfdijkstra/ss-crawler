@@ -38,9 +38,9 @@ public class ResultPage {
 
     private long readTime = -1;
 
-    private String pageName;
-    
-    private int responseCode=-1;
+    private final String pageName;
+
+    private int responseCode = -1;
 
     /**
      * @param uri
@@ -63,7 +63,7 @@ public class ResultPage {
     /**
      * @param body the body to set
      */
-    public void setBody(String body) {
+    public void setBody(final String body) {
         this.body = body;
     }
 
@@ -81,54 +81,63 @@ public class ResultPage {
         return uri;
     }
 
-    public void addLink(Link uri) {
-        this.links.add(uri);
+    public void addLink(final Link uri) {
+        links.add(uri);
 
     }
 
-    public void addLinks(Collection<Link> uris) {
-        this.links.addAll(uris);
+    public void addLinks(final Collection<Link> uris) {
+        links.addAll(uris);
 
     }
 
-    public void addMarker(Pagelet uri) {
-        this.markers.add(uri);
+    public void addMarker(final Pagelet uri) {
+        markers.add(uri);
 
     }
 
-    public void addMarkers(Collection<Pagelet> uris) {
-        this.markers.addAll(uris);
+    public void addMarkers(final Collection<Pagelet> uris) {
+        markers.addAll(uris);
 
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
     public int hashCode() {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + ((uri == null) ? 0 : uri.hashCode());
+        result = PRIME * result + (uri == null ? 0 : uri.hashCode());
         return result;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         final ResultPage other = (ResultPage) obj;
         if (uri == null) {
-            if (other.uri != null)
+            if (other.uri != null) {
                 return false;
-        } else if (!uri.equals(other.uri))
+            }
+        } else if (!uri.equals(other.uri)) {
             return false;
+        }
         return true;
     }
 
@@ -149,7 +158,7 @@ public class ResultPage {
     /**
      * @param readTime the readTime to set
      */
-    public void setReadTime(long readTime) {
+    public void setReadTime(final long readTime) {
         this.readTime = readTime;
     }
 
@@ -157,13 +166,13 @@ public class ResultPage {
      * @return the responseHeaders
      */
     public Header[] getResponseHeaders() {
-        return responseHeaders !=null ? responseHeaders: new Header[0];
+        return responseHeaders != null ? responseHeaders : new Header[0];
     }
 
     /**
      * @param responseHeaders the responseHeaders to set
      */
-    public void setResponseHeaders(Header[] responseHeaders) {
+    public void setResponseHeaders(final Header[] responseHeaders) {
         this.responseHeaders = responseHeaders;
     }
 
@@ -184,7 +193,7 @@ public class ResultPage {
     /**
      * @param responseCode the responseCode to set
      */
-    public void setResponseCode(int responseCode) {
+    public void setResponseCode(final int responseCode) {
         this.responseCode = responseCode;
     }
 

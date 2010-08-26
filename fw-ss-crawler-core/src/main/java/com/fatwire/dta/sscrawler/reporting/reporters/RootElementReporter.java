@@ -40,7 +40,7 @@ public class RootElementReporter extends ReportDelegatingReporter {
         if (page.getResponseCode() == 200) {
             for (final Header header : page.getResponseHeaders()) {
                 if (RootElementReporter.HEADER_NAME.equals(header.getName())) {
-                    String element = header.getValue();
+                    final String element = header.getValue();
 
                     if (!elements.contains(element)) {
                         elements.add(element);

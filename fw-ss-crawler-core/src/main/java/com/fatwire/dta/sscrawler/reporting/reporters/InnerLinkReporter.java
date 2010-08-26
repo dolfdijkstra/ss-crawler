@@ -46,9 +46,11 @@ public class InnerLinkReporter extends ReportDelegatingReporter {
         }
 
     }
+
     public Verdict getVerdict() {
-        return  Verdict.NONE;
+        return Verdict.NONE;
     }
+
     @Override
     protected String[] getHeader() {
         return new String[0];

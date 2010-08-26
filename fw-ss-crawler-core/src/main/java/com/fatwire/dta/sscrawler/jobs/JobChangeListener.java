@@ -28,6 +28,7 @@ public interface JobChangeListener {
     /**
      * 
      * Invoked after a job is started
+     * 
      * @param event
      */
 
@@ -35,6 +36,7 @@ public interface JobChangeListener {
 
     /**
      * Invoked after a job is finished
+     * 
      * @param event
      */
     public void jobFinished(JobFinishedEvent event);

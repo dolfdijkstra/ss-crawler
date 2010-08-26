@@ -14,7 +14,7 @@ public class SummaryReporter implements Reporter {
     final Report report;
     List<Reporter> reporters;
 
-    public SummaryReporter(Report report, List<Reporter> reporters) {
+    public SummaryReporter(final Report report, final List<Reporter> reporters) {
         this.report = report;
         this.reporters = reporters;
     }
@@ -23,22 +23,22 @@ public class SummaryReporter implements Reporter {
         return new String[] { "name", "Verdict" };
     }
 
-    public void addToReport(ResultPage page) {
+    public void addToReport(final ResultPage page) {
 
     }
 
     public void endCollecting() {
         report.startReport();
-        Set<Reporter> r = new TreeSet<Reporter>(new Comparator<Reporter>() {
+        final Set<Reporter> r = new TreeSet<Reporter>(new Comparator<Reporter>() {
 
-            public int compare(Reporter r1, Reporter r2) {
-                
+            public int compare(final Reporter r1, final Reporter r2) {
+
                 return r1.getTitle().compareTo(r2.getTitle());
             }
 
         });
         r.addAll(reporters);
-        for (Reporter reporter : r) {
+        for (final Reporter reporter : r) {
             if (reporter.getVerdict() != Verdict.NONE) {
                 report.addRow(reporter.getTitle(), String.valueOf(reporter.getVerdict()));
             }

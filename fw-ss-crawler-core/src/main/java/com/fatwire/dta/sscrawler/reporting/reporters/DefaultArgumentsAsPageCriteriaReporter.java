@@ -38,26 +38,26 @@ import com.fatwire.dta.sscrawler.util.HelperStrings;
 
 public class DefaultArgumentsAsPageCriteriaReporter extends ReportDelegatingReporter {
 
-    private Set<String> pagenamesDone = new CopyOnWriteArraySet<String>();
+    private final Set<String> pagenamesDone = new CopyOnWriteArraySet<String>();
 
     public static final String DEFAULT_ARGUMENTS = HelperStrings.CS_TO_SS_RESPONSE_HEADER_PREFIX + "defaultarguments";
-    private AtomicInteger count = new AtomicInteger();
+    private final AtomicInteger count = new AtomicInteger();
 
-    public DefaultArgumentsAsPageCriteriaReporter(Report report) {
+    public DefaultArgumentsAsPageCriteriaReporter(final Report report) {
         super(report);
 
     }
 
-    public synchronized void addToReport(ResultPage page) {
+    public synchronized void addToReport(final ResultPage page) {
         if (page.getResponseCode() == 200) {
             if (pagenamesDone.contains(page.getPageName())) {
                 return;
             }
             pagenamesDone.add(page.getPageName());
-            List<String> pageCriteria = extractPageCriteria(page.getResponseHeaders());
+            final List<String> pageCriteria = extractPageCriteria(page.getResponseHeaders());
             for (final Header header : page.getResponseHeaders()) {
                 if (header.getName().startsWith(DEFAULT_ARGUMENTS)) {
-                    String v = header.getValue().split("\\|", 2)[0];
+                    final String v = header.getValue().split("\\|", 2)[0];
                     if (!pageCriteria.contains(v)) {
                         count.incrementAndGet();
                         report.addRow(new String[] { page.getPageName(), v, pageCriteria.toString() });

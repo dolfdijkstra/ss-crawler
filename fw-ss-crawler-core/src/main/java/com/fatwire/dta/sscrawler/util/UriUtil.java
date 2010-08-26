@@ -40,8 +40,7 @@ public class UriUtil {
             for (final String p : qs.split("&")) {
                 if (p.startsWith(UriUtil.PAGENAME_KEY)) {
                     try {
-                        return URLDecoder.decode(p.substring(UriUtil.PAGENAME_KEY
-                                .length()), UriUtil.UTF8);
+                        return URLDecoder.decode(p.substring(UriUtil.PAGENAME_KEY.length()), UriUtil.UTF8);
                     } catch (final UnsupportedEncodingException e) {
                         UriUtil.log.error(e, e);
                     }

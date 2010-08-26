@@ -51,8 +51,7 @@ public class SameContentPageletReporter implements Reporter {
     }
 
     public synchronized void addToReport(final ResultPage page) {
-        if (page.getResponseCode() == 200
-                && CacheHelper.shouldCache(page.getResponseHeaders())) {
+        if (page.getResponseCode() == 200 && CacheHelper.shouldCache(page.getResponseHeaders())) {
             final String hex = DigestUtils.md5Hex(page.getBody());
             List<QueryString> x = map.get(hex);
             if (x == null) {
@@ -65,16 +64,16 @@ public class SameContentPageletReporter implements Reporter {
 
     public synchronized void endCollecting() {
         report.startReport();
-        report.addHeader("group", "pagename", "suspected parameters","uri");
-        
+        report.addHeader("group", "pagename", "suspected parameters", "uri");
+
         for (final Entry<String, List<QueryString>> e : map.entrySet()) {
             final List<QueryString> l = e.getValue();
             if (l.size() > 1) {
                 group++;
-                Collection<String> suspects = getMultiValuedKeys(l);
+                final Collection<String> suspects = getMultiValuedKeys(l);
                 for (final QueryString qs : l) {
-                    report.addRow(Integer.toString(group), qs.getParameters()
-                            .get(HelperStrings.PAGENAME), suspects.toString(),qs.toString());
+                    report.addRow(Integer.toString(group), qs.getParameters().get(HelperStrings.PAGENAME), suspects
+                            .toString(), qs.toString());
                 }
             }
         }
@@ -85,12 +84,12 @@ public class SameContentPageletReporter implements Reporter {
 
     }
 
-    Collection<String> getMultiValuedKeys(List<QueryString> l) {
-        DupeCounter nvp = new DupeCounter();
+    Collection<String> getMultiValuedKeys(final List<QueryString> l) {
+        final DupeCounter nvp = new DupeCounter();
         for (final QueryString qs : l) {
-            Map<String, String> m = qs.getParameters();
-            for (Map.Entry<String, String> e : m.entrySet()) {
-                String pair = e.getKey() + '=' + e.getValue();
+            final Map<String, String> m = qs.getParameters();
+            for (final Map.Entry<String, String> e : m.entrySet()) {
+                final String pair = e.getKey() + '=' + e.getValue();
                 nvp.add(pair);
             }
 
@@ -105,7 +104,7 @@ public class SameContentPageletReporter implements Reporter {
             values = new HashMap<String, AtomicInteger>();
         }
 
-        void add(String value) {
+        void add(final String value) {
             AtomicInteger i;
             i = values.get(value);
             if (i == null) {
@@ -117,8 +116,8 @@ public class SameContentPageletReporter implements Reporter {
         }
 
         Collection<String> getSingleValues() {
-            Set<String> s = new HashSet<String>();
-            for (Map.Entry<String, AtomicInteger> e : values.entrySet()) {
+            final Set<String> s = new HashSet<String>();
+            for (final Map.Entry<String, AtomicInteger> e : values.entrySet()) {
                 if (e.getValue().get() == 1) {
                     s.add(e.getKey());
                 }
@@ -133,6 +132,6 @@ public class SameContentPageletReporter implements Reporter {
     }
 
     public Verdict getVerdict() {
-        return group>10? Verdict.RED:group==0? Verdict.GREEN:Verdict.AMBER;
+        return group > 10 ? Verdict.RED : group == 0 ? Verdict.GREEN : Verdict.AMBER;
     }
 }

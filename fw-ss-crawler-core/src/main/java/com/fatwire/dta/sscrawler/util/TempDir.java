@@ -27,7 +27,7 @@ public class TempDir {
     }
 
     @SuppressWarnings("unchecked")
-    public static File getTempDir(Class c) {
+    public static File getTempDir(final Class c) {
         final File f = new File(getTempDir(), c.getName());
         f.mkdirs();
         return f;

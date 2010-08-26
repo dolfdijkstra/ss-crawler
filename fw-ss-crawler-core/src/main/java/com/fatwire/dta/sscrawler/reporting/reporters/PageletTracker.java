@@ -28,14 +28,15 @@ import com.fatwire.dta.sscrawler.ResultPage;
 public class PageletTracker {
     private final ConcurrentMap<QueryString, AtomicInteger> pages = new ConcurrentHashMap<QueryString, AtomicInteger>();
 
-    public void add(ResultPage page) {
-        for (QueryString qs : page.getMarkers()) {
+    public void add(final ResultPage page) {
+        for (final QueryString qs : page.getMarkers()) {
             AtomicInteger i = pages.get(qs);
             if (i == null) {
-                AtomicInteger n = new AtomicInteger();
+                final AtomicInteger n = new AtomicInteger();
                 i = pages.putIfAbsent(qs, n);
-                if (i == null)
+                if (i == null) {
                     i = n;
+                }
             }
 
             i.incrementAndGet();

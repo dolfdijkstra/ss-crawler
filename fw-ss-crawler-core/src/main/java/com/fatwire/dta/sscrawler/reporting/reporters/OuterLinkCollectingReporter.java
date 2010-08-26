@@ -27,8 +27,7 @@ import com.fatwire.dta.sscrawler.util.SSUriHelper;
 public class OuterLinkCollectingReporter extends ReportDelegatingReporter {
     private final SSUriHelper uriHelper;
 
-    public OuterLinkCollectingReporter(final Report report,
-            SSUriHelper uriHelper) {
+    public OuterLinkCollectingReporter(final Report report, final SSUriHelper uriHelper) {
         super(report);
         this.uriHelper = uriHelper;
     }
@@ -45,7 +44,7 @@ public class OuterLinkCollectingReporter extends ReportDelegatingReporter {
     }
 
     public Verdict getVerdict() {
-        
+
         return Verdict.NONE;
     }
 

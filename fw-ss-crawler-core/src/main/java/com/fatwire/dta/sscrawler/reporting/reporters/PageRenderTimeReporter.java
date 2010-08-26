@@ -33,17 +33,16 @@ public class PageRenderTimeReporter extends ReportDelegatingReporter {
     }
 
     public void addToReport(final ResultPage page) {
-        report.addRow(page.getPageName(), Long.toString(page.getReadTime()),
-                Integer.toString(page.getResponseCode()), page.getUri()
-                        .toString());
+        report.addRow(page.getPageName(), Long.toString(page.getReadTime()), Integer.toString(page.getResponseCode()),
+                page.getUri().toString());
 
     }
 
     @Override
     protected String[] getHeader() {
-        return new String[] { "pagename", "download time", "statuscode",
-                "arguments" };
+        return new String[] { "pagename", "download time", "statuscode", "arguments" };
     }
+
     public Verdict getVerdict() {
         return Verdict.NONE;
     }

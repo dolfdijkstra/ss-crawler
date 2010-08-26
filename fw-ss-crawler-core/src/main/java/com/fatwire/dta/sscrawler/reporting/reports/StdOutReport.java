@@ -22,11 +22,11 @@ public class StdOutReport implements Report {
 
     private final DelimitedLineConstructor dlc = new DelimitedLineConstructor('\t');
 
-    public synchronized void addHeader(String... columns) {
+    public synchronized void addHeader(final String... columns) {
         System.out.println(dlc.construct(columns));
     }
 
-    public synchronized void addRow(String... values) {
+    public synchronized void addRow(final String... values) {
         System.out.println(dlc.construct(values));
     }
 

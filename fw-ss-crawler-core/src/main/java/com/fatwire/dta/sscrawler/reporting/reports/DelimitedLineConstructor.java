@@ -20,14 +20,15 @@ public class DelimitedLineConstructor {
 
     private final char seperator;
 
-    public DelimitedLineConstructor(char delimiter) {
-        this.seperator = delimiter;
+    public DelimitedLineConstructor(final char delimiter) {
+        seperator = delimiter;
     }
 
-    String construct(String[] columns) {
-        if (columns == null || columns.length == 0)
+    String construct(final String[] columns) {
+        if (columns == null || columns.length == 0) {
             return null;
-        StringBuilder b = new StringBuilder();
+        }
+        final StringBuilder b = new StringBuilder();
         for (int i = 0; i < columns.length; i++) {
             if (i > 0) {
                 b.append(seperator);

@@ -34,47 +34,47 @@ public class ReportCollection implements Report {
 
     }
 
-    public ReportCollection(Report... reports) {
-        for (Report report : reports) {
+    public ReportCollection(final Report... reports) {
+        for (final Report report : reports) {
             addReport(report);
         }
     }
 
-    public void addReport(Report reporter) {
+    public void addReport(final Report reporter) {
         reports.add(reporter);
     }
-    public void addHeader(String... columns) {
-        for (Iterator<Report> i = reports.iterator(); i.hasNext();) {
-            Report report = i.next();
+
+    public void addHeader(final String... columns) {
+        for (final Iterator<Report> i = reports.iterator(); i.hasNext();) {
+            final Report report = i.next();
             try {
                 report.addHeader(columns);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 log.error(e, e);
             }
         }
-        
+
     }
 
-    public void addRow(String... values) {
-        for (Iterator<Report> i = reports.iterator(); i.hasNext();) {
-            Report report = i.next();
+    public void addRow(final String... values) {
+        for (final Iterator<Report> i = reports.iterator(); i.hasNext();) {
+            final Report report = i.next();
             try {
                 report.addRow(values);
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 log.error(e, e);
-                i.remove(); //remove reporter if we can't use it
+                i.remove(); // remove reporter if we can't use it
             }
         }
-        
+
     }
-    
-    
+
     public void finishReport() {
-        for (Iterator<Report> i = reports.iterator(); i.hasNext();) {
-            Report report = i.next();
+        for (final Iterator<Report> i = reports.iterator(); i.hasNext();) {
+            final Report report = i.next();
             try {
                 report.finishReport();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 log.error(e, e);
             }
         }
@@ -82,17 +82,16 @@ public class ReportCollection implements Report {
     }
 
     public void startReport() {
-        for (Iterator<Report> i = reports.iterator(); i.hasNext();) {
-            Report report = i.next();
+        for (final Iterator<Report> i = reports.iterator(); i.hasNext();) {
+            final Report report = i.next();
             try {
                 report.startReport();
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 log.error(e, e);
-                i.remove(); //remove reporter if we can't use it
+                i.remove(); // remove reporter if we can't use it
             }
         }
 
     }
-
 
 }

@@ -30,7 +30,7 @@ public interface Reporter {
      * 
      */
     void startCollecting();
-    
+
     /**
      * Ibvoked when reporting ends
      * 
@@ -38,7 +38,6 @@ public interface Reporter {
 
     void endCollecting();
 
-    
     /**
      * 
      * Invoked when a page is rendered
@@ -47,18 +46,17 @@ public interface Reporter {
      */
     void addToReport(ResultPage page);
 
-    
     /**
      * To get the report summary verdict when reporting is done
      * 
      * @return the verdict
      */
     Verdict getVerdict();
-    
+
     /**
-     *  
+     * 
      * @return the title of the report
      */
-    
+
     String getTitle();
 }

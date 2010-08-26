@@ -35,7 +35,7 @@ public class SSUriHelper {
 
     public static final String SSURI_PREFIX = "SSURI";
 
-    public static final String SSURI_BLOBSERVER = SSURI_PREFIX +"apptype=BlobServer";
+    public static final String SSURI_BLOBSERVER = SSURI_PREFIX + "apptype=BlobServer";
 
     private final String path;
 
@@ -51,28 +51,26 @@ public class SSUriHelper {
         this.path = path;
     }
 
-    public String toLink(QueryString uri) {
+    public String toLink(final QueryString uri) {
         if (uri.getParameters().isEmpty()) {
             return null;
         }
         try {
-            Map<String, String> map = new TreeMap<String, String>(uri
-                    .getParameters());
+            final Map<String, String> map = new TreeMap<String, String>(uri.getParameters());
             map.remove(HelperStrings.CACHECONTROL);
             map.remove(HelperStrings.RENDERMODE);
             final StringBuilder qs = new StringBuilder();
             qs.append(path);
-            //qs.append("ContentServer");
+            // qs.append("ContentServer");
             qs.append("?");
-            for (final Iterator<Map.Entry<String, String>> i = map.entrySet()
-                    .iterator(); i.hasNext();) {
+            for (final Iterator<Map.Entry<String, String>> i = map.entrySet().iterator(); i.hasNext();) {
                 final Map.Entry<String, String> entry = i.next();
                 qs.append(urlCodec.encode(entry.getKey()));
                 qs.append("=");
-                String v = entry.getValue();
+                final String v = entry.getValue();
                 if (v != null && v.startsWith(HelperStrings.SSURI_START)) {
 
-                    QueryString inner = linkToMap(v);
+                    final QueryString inner = linkToMap(v);
                     qs.append(urlCodec.encode(toLink(inner)));
                 } else {
                     qs.append(urlCodec.encode(v));
@@ -82,10 +80,10 @@ public class SSUriHelper {
                 }
             }
             return qs.toString();
-        } catch (EncoderException e) {
+        } catch (final EncoderException e) {
             log.warn(e);
             return null;
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             log.warn(e);
             return null;
         }
@@ -99,7 +97,7 @@ public class SSUriHelper {
     }
 
     public Link uriToQueryString(final URI uri) {
-        String qs = uri.getQuery();
+        final String qs = uri.getQuery();
         if (log.isDebugEnabled()) {
             log.debug(qs);
         }
@@ -112,8 +110,7 @@ public class SSUriHelper {
         for (final String v : val) {
             if (!v.startsWith(SSURI_PREFIX)) {
                 final int t = v.indexOf('=');
-                map.addParameter(v.substring(0, t), v.substring(t + 1, v
-                        .length()));
+                map.addParameter(v.substring(0, t), v.substring(t + 1, v.length()));
             } else {
                 if (SSURI_BLOBSERVER.equals(v)) {
                     map.clear();

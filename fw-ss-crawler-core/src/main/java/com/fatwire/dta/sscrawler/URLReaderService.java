@@ -29,14 +29,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import com.fatwire.dta.sscrawler.domain.HostConfig;
-import com.fatwire.dta.sscrawler.events.PageletRenderedEvent;
-import com.fatwire.dta.sscrawler.events.PageletRenderingListener;
-import com.fatwire.dta.sscrawler.handlers.BodyHandler;
-import com.fatwire.dta.sscrawler.jobs.ProgressMonitor;
-import com.fatwire.dta.sscrawler.util.HelperStrings;
-import com.fatwire.dta.sscrawler.util.SSUriHelper;
-
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
@@ -45,6 +37,14 @@ import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com.fatwire.dta.sscrawler.domain.HostConfig;
+import com.fatwire.dta.sscrawler.events.PageletRenderedEvent;
+import com.fatwire.dta.sscrawler.events.PageletRenderingListener;
+import com.fatwire.dta.sscrawler.handlers.BodyHandler;
+import com.fatwire.dta.sscrawler.jobs.ProgressMonitor;
+import com.fatwire.dta.sscrawler.util.HelperStrings;
+import com.fatwire.dta.sscrawler.util.SSUriHelper;
 
 public class URLReaderService {
     private final Log log = LogFactory.getLog(getClass());
@@ -59,8 +59,8 @@ public class URLReaderService {
 
     private MultiThreadedHttpConnectionManager connectionManager;
 
-    private HttpClientService httpClientService = new HttpClientService() {
-        private ThreadLocal<HttpClient> tl = new ThreadLocal<HttpClient>() {
+    private final HttpClientService httpClientService = new HttpClientService() {
+        private final ThreadLocal<HttpClient> tl = new ThreadLocal<HttpClient>() {
 
             /*
              * (non-Javadoc)
@@ -98,7 +98,7 @@ public class URLReaderService {
     }
 
     protected HttpClient initClient() {
-        HttpClient client = new HttpClient(connectionManager);
+        final HttpClient client = new HttpClient(connectionManager);
         client.getHostConfiguration().setHost(hostConfig.getHostname(), hostConfig.getPort(), hostConfig.getProtocol());
 
         if (hostConfig.getProxyHost() != null) {
@@ -131,11 +131,11 @@ public class URLReaderService {
         connectionManager.getParams().setConnectionTimeout(30000);
         connectionManager.getParams().setDefaultMaxConnectionsPerHost(1500);
         connectionManager.getParams().setMaxTotalConnections(30000);
-        MBeanServer platform = java.lang.management.ManagementFactory.getPlatformMBeanServer();
+        final MBeanServer platform = java.lang.management.ManagementFactory.getPlatformMBeanServer();
         try {
             platform.registerMBean(new ReaderService(scheduler, connectionManager), new ObjectName(
                     "com.fatwire.crawler:name=scheduler"));
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             log.error(t.getMessage(), t);
         }
 
@@ -147,13 +147,13 @@ public class URLReaderService {
         }
         scheduler.waitForlAllTasksToFinish();
         try {
-            this.connectionManager.shutdown();
-        } catch (Throwable t) {
+            connectionManager.shutdown();
+        } catch (final Throwable t) {
             log.error(t.getMessage(), t);
         }
         try {
             platform.unregisterMBean(new ObjectName("com.fatwire.crawler:name=scheduler"));
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             log.error(t.getMessage(), t);
         }
 
@@ -171,13 +171,13 @@ public class URLReaderService {
 
         private final AtomicInteger scheduledCounter = new AtomicInteger();
 
-        private AtomicInteger count = new AtomicInteger();
+        private final AtomicInteger count = new AtomicInteger();
 
-        private AtomicInteger completeCount = new AtomicInteger();
+        private final AtomicInteger completeCount = new AtomicInteger();
 
         private ProgressMonitor monitor;
 
-        private boolean requestPageData = true;
+        private final boolean requestPageData = true;
 
         /**
          * @param executor
@@ -279,15 +279,15 @@ public class URLReaderService {
         }
 
         public int getCount() {
-            return this.count.get();
+            return count.get();
         }
 
         public int getScheduledCount() {
-            return this.scheduledCounter.get();
+            return scheduledCounter.get();
         }
 
         public int getCompleteCount() {
-            return this.completeCount.get();
+            return completeCount.get();
         }
 
     }
@@ -307,7 +307,7 @@ public class URLReaderService {
          * @param downloader
          */
         public Harvester(final UrlRenderingCallable downloader, final String taskInfo, final ProgressMonitor monitor,
-                final int priority, int orderNumber) {
+                final int priority, final int orderNumber) {
             super();
             this.downloader = downloader;
             this.taskInfo = taskInfo;
@@ -336,15 +336,15 @@ public class URLReaderService {
 
         }
 
-        public int compareTo(Harvester o) {
+        public int compareTo(final Harvester o) {
             // comparing on priority and orderNumber, with same priority, the
             // lower order number comes first.
             if (priority != o.priority) {
-                return (priority < o.priority ? -1 : 1);
-            } else if (this.orderNumber == o.orderNumber) {
+                return priority < o.priority ? -1 : 1;
+            } else if (orderNumber == o.orderNumber) {
                 return 0;
             } else {
-                return this.orderNumber < o.orderNumber ? -1 : 1;
+                return orderNumber < o.orderNumber ? -1 : 1;
             }
 
         }

@@ -32,27 +32,26 @@ public class FileReport implements Report {
 
     /**
      * @param file
-     
      */
-    public FileReport(final File file, char delimiter) {
+    public FileReport(final File file, final char delimiter) {
         super();
         this.file = file;
-        this.dlc = new DelimitedLineConstructor(delimiter);
+        dlc = new DelimitedLineConstructor(delimiter);
 
     }
 
-    public FileReport(final File parentDir, String name, char delimiter) {
+    public FileReport(final File parentDir, final String name, final char delimiter) {
         this(new File(parentDir, name), delimiter);
 
     }
 
-    public synchronized void addHeader(String... columns) {
+    public synchronized void addHeader(final String... columns) {
         if (columns != null && columns.length > 0) {
             writer.println(dlc.construct(columns));
         }
     }
 
-    public synchronized void addRow(String... values) {
+    public synchronized void addRow(final String... values) {
         writer.println(dlc.construct(values));
     }
 
@@ -64,19 +63,17 @@ public class FileReport implements Report {
     public void startReport() {
         if (!file.getParentFile().exists()) {
             if (!file.getParentFile().mkdirs()) {
-                throw new RuntimeException("Can't create parent folder for "
-                        + file);
+                throw new RuntimeException("Can't create parent folder for " + file);
             }
         } else {
             if (!file.getParentFile().isDirectory()) {
-                throw new RuntimeException("parent folder for " + file
-                        + " is not a directory");
+                throw new RuntimeException("parent folder for " + file + " is not a directory");
             }
 
         }
         try {
-            this.writer = new PrintWriter(file);
-        } catch (IOException e) {
+            writer = new PrintWriter(file);
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
