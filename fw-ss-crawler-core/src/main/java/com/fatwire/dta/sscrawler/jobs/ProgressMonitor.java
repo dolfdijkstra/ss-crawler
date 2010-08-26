@@ -41,9 +41,9 @@ public interface ProgressMonitor {
     void internalWorked(double work);
 
     /**
-     *Returns whether cancelation of current operation has been requested.
+     *Returns whether cancellation of current operation has been requested.
      * 
-     * @return
+     * @return true is operation is canceled.
      */
     boolean isCanceled();
 
