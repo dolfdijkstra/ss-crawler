@@ -16,6 +16,8 @@
 
 package com.fatwire.dta.sscrawler;
 
+import java.io.IOException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -31,6 +33,7 @@ import javax.management.ObjectName;
 
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
@@ -201,14 +204,13 @@ public class URLReaderService {
             final String uri = checkUri(qs);
 
             scheduledCounter.incrementAndGet();
-            final UrlRenderingCallable downloader = new UrlRenderingCallable(httpClientService, uri, qs);
-
             try {
+                final UrlRenderingCallable downloader = new UrlRenderingCallable(httpClientService, uri, qs);
                 int priority = 0;
                 if (qs instanceof Link) {
                     priority = 5;
                 }
-                executor.execute(new Harvester(downloader, qs.toString(), monitor, priority, count.get()));
+                executor.execute(new Harvester(downloader, monitor, priority, count.get()));
 
             } catch (final Exception e) {
                 scheduledCounter.decrementAndGet();
@@ -295,8 +297,6 @@ public class URLReaderService {
     class Harvester implements Runnable, Comparable<Harvester> {
         private final UrlRenderingCallable downloader;
 
-        private final String taskInfo;
-
         private final ProgressMonitor monitor;
 
         private final int priority;
@@ -306,30 +306,34 @@ public class URLReaderService {
         /**
          * @param downloader
          */
-        public Harvester(final UrlRenderingCallable downloader, final String taskInfo, final ProgressMonitor monitor,
-                final int priority, final int orderNumber) {
+        public Harvester(final UrlRenderingCallable downloader, final ProgressMonitor monitor, final int priority,
+                final int orderNumber) {
             super();
             this.downloader = downloader;
-            this.taskInfo = taskInfo;
             this.monitor = monitor;
             this.priority = priority;
             this.orderNumber = orderNumber;
         }
 
         public void run() {
-            if (monitor.isCanceled()) {
-                return;
-            }
             try {
-                monitor.subTask(taskInfo);
+                if (monitor.isCanceled()) {
+                    return;
+                }
                 final ResultPage page;
                 page = downloader.call();
                 if (page.getBody() != null) {
                     handler.visit(page);
                 }
                 scheduler.pageComplete(page);
+            } catch (final ConnectException e) {
+                log.error(e + " for " + downloader.getUri());
+            } catch (final HttpException e) {
+                log.error(e + " for " + downloader.getUri());
+            } catch (final IOException e) {
+                log.error(e + " for " + downloader.getUri());
             } catch (final Exception e) {
-                log.error(e, e);
+                log.error(e + " for " + downloader.getUri(), e);
             } finally {
                 scheduler.taskFinished();
             }
