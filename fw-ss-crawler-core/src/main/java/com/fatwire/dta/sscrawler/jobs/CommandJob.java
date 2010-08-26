@@ -26,8 +26,7 @@ public class CommandJob implements Job {
     private final Command command;
 
     /**
-     * @param hostConfig
-     * @param maxPages
+     * @param command the command to execute
      */
     public CommandJob(final Command command) {
         super();
