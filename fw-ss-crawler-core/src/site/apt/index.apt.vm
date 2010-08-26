@@ -24,52 +24,76 @@ SS-CRAWLER
 
 USAGE
 
+    ss-crawler \<subcommand\> [options] [argument]
+
 	minimal arguments to specify for windows
 	
-	<<<ss-crawler.bat -startUri \<full url to ContentServer with querystring containing parameters for staring page\>>>>
+	<<<ss-crawler.bat crawler \<full url to ContentServer with querystring containing parameters for staring page\>>>>
 	
 	for instance: crawl FSII at localhost
 	 
-	<<<ss-crawler.bat -startUri "http://localhost:8080/cs/ContentServer?pagename=FSIIWrapper&cid=1118867611403&c=Page&p=1118867611403&childpagename=FirstSiteII/FSIILayout">>>
+	<<<ss-crawler.bat crawler "http://localhost:8080/cs/ContentServer?pagename=FSIIWrapper&cid=1118867611403&c=Page&p=1118867611403&childpagename=FirstSiteII/FSIILayout">>>
 	
 	minimal arguments to specify for UNIX (bash)
 	
-	<<<ss-crawler.sh -startUri \<full url to ContentServer with querystring containing parameters for staring page\>>>>
+	<<<ss-crawler.sh crawler \<full url to ContentServer with querystring containing parameters for staring page\>>>>
 	
 	for instance: crawl FSII at localhost
 	 
-	<<<ss-crawler -startUri 'http://localhost:8080/cs/ContentServer?pagename=FSIIWrapper&cid=1118867611403&c=Page&p=1118867611403&childpagename=FirstSiteII/FSIILayout'>>>
+	<<<ss-crawler.sh crawler 'http://localhost:8080/cs/ContentServer?pagename=FSIIWrapper&cid=1118867611403&c=Page&p=1118867611403&childpagename=FirstSiteII/FSIILayout'>>>
 
 COMMAND LINE ARGUMENTS
 
-	command line arguments are space seperated (-a val1 -b val2)
+	usage: ss-crawler \<subcommand\> [options] [argument]
 	
-	If the first command-line argument is 'warmer' it will start a cache warmer tool. It does the same as the crawler except for the reporting.
+	OPTIONS: [-d \<dir\>] [-f \<classname\>] [-h] [-m \<num\>] [-ph \<host\>]
+       [-pp \<port\>] [-pu \<username\>] [-pw \<password\>] [-t \<num\>]
+
+	ARGUMENT: the start uri in the form of 'http://localhost:8080/cs/ContentServer?pagename=...'.
+
+	Available subcommands:
 	
-	-startUri (REQUIRED) <full url to ContentServer with querystring containing parameters for staring page>
+	* crawler: extensive reporting on the discovered pagelets.
 	
-	-reportDir (OPTIONAL) <directory where the reports are written>. If not specified ./reports will be used. The directory with be appended with a subdir for the timestamp when the program was started.
-	 
-	-max (OPTIONAL) <maximum number of full pages to be crawled>. If not specified
-	 
-	-uriHelperFactory (OPTIONAL) <a classname extending com.fatwire.dta.sscrawler.util.UriHelperFactory if you need a special implementation for uri parsing>. 
-	 Normally no need to set this. For CS6.2 you need to set it to <<<com.fatwire.dta.sscrawler.util.DecodingUriHelperFactory>>>.
-	
-	-threads (OPTIONAL) <Number of parallel threads to start>
-	
-	-proxyUsername (OPTIONAL) <Username for proxy if authentication is required>
-	
-	-proxyPassword (OPTIONAL) <Password for proxy if authentication is required>
-	
-	-proxyHost (OPTIONAL) <Proxy host>
-	
-	-proxyPort (OPTIONAL) <Proxy port>
+	* warmer:  warm the cache with reporting of PageRenderTimeReporter.
+
+    []
+    	
+-----------
+ -d,--reportDir <dir>                Directory where reports are stored
+
+ -f,--uriHelperFactory <classname>   a classname extending com.fatwire.dta.sscrawler.util.UriHelperFactory 
+                                     if you need a special implementation for uri parsing>. 
+                                     Normally no need to set this. 
+                                     For CS6.2 you need to set it to com.fatwire.dta.sscrawler.util.DecodingUriHelperFactory.
+
+ -h,--help                           print this message.
+
+ -m,--max <num>                      Maximum number of pages, default is
+                                     unlimited
+
+ -ph,--proxyHost <host>              Proxy hostname
+
+ -pp,--proxyPort <port>              Proxy port number
+
+ -pu,--proxyUsername <username>      Proxy Username
+
+ -pw,--proxyPassword <password>      Proxy Password
+
+ -t,--threads <num>                  Number of concurrent threads that are
+                                     reading from ContentServer
+
+-----------------	
 
 
 
 REPORTS
 
 	Several reports will be created when this program is running.
+	
+	* Summary: summary.txt
+	
+	  Gives a RED/AMBER/GREEN report for a quick overview of the status. For any RED or AMBER status you should check the individual report for more detail. 
 
 	* LinkCollectingReporter: pagelets.txt
 
@@ -109,9 +133,9 @@ REPORTS
 
 	  Which pagelets produce a non 200 HTTP status code response. A non-200 response is considered an error.
 	
-	* InnerPageletReporter: inner-pagelets.txt
+	* InnerPageletPerOuterReporter: inner-pagelets.txt
 
-	  Reports per pagelet what the direct innner pagelets are.
+	  Reports per page what the innner pagelets are, as well as their nesting.
 	
 	* InnerLinkReporter: inner-links.txt
 
