@@ -33,7 +33,7 @@ import com.fatwire.dta.sscrawler.util.SSUriHelper;
 
 public class RenderCommand implements Command {
 
-    private final List<QueryString> queue = new ArrayList<QueryString>();
+    private final List<Link> queue = new ArrayList<Link>();
 
     private int maxPages;
 
@@ -62,7 +62,7 @@ public class RenderCommand implements Command {
         this(hostConfig, Integer.MAX_VALUE, readerPool);
     }
 
-    public void addStartUri(final QueryString uri) {
+    public void addStartUri(final Link uri) {
         queue.add(uri);
     }
 

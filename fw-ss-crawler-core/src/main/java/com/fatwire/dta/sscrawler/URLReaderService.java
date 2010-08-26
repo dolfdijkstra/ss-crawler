@@ -86,7 +86,7 @@ public class URLReaderService {
 
     private final Set<PageletRenderingListener> listeners = new CopyOnWriteArraySet<PageletRenderingListener>();
 
-    private final List<QueryString> startUrls = new ArrayList<QueryString>();
+    private final List<Link> startUrls = new ArrayList<Link>();
 
     private final Scheduler scheduler;
 
@@ -396,7 +396,7 @@ public class URLReaderService {
 
     }
 
-    public void addStartUris(final Collection<QueryString> uri) {
+    public void addStartUris(final Collection<Link> uri) {
         startUrls.addAll(uri);
     }
 
