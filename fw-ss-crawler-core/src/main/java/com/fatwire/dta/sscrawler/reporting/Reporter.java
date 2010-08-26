@@ -24,13 +24,41 @@ public interface Reporter {
         NONE, RED, ORANGE, GREEN
     }
 
+    /**
+     * 
+     * Invoked when reporting starts
+     * 
+     */
     void startCollecting();
+    
+    /**
+     * Ibvoked when reporting ends
+     * 
+     */
 
     void endCollecting();
 
+    
+    /**
+     * 
+     * Invoked when a page is rendered
+     * 
+     * @param page the ResultPage just rendered
+     */
     void addToReport(ResultPage page);
 
+    
+    /**
+     * To get the report summary verdict when reporting is done
+     * 
+     * @return the verdict
+     */
     Verdict getVerdict();
+    
+    /**
+     *  
+     * @return the title of the report
+     */
     
     String getTitle();
 }

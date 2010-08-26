@@ -76,7 +76,7 @@ public class Crawler {
         command.execute(progressMonitor);
 
         for (Reporter reporter : reporters) {
-            reporter.endCollecting();
+                reporter.endCollecting();
         }
 
     }

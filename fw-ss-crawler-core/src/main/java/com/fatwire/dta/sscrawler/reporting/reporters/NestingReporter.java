@@ -16,7 +16,10 @@
 
 package com.fatwire.dta.sscrawler.reporting.reporters;
 
+import java.text.DecimalFormat;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.commons.math.stat.descriptive.SynchronizedSummaryStatistics;
 
 import com.fatwire.dta.sscrawler.QueryString;
 import com.fatwire.dta.sscrawler.ResultPage;
@@ -26,14 +29,22 @@ import com.fatwire.dta.sscrawler.reporting.Report;
 public class NestingReporter extends ReportDelegatingReporter {
 
     private final int threshold;
+    private final int avg;
 
     private AtomicInteger count = new AtomicInteger();
-    private AtomicInteger total = new AtomicInteger();
+    private final SynchronizedSummaryStatistics total = new SynchronizedSummaryStatistics();
     private final NestingTracker tracker = new NestingTracker();
 
-    public NestingReporter(Report report, final int threshold) {
+    /**
+     * @param report to send the data to 
+     * @param threshold max number of nested pagelets allowed
+     * @param avg maximum average number of pagelets allowed
+     */
+    public NestingReporter(Report report, final int threshold, final int avg) {
         super(report);
         this.threshold = threshold;
+        this.avg = avg;
+        if (threshold <= avg) throw new IllegalStateException("threshold cannot be equal or smaller than avg.");
 
     }
 
@@ -52,30 +63,37 @@ public class NestingReporter extends ReportDelegatingReporter {
      */
     @Override
     public void endCollecting() {
-        super.startCollecting();
+        report.startReport();
         report.addHeader("threshold", Integer.toString(threshold));
         report.addHeader("uri", "nesting");
 
         for (QueryString qs : tracker.getKeys()) {
             if (qs instanceof Link) {
-                total.incrementAndGet();
                 int level = tracker.getNestingLevel(qs);
+                total.addValue(level);
                 if (level >= threshold) {
                     count.incrementAndGet();
+
+                    report.addRow(qs.toString(), Integer.toString(level));
+                } else if (level == 0) {
                     report.addRow(qs.toString(), Integer.toString(level));
                 }
             }
         }
-
+        final DecimalFormat df = new DecimalFormat("###0.00");
+        report.addRow("Average Nesting level", df.format(total.getMean()));
+        report.addRow("Maximum Nesting level", Long.toString(Math.round(total.getMax())));
+        report.addRow("Minimum Nesting level", Long.toString(Math.round(total.getMin())));
         super.endCollecting();
     }
 
     /**
-     * If more than 25% of the pages are above the threshold, turn red
+     * If on average more than averageThreshold nested pagelets are found, turn red 
+     * if one pagelet is found over threshold, turn orange
      * 
      */
     public Verdict getVerdict() {
-        return count.get() > 1 ? (count.get() * 4 > total.get() ? Verdict.RED : Verdict.ORANGE) : Verdict.GREEN;
+        return  total.getMean() > avg ? Verdict.RED : count.get() > 1 ? Verdict.ORANGE : Verdict.GREEN;
     }
 
     /*

@@ -45,7 +45,7 @@ import com.fatwire.dta.sscrawler.domain.HostConfig;
 import com.fatwire.dta.sscrawler.reporting.Reporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.DefaultArgumentsAsPageCriteriaReporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.InnerLinkReporter;
-import com.fatwire.dta.sscrawler.reporting.reporters.InnerPageletReporter;
+import com.fatwire.dta.sscrawler.reporting.reporters.InnerPageletPerOuterReporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.NestingReporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.Non200ResponseCodeReporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.NotCachedReporter;
@@ -243,8 +243,11 @@ public class App {
         }
         crawler.setReporters(createReporters(path, helper));
         crawler.setUriHelper(helper);
-        crawler.work();
-        readerPool.shutdown();
+        try {
+            crawler.work();
+        } finally {
+            readerPool.shutdown();
+        }
         try {
             platform.unregisterMBean(new ObjectName("com.fatwire.crawler:name=readerpool"));
         } catch (Throwable x) {
@@ -266,25 +269,22 @@ public class App {
         reporters.add(new PageCollectingReporter(new File(outputDir, "pages")));
         reporters.add(new OuterLinkCollectingReporter(new FileReport(outputDir, "browsable-links.tsv", '\t'), helper));
         reporters.add(new InnerLinkReporter(new FileReport(outputDir, "inner-links.tsv", '\t')));
-        
 
         reporters.add(new PageletTimingsStatisticsReporter(new FileReport(outputDir, "pagelet-stats.tsv", '\t')));
         reporters.add(new PageRenderTimeReporter(new FileReport(outputDir, "pagelet-timings.tsv", '\t')));
-        
+
         reporters.add(new PageCriteriaReporter(new FileReport(outputDir, "pagecriteria.tsv", '\t')));
-        
 
         reporters.add(new RootElementReporter(new FileReport(outputDir, "root-elements.tsv", '\t')));
-        
+
         reporters.add(new Non200ResponseCodeReporter(new FileReport(outputDir, "non-200-repsonse.tsv", '\t')));
 
-        reporters.add(new InnerPageletReporter(new FileReport(outputDir, "inner-pagelets.tsv", '\t')));
+        reporters.add(new InnerPageletPerOuterReporter(new FileReport(outputDir, "inner-pagelets.tsv", '\t')));
         reporters.add(new NumberOfInnerPageletsReporter(new FileReport(outputDir, "num-inner-pagelets.tsv", '\t'), 8));
-        reporters.add(new NestingReporter(new FileReport(outputDir, "nesting.tsv", '\t'), 7));
-        
+        reporters.add(new NestingReporter(new FileReport(outputDir, "nesting.tsv", '\t'), 8, 5));
+
         reporters.add(new PageletOnlyReporter(new FileReport(outputDir, "pagelet-only.tsv", '\t')));
 
-        
         reporters.add(new NotCachedReporter(new FileReport(outputDir, "not-cached.tsv", '\t')));
         reporters.add(new DefaultArgumentsAsPageCriteriaReporter(new FileReport(outputDir,
                 "defaultArguments-as-pagecriteria.tsv", '\t')));
@@ -295,16 +295,13 @@ public class App {
         reporters.add(new SuspiciousContextParamReporter(new FileReport(outputDir, "suspicious-context-parameters.tsv",
                 '\t')));
 
-        reporters.add(new SummaryReporter(new FileReport(outputDir, "summary.txt",
-                '\t'),reporters));
-        
+        reporters.add(new SummaryReporter(new FileReport(outputDir, "summary.txt", '\t'), reporters));
+
         /*
-         * TODO
-         * - inner uncached pagelets, is inner uncached good? Too many certainly not
-         * - better InnerPageletReporter, list per whole page
-         * 
+         * TODO - inner uncached pagelets, is inner uncached good? Too many
+         * certainly not - better InnerPageletReporter, list per whole page
          */
-        
+
         return reporters;
     }
 

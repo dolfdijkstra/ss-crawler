@@ -16,6 +16,7 @@
 
 package com.fatwire.dta.sscrawler.reporting.reporters;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,5 +49,11 @@ public class NestingTracker {
         }
         return level;
 
+    }
+    
+    List<QueryString> getMarkers(QueryString qs){
+        List<QueryString> markers = pages.get(qs);
+        return markers !=null?markers: Collections.<QueryString>emptyList();
+        
     }
 }

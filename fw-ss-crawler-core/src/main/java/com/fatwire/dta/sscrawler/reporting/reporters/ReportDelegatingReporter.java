@@ -42,6 +42,12 @@ public abstract class ReportDelegatingReporter implements Reporter {
         String[] h = getHeader();
         report.addHeader(h);
     }
+    
+    /**
+     * 
+     * 
+     * @return the header columns of the report
+     */
 
     protected abstract String[] getHeader();
     
