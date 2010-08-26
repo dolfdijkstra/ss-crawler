@@ -247,11 +247,11 @@ public class App {
             crawler.work();
         } finally {
             readerPool.shutdown();
-        }
-        try {
-            platform.unregisterMBean(new ObjectName("com.fatwire.crawler:name=readerpool"));
-        } catch (Throwable x) {
-            LogFactory.getLog(App.class).error(x.getMessage(), x);
+            try {
+                platform.unregisterMBean(new ObjectName("com.fatwire.crawler:name=readerpool"));
+            } catch (Throwable x) {
+                LogFactory.getLog(App.class).error(x.getMessage(), x);
+            }
         }
     }
 
