@@ -44,5 +44,10 @@ public abstract class ReportDelegatingReporter implements Reporter {
     }
 
     protected abstract String[] getHeader();
+    
+    public String getTitle() {
+        return this.getClass().getSimpleName();
+    }
+
 
 }

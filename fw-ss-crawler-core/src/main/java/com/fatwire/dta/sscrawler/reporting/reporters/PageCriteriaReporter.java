@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.httpclient.Header;
 
@@ -39,11 +40,14 @@ import com.fatwire.dta.sscrawler.util.HelperStrings;
  * @since Apr 3, 2009
  */
 public class PageCriteriaReporter extends ReportDelegatingReporter {
+    private AtomicInteger count = new AtomicInteger();
     public PageCriteriaReporter(final Report report) {
         super(report);
 
     }
-
+    public Verdict getVerdict() {
+        return count.get() > 1 ? Verdict.RED : Verdict.GREEN;
+    }
     public void addToReport(final ResultPage page) {
         if (page.getResponseCode() != 200) {
             return; //bail out
@@ -72,6 +76,7 @@ public class PageCriteriaReporter extends ReportDelegatingReporter {
                 params.remove(HelperStrings.SS_PAGEDATA_REQUEST);
                 for (final String param : params.keySet()) {
                     if (!pageCriteria.contains(param)) {
+                        count.incrementAndGet();
                         report.addRow(page.getPageName(), page.getUri()
                                 .toString(), param, header.getValue());
 

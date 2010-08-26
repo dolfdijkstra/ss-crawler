@@ -16,26 +16,28 @@
 
 package com.fatwire.dta.sscrawler.reporting.reporters;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.fatwire.dta.sscrawler.QueryString;
 import com.fatwire.dta.sscrawler.ResultPage;
 
 public class PageletTracker {
-    private final Map<QueryString, AtomicInteger> pages = new HashMap<QueryString, AtomicInteger>();
+    private final ConcurrentMap<QueryString, AtomicInteger> pages = new ConcurrentHashMap<QueryString, AtomicInteger>();
 
     public void add(ResultPage page) {
         for (QueryString qs : page.getMarkers()) {
             AtomicInteger i = pages.get(qs);
-            if (i ==null){
-                i = new AtomicInteger();
-                pages.put(qs, i);
+            if (i == null) {
+                AtomicInteger n = new AtomicInteger();
+                i = pages.putIfAbsent(qs, n);
+                if (i == null)
+                    i = n;
             }
-            
+
             i.incrementAndGet();
         }
     }
@@ -43,6 +45,5 @@ public class PageletTracker {
     public Set<Entry<QueryString, AtomicInteger>> getEntries() {
         return pages.entrySet();
     }
-
 
 }

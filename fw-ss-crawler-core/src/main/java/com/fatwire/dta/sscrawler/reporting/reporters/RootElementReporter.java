@@ -27,7 +27,7 @@ import com.fatwire.dta.sscrawler.util.HelperStrings;
 
 public class RootElementReporter extends ReportDelegatingReporter {
 
-    public static final String HEADER_NAME = HelperStrings.CS_TO_SS_RESPONSE_HEADER_PREFIX +"rootelement";
+    public static final String HEADER_NAME = HelperStrings.CS_TO_SS_RESPONSE_HEADER_PREFIX + "rootelement";
 
     private final Set<String> elements = new CopyOnWriteArraySet<String>();
 
@@ -55,7 +55,10 @@ public class RootElementReporter extends ReportDelegatingReporter {
 
     @Override
     protected String[] getHeader() {
-        return new String[]{"elemenname"};
+        return new String[] { "elementname" };
     }
 
+    public Verdict getVerdict() {
+        return Verdict.NONE;
+    }
 }

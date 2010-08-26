@@ -49,5 +49,7 @@ public class RawLinkReporter extends ReportDelegatingReporter {
     protected String[] getHeader() {
         return new String[]{"uri","link"};
     }
-
+    public Verdict getVerdict() {
+        return Verdict.NONE;
+    }
 }

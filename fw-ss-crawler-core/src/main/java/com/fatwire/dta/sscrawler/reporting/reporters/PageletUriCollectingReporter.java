@@ -33,6 +33,11 @@ public class PageletUriCollectingReporter extends ReportDelegatingReporter {
 
     @Override
     protected String[] getHeader() {
-        return new String[]{"pagename","uri"};
+        return new String[] { "pagename", "uri" };
     }
+
+    public Verdict getVerdict() {
+        return Verdict.NONE;
+    }
+
 }

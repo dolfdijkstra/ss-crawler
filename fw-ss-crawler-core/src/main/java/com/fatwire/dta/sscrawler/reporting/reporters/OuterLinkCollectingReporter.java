@@ -44,4 +44,9 @@ public class OuterLinkCollectingReporter extends ReportDelegatingReporter {
         return new String[0];
     }
 
+    public Verdict getVerdict() {
+        
+        return Verdict.NONE;
+    }
+
 }

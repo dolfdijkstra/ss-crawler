@@ -22,28 +22,34 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.fatwire.dta.sscrawler.QueryString;
 import com.fatwire.dta.sscrawler.ResultPage;
 import com.fatwire.dta.sscrawler.reporting.Report;
+import com.fatwire.dta.sscrawler.util.CacheHelper;
 
 public class PageletReuseReporter extends ReportDelegatingReporter {
 
     private final int threshold;
     private final PageletTracker tracker = new PageletTracker();
-    
+    private AtomicInteger count = new AtomicInteger();
+    private AtomicInteger total = new AtomicInteger();
+
     public PageletReuseReporter(Report report, final int threshold) {
         super(report);
         this.threshold = threshold;
 
     }
 
-
-
-    public synchronized void addToReport(ResultPage page) {
-        if (page.getResponseCode() == 200) {
+    public void addToReport(ResultPage page) {
+        if (page.getResponseCode() == 200 && CacheHelper.shouldCache(page.getResponseHeaders())) {
+            //track pages that should be cached
             tracker.add(page);
         }
     }
 
-    /* (non-Javadoc)
-     * @see com.fatwire.dta.sscrawler.reporting.reporters.ReportDelegatingReporter#endCollecting()
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.fatwire.dta.sscrawler.reporting.reporters.ReportDelegatingReporter
+     * #endCollecting()
      */
     @Override
     public synchronized void endCollecting() {
@@ -53,9 +59,10 @@ public class PageletReuseReporter extends ReportDelegatingReporter {
 
         for (Entry<QueryString, AtomicInteger> e : tracker.getEntries()) {
             QueryString qs = e.getKey();
-
+            total.incrementAndGet();
             int level = e.getValue().get();
             if (level >= threshold) {
+                count.incrementAndGet();
                 report.addRow(qs.toString(), Integer.toString(level));
             }
         }
@@ -63,16 +70,25 @@ public class PageletReuseReporter extends ReportDelegatingReporter {
         super.endCollecting();
     }
 
-    /* (non-Javadoc)
-     * @see com.fatwire.dta.sscrawler.reporting.reporters.ReportDelegatingReporter#startCollecting()
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.fatwire.dta.sscrawler.reporting.reporters.ReportDelegatingReporter
+     * #startCollecting()
      */
     @Override
     public void startCollecting() {
-        //do nothing, all is handled in the endCollecting call
+        // do nothing, all is handled in the endCollecting call
     }
+
     @Override
     protected String[] getHeader() {
         return new String[] { "uri", "reuse" };
+    }
+
+    public Verdict getVerdict() {
+        return count.get() == 0 ? Verdict.RED : Verdict.GREEN;
     }
 
 }

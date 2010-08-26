@@ -16,29 +16,27 @@
 
 package com.fatwire.dta.sscrawler.reporting.reporters;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import com.fatwire.dta.sscrawler.QueryString;
 import com.fatwire.dta.sscrawler.ResultPage;
 
 public class NestingTracker {
 
-    private final Map<QueryString, List<QueryString>> pages = new HashMap<QueryString, List<QueryString>>();
+    private final ConcurrentMap<QueryString, List<QueryString>> pages = new ConcurrentHashMap<QueryString, List<QueryString>>();
 
-    public synchronized void add(ResultPage page) {
-        if (!pages.containsKey(page.getUri())) {
-            pages.put(page.getUri(), page.getMarkers());
-        }
+    public void add(ResultPage page) {
+        pages.putIfAbsent(page.getUri(), page.getMarkers());
     }
 
-    public synchronized Set<QueryString> getKeys() {
+    public Set<QueryString> getKeys() {
         return pages.keySet();
     }
 
-    public synchronized int getNestingLevel(QueryString qs) {
+    public int getNestingLevel(QueryString qs) {
         int level = 0;
         if (qs == null)
             return 0;

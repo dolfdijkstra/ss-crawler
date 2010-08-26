@@ -106,4 +106,13 @@ public class PageCollectingReporter implements Reporter {
         }
 
     }
+
+    public String getTitle() {
+
+        return this.getClass().getSimpleName();
+    }
+
+    public Verdict getVerdict() {
+        return Verdict.NONE;
+    }
 }

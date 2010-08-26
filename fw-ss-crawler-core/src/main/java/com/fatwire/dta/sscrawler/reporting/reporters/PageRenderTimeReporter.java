@@ -44,5 +44,7 @@ public class PageRenderTimeReporter extends ReportDelegatingReporter {
         return new String[] { "pagename", "download time", "statuscode",
                 "arguments" };
     }
-
+    public Verdict getVerdict() {
+        return Verdict.NONE;
+    }
 }

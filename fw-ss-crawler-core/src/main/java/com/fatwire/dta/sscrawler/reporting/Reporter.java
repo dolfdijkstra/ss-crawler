@@ -20,9 +20,17 @@ import com.fatwire.dta.sscrawler.ResultPage;
 
 public interface Reporter {
 
+    enum Verdict {
+        NONE, RED, ORANGE, GREEN
+    }
+
     void startCollecting();
-    
+
     void endCollecting();
-    
+
     void addToReport(ResultPage page);
+
+    Verdict getVerdict();
+    
+    String getTitle();
 }

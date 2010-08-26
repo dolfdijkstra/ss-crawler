@@ -16,12 +16,21 @@
 
 package com.fatwire.dta.sscrawler.reporting.reporters;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.fatwire.dta.sscrawler.ResultPage;
 import com.fatwire.dta.sscrawler.reporting.Report;
 
+/**
+ * Reports the number of inner pagelets per pagelet above a threshold.
+ * 
+ * @author Dolf Dijkstra
+ * 
+ */
 public class NumberOfInnerPageletsReporter extends ReportDelegatingReporter {
 
     private final int threshold;
+    private AtomicInteger count = new AtomicInteger();
 
     public NumberOfInnerPageletsReporter(final Report report, final int threshold) {
         super(report);
@@ -33,25 +42,36 @@ public class NumberOfInnerPageletsReporter extends ReportDelegatingReporter {
         if (page.getResponseCode() == 200) {
             final int num = page.getMarkers().size();
             if (num >= threshold) {
-                report.addRow(Integer.toString(num)  ,  page.getUri().toString());
+                count.incrementAndGet();
+                report.addRow(Integer.toString(num), page.getUri().toString());
             }
         }
     }
 
-    /* (non-Javadoc)
-     * @see com.fatwire.dta.sscrawler.reporting.reporters.ReportDelegatingReporter#startCollecting()
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.fatwire.dta.sscrawler.reporting.reporters.ReportDelegatingReporter
+     * #startCollecting()
      */
     @Override
     public void startCollecting() {
-        super.startCollecting();
-        report.addHeader("threshold: " +threshold);
+
+        report.startReport();
+        report.addHeader("threshold: " + threshold);
+
         report.addHeader(getHeader());
 
     }
 
     @Override
     protected String[] getHeader() {
-        return new String[]{"inner pagelets","uri"};
+        return new String[] { "inner pagelets", "uri" };
+    }
+
+    public Verdict getVerdict() {
+        return count.get() > 5 ? Verdict.RED : count.get() > 0 ? Verdict.RED : Verdict.GREEN;
     }
 
 }

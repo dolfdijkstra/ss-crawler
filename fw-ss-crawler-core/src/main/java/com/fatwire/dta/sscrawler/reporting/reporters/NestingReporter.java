@@ -16,13 +16,20 @@
 
 package com.fatwire.dta.sscrawler.reporting.reporters;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.fatwire.dta.sscrawler.QueryString;
 import com.fatwire.dta.sscrawler.ResultPage;
+import com.fatwire.dta.sscrawler.Link;
 import com.fatwire.dta.sscrawler.reporting.Report;
 
 public class NestingReporter extends ReportDelegatingReporter {
 
     private final int threshold;
+
+    private AtomicInteger count = new AtomicInteger();
+    private AtomicInteger total = new AtomicInteger();
+    private final NestingTracker tracker = new NestingTracker();
 
     public NestingReporter(Report report, final int threshold) {
         super(report);
@@ -30,16 +37,18 @@ public class NestingReporter extends ReportDelegatingReporter {
 
     }
 
-    private final NestingTracker tracker = new NestingTracker();
-
     public void addToReport(ResultPage page) {
         if (page.getResponseCode() == 200) {
             tracker.add(page);
         }
     }
 
-    /* (non-Javadoc)
-     * @see com.fatwire.dta.sscrawler.reporting.reporters.ReportDelegatingReporter#endCollecting()
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.fatwire.dta.sscrawler.reporting.reporters.ReportDelegatingReporter
+     * #endCollecting()
      */
     @Override
     public void endCollecting() {
@@ -48,21 +57,37 @@ public class NestingReporter extends ReportDelegatingReporter {
         report.addHeader("uri", "nesting");
 
         for (QueryString qs : tracker.getKeys()) {
-            int level = tracker.getNestingLevel(qs);
-            if (level >= threshold) {
-                report.addRow(qs.toString(), Integer.toString(level));
+            if (qs instanceof Link) {
+                total.incrementAndGet();
+                int level = tracker.getNestingLevel(qs);
+                if (level >= threshold) {
+                    count.incrementAndGet();
+                    report.addRow(qs.toString(), Integer.toString(level));
+                }
             }
         }
 
         super.endCollecting();
     }
 
-    /* (non-Javadoc)
-     * @see com.fatwire.dta.sscrawler.reporting.reporters.ReportDelegatingReporter#startCollecting()
+    /**
+     * If more than 25% of the pages are above the threshold, turn red
+     * 
+     */
+    public Verdict getVerdict() {
+        return count.get() > 1 ? (count.get() * 4 > total.get() ? Verdict.RED : Verdict.ORANGE) : Verdict.GREEN;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.fatwire.dta.sscrawler.reporting.reporters.ReportDelegatingReporter
+     * #startCollecting()
      */
     @Override
     public void startCollecting() {
-        //do nothing, all is handled in the endCollecting call
+        // do nothing, all is handled in the endCollecting call
     }
 
     @Override

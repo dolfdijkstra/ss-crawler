@@ -16,6 +16,8 @@
 
 package com.fatwire.dta.sscrawler.reporting.reporters;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.fatwire.dta.sscrawler.QueryString;
 import com.fatwire.dta.sscrawler.ResultPage;
 import com.fatwire.dta.sscrawler.reporting.Report;
@@ -24,6 +26,7 @@ import com.fatwire.dta.sscrawler.reporting.Reporter;
 public class SuspiciousContextParamReporter implements Reporter {
 
     private final Report report;
+    private AtomicInteger count = new AtomicInteger();
 
     /**
      * @param report
@@ -41,8 +44,8 @@ public class SuspiciousContextParamReporter implements Reporter {
 
                     String context = qs.getParameters().get("context");
                     if (context != null && context.indexOf(';') != -1) {
-                        report.addRow(page.getPageName(), context, page
-                                .getUri().toString(), qs.toString());
+                        count.incrementAndGet();
+                        report.addRow(page.getPageName(), context, page.getUri().toString(), qs.toString());
                     }
 
                 }
@@ -56,8 +59,14 @@ public class SuspiciousContextParamReporter implements Reporter {
 
     public void startCollecting() {
         report.startReport();
-        report.addHeader("pagename", "context", "calling pagelet",
-                "call to pagelet");
+        report.addHeader("pagename", "context", "calling pagelet", "call to pagelet");
     }
 
+    public String getTitle() {
+        return this.getClass().getSimpleName();
+    }
+
+    public Verdict getVerdict() {
+        return count.get() > 10 ? Verdict.RED : count.get() == 0 ? Verdict.GREEN : Verdict.ORANGE;
+    }
 }

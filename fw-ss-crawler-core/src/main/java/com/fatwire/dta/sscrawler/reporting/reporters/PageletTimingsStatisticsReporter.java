@@ -22,7 +22,7 @@ package com.fatwire.dta.sscrawler.reporting.reporters;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.math.stat.descriptive.SynchronizedSummaryStatistics;
@@ -32,7 +32,7 @@ import com.fatwire.dta.sscrawler.reporting.Report;
 
 public class PageletTimingsStatisticsReporter extends ReportDelegatingReporter {
 
-    private final Map<String, SynchronizedSummaryStatistics> stats = new ConcurrentHashMap<String, SynchronizedSummaryStatistics>();
+    private final Map<String, SynchronizedSummaryStatistics> stats = new ConcurrentSkipListMap<String, SynchronizedSummaryStatistics>();
 
     private final SynchronizedSummaryStatistics total = new SynchronizedSummaryStatistics();
 
@@ -46,7 +46,7 @@ public class PageletTimingsStatisticsReporter extends ReportDelegatingReporter {
 
     }
 
-    public synchronized void addToReport(final ResultPage page) {
+    public void addToReport(final ResultPage page) {
         pagesDone.incrementAndGet();
         total.addValue(page.getReadTime());
         final String pagename = page.getPageName();
@@ -64,44 +64,37 @@ public class PageletTimingsStatisticsReporter extends ReportDelegatingReporter {
     @Override
     public synchronized void endCollecting() {
         report.startReport();
-        //report.addRow("reporting on " + pagesDone.get() + " pages");
         final DecimalFormat df = new DecimalFormat("###0.00");
         final DecimalFormat lf = new DecimalFormat("##0");
-        //     final DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
         int l = 0;
         for (final String s : stats.keySet()) {
             l = Math.max(s.length(), l);
         }
         final char[] blank = new char[l];
         Arrays.fill(blank, ' ');
-        report.addHeader("pagename" + new String(blank, 0, l - 8),
-                "invocations", "average", "min", "max", "standard-deviation");
+        report.addHeader("pagename" + new String(blank, 0, l - 8), "invocations", "average", "min", "max",
+                "standard-deviation");
 
-        for (final Map.Entry<String, SynchronizedSummaryStatistics> e : stats
-                .entrySet()) {
+        for (final Map.Entry<String, SynchronizedSummaryStatistics> e : stats.entrySet()) {
             SynchronizedSummaryStatistics s = e.getValue();
 
-            final String n = e.getKey()
-                    + new String(blank, 0, l - e.getKey().length());
-            report.addRow(n, Long.toString(s.getN()), df.format(s.getMean()),
-                    lf.format(s.getMin()), lf.format(s.getMax()), df.format(s
-                            .getStandardDeviation()));
+            final String n = e.getKey() + new String(blank, 0, l - e.getKey().length());
+            report.addRow(n, Long.toString(s.getN()), df.format(s.getMean()), lf.format(s.getMin()), lf.format(s
+                    .getMax()), df.format(s.getStandardDeviation()));
 
         }
         final String n = "total" + new String(blank, 0, l - "total".length());
-        report.addRow(n, Long.toString(total.getN()), df
-                .format(total.getMean()), lf.format(total.getMin()), lf
-                .format(total.getMax()), df
-                .format(total.getStandardDeviation()));
+        report.addRow(n, Long.toString(total.getN()), df.format(total.getMean()), lf.format(total.getMin()), lf
+                .format(total.getMax()), df.format(total.getStandardDeviation()));
 
         report.finishReport();
 
     }
+
     @Override
     protected String[] getHeader() {
         return new String[0];
     }
-
 
     @Override
     public synchronized void startCollecting() {
@@ -109,6 +102,10 @@ public class PageletTimingsStatisticsReporter extends ReportDelegatingReporter {
         pagesDone.set(0);
         total.clear();
 
+    }
+
+    public Verdict getVerdict() {
+        return total.getMean() > 200 ? Verdict.RED : total.getMean() > 100 ? Verdict.ORANGE : Verdict.GREEN;
     }
 
 }

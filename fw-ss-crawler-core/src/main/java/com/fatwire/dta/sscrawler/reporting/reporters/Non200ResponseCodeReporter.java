@@ -16,22 +16,34 @@
 
 package com.fatwire.dta.sscrawler.reporting.reporters;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.fatwire.dta.sscrawler.ResultPage;
 import com.fatwire.dta.sscrawler.reporting.Report;
 
-public class Non200ResponseCodeReporter extends ReportDelegatingReporter {
+/**
+ * Reports all pages that return with a non-200 status code
+ * 
+ * @author Dolf Dijkstra
+ *
+ */
 
+public class Non200ResponseCodeReporter extends ReportDelegatingReporter {
+    private AtomicInteger count = new AtomicInteger();
     public Non200ResponseCodeReporter(final Report report) {
         super(report);
     }
 
     public void addToReport(final ResultPage page) {
         if (page.getResponseCode() != 200) {
+            count.incrementAndGet();
             report.addRow(page.getUri().toString(), Integer.toString(page.getResponseCode()));
         }
 
     }
-
+    public Verdict getVerdict() {
+        return count.get() > 1 ? Verdict.RED : Verdict.GREEN;
+    }
     @Override
     protected String[] getHeader() {
         return new String[]{"uri","responsecode"};

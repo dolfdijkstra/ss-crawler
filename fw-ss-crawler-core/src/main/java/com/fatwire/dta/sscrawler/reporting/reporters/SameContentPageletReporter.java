@@ -40,6 +40,7 @@ public class SameContentPageletReporter implements Reporter {
     private final Report report;
 
     private final Map<String, List<QueryString>> map = new HashMap<String, List<QueryString>>();
+    private int group = 0;
 
     /**
      * @param report
@@ -65,7 +66,7 @@ public class SameContentPageletReporter implements Reporter {
     public synchronized void endCollecting() {
         report.startReport();
         report.addHeader("group", "pagename", "suspected parameters","uri");
-        int group = 0;
+        
         for (final Entry<String, List<QueryString>> e : map.entrySet()) {
             final List<QueryString> l = e.getValue();
             if (l.size() > 1) {
@@ -125,5 +126,13 @@ public class SameContentPageletReporter implements Reporter {
             return s;
         }
 
+    }
+
+    public String getTitle() {
+        return this.getClass().getSimpleName();
+    }
+
+    public Verdict getVerdict() {
+        return group>10? Verdict.RED:group==0? Verdict.GREEN:Verdict.ORANGE;
     }
 }

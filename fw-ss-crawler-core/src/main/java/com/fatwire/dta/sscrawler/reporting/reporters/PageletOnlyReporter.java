@@ -53,4 +53,9 @@ public class PageletOnlyReporter extends ReportDelegatingReporter {
     protected String[] getHeader() {
         return new String[] { "value", "pagename" };
     }
+
+    public Verdict getVerdict() {
+        
+        return Verdict.NONE;
+    }
 }
