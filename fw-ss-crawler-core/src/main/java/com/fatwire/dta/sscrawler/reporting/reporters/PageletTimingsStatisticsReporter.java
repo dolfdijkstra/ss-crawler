@@ -68,6 +68,8 @@ public class PageletTimingsStatisticsReporter extends ReportDelegatingReporter {
 
     @Override
     public synchronized void endCollecting() {
+        if (pagesDone.get() == 0)
+            return;
         report.startReport();
         final DecimalFormat df = new DecimalFormat("###0.00");
         final DecimalFormat lf = new DecimalFormat("##0");
