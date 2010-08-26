@@ -299,7 +299,7 @@ public class App {
 
         /*
          * TODO - inner uncached pagelets, is inner uncached good? Too many
-         * certainly not - better InnerPageletReporter, list per whole page
+         * 
          */
 
         return reporters;
