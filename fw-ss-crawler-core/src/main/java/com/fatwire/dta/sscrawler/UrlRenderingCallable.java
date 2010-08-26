@@ -46,8 +46,9 @@ public class UrlRenderingCallable implements Callable<ResultPage> {
     private final QueryString qs;
 
     /**
-     * @param client
+     * @param httpClientService
      * @param uri
+     * @param qs
      */
     public UrlRenderingCallable(final HttpClientService httpClientService, final String uri,final QueryString qs) {
         super();

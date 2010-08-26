@@ -19,43 +19,43 @@ package com.fatwire.dta.sscrawler;
 public interface RenderingThreadPoolMBean {
 
     /**
-     * @return
+     * @return activeCount
      * @see java.util.concurrent.ThreadPoolExecutor#getActiveCount()
      */
     public int getActiveCount();
 
     /**
-     * @return
+     * @return completedTaskCount
      * @see java.util.concurrent.ThreadPoolExecutor#getCompletedTaskCount()
      */
     public long getCompletedTaskCount();
 
     /**
-     * @return
+     * @return corePoolSize
      * @see java.util.concurrent.ThreadPoolExecutor#getCorePoolSize()
      */
     public int getCorePoolSize();
 
     /**
-     * @return
+     * @return largestPoolSize
      * @see java.util.concurrent.ThreadPoolExecutor#getLargestPoolSize()
      */
     public int getLargestPoolSize();
 
     /**
-     * @return
+     * @return maximumPoolSize
      * @see java.util.concurrent.ThreadPoolExecutor#getMaximumPoolSize()
      */
     public int getMaximumPoolSize();
 
     /**
-     * @return
+     * @return poolSize
      * @see java.util.concurrent.ThreadPoolExecutor#getPoolSize()
      */
     public int getPoolSize();
 
     /**
-     * @return
+     * @return taskCount
      * @see java.util.concurrent.ThreadPoolExecutor#getTaskCount()
      */
     public long getTaskCount();

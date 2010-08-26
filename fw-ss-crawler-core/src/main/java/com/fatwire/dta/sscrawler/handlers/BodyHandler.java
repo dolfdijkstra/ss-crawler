@@ -27,7 +27,7 @@ public class BodyHandler implements Visitor<ResultPage> {
     private final List<Visitor<ResultPage>> visitors = new ArrayList<Visitor<ResultPage>>();
 
     /**
-     * @param page
+     * @param uriHelper
      */
     public BodyHandler(final SSUriHelper uriHelper) {
         super();
@@ -39,10 +39,14 @@ public class BodyHandler implements Visitor<ResultPage> {
 
     }
 
-    public void visit(ResultPage page) {
-        if (page.getResponseCode() != 200)
-            return; //bail out
-        for (Visitor<ResultPage> visitor : visitors) {
+    /* (non-Javadoc)
+     * @see com.fatwire.dta.sscrawler.handlers.Visitor#visit(java.lang.Object)
+     */
+    public void visit(final ResultPage page) {
+        if (page.getResponseCode() != 200) {
+            return; // bail out
+        }
+        for (final Visitor<ResultPage> visitor : visitors) {
             visitor.visit(page);
         }
 

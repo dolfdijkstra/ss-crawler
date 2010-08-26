@@ -29,13 +29,15 @@ public class BodyLinkHandler extends AbstractBodyHandler {
             .compile("satellitescheme://SSURI/.*?#satellitefragment");
 
     /**
-     * @param body
      * @param uriHelper
      */
     public BodyLinkHandler(final SSUriHelper uriHelper) {
         super(uriHelper);
     }
 
+    /* (non-Javadoc)
+     * @see com.fatwire.dta.sscrawler.handlers.Visitor#visit(java.lang.Object)
+     */
     public void visit(ResultPage page) {
         final Matcher m = linkPattern.matcher(page.getBody());
         while (m.find()) {

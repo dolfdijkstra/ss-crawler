@@ -43,7 +43,7 @@ public class PageletTimingsStatisticsReporter extends ReportDelegatingReporter {
     private final Map<String, Boolean> cached = new ConcurrentHashMap<String, Boolean>();
 
     /**
-     * @param file
+     * @param report
      */
     public PageletTimingsStatisticsReporter(final Report report) {
         super(report);
