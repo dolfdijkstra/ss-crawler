@@ -18,17 +18,12 @@ package com.fatwire.dta.sscrawler.jobs;
 
 public class StdOutProgressMonitor implements ProgressMonitor {
 
-    private int totalWork;
-
     private String taskName;
 
     private boolean cancelled;
 
-    private String subTask;
-
     public void beginTask(final String name, final int totalWork) {
         taskName = name;
-        this.totalWork = totalWork;
         System.out.println(name);
 
     }
@@ -59,7 +54,6 @@ public class StdOutProgressMonitor implements ProgressMonitor {
     }
 
     public void subTask(final String name) {
-        subTask = name;
         System.out.println(name);
 
     }
