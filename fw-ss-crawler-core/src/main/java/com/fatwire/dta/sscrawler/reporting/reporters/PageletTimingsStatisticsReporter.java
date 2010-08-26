@@ -22,6 +22,7 @@ package com.fatwire.dta.sscrawler.reporting.reporters;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,6 +30,7 @@ import org.apache.commons.math.stat.descriptive.SynchronizedSummaryStatistics;
 
 import com.fatwire.dta.sscrawler.ResultPage;
 import com.fatwire.dta.sscrawler.reporting.Report;
+import com.fatwire.dta.sscrawler.util.CacheHelper;
 
 public class PageletTimingsStatisticsReporter extends ReportDelegatingReporter {
 
@@ -37,6 +39,8 @@ public class PageletTimingsStatisticsReporter extends ReportDelegatingReporter {
     private final SynchronizedSummaryStatistics total = new SynchronizedSummaryStatistics();
 
     private final AtomicInteger pagesDone = new AtomicInteger();
+
+    private final Map<String, Boolean> cached = new ConcurrentHashMap<String, Boolean>();
 
     /**
      * @param file
@@ -55,6 +59,7 @@ public class PageletTimingsStatisticsReporter extends ReportDelegatingReporter {
             if (ss == null) {
                 ss = new SynchronizedSummaryStatistics();
                 stats.put(pagename, ss);
+                cached.put(pagename, CacheHelper.shouldCache(page.getResponseHeaders()));
             }
             ss.addValue(page.getReadTime());
         }
@@ -70,6 +75,7 @@ public class PageletTimingsStatisticsReporter extends ReportDelegatingReporter {
         for (final String s : stats.keySet()) {
             l = Math.max(s.length(), l);
         }
+        l += 3;
         final char[] blank = new char[l];
         Arrays.fill(blank, ' ');
         report.addHeader("pagename" + new String(blank, 0, l - 8), "invocations", "average", "min", "max",
@@ -78,7 +84,8 @@ public class PageletTimingsStatisticsReporter extends ReportDelegatingReporter {
         for (final Map.Entry<String, SynchronizedSummaryStatistics> e : stats.entrySet()) {
             SynchronizedSummaryStatistics s = e.getValue();
 
-            final String n = e.getKey() + new String(blank, 0, l - e.getKey().length());
+            final String n = e.getKey() + new String(blank, 0, l - e.getKey().length())+ (Boolean.FALSE.equals(cached.get(e.getKey()))?" * ": "   ");
+            
             report.addRow(n, Long.toString(s.getN()), df.format(s.getMean()), lf.format(s.getMin()), lf.format(s
                     .getMax()), df.format(s.getStandardDeviation()));
 
