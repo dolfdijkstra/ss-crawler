@@ -93,7 +93,7 @@ public class NestingReporter extends ReportDelegatingReporter {
      * 
      */
     public Verdict getVerdict() {
-        return  total.getMean() > avg ? Verdict.RED : count.get() > 1 ? Verdict.ORANGE : Verdict.GREEN;
+        return  total.getMean() > avg ? Verdict.RED : count.get() > 1 ? Verdict.AMBER : Verdict.GREEN;
     }
 
     /*

@@ -21,7 +21,7 @@ import com.fatwire.dta.sscrawler.ResultPage;
 public interface Reporter {
 
     enum Verdict {
-        NONE, RED, ORANGE, GREEN
+        NONE, RED, AMBER, GREEN
     }
 
     /**

@@ -67,6 +67,6 @@ public class SuspiciousContextParamReporter implements Reporter {
     }
 
     public Verdict getVerdict() {
-        return count.get() > 10 ? Verdict.RED : count.get() == 0 ? Verdict.GREEN : Verdict.ORANGE;
+        return count.get() > 10 ? Verdict.RED : count.get() == 0 ? Verdict.GREEN : Verdict.AMBER;
     }
 }

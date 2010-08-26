@@ -133,6 +133,6 @@ public class SameContentPageletReporter implements Reporter {
     }
 
     public Verdict getVerdict() {
-        return group>10? Verdict.RED:group==0? Verdict.GREEN:Verdict.ORANGE;
+        return group>10? Verdict.RED:group==0? Verdict.GREEN:Verdict.AMBER;
     }
 }

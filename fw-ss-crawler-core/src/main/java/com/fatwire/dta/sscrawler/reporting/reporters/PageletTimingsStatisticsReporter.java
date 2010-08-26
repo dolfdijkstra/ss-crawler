@@ -112,7 +112,7 @@ public class PageletTimingsStatisticsReporter extends ReportDelegatingReporter {
     }
 
     public Verdict getVerdict() {
-        return total.getMean() > 200 ? Verdict.RED : total.getMean() > 100 ? Verdict.ORANGE : Verdict.GREEN;
+        return total.getMean() > 200 ? Verdict.RED : total.getMean() > 100 ? Verdict.AMBER : Verdict.GREEN;
     }
 
 }
