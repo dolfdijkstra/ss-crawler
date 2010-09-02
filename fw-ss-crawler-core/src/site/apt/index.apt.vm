@@ -21,6 +21,10 @@ SS-CRAWLER
 	reporting section on the reports provided.
 	
 	It can be useful to understand the implemented pagelet and caching strategy on a site.
+	
+DOWNLOAD
+
+   The tool can be downloaded at {{{${download_link_windows}} for windows}} and {{{${download_link_unix}} for unix}}.
 
 USAGE
 
@@ -28,7 +32,7 @@ USAGE
 
 	minimal arguments to specify for windows
 	
-	<<<ss-crawler.bat crawler \<full url to ContentServer with querystring containing parameters for staring page\>>>>
+	<<<ss-crawler.bat crawler \<full url to ContentServer with querystring containing parameters for starting page\>>>>
 	
 	for instance: crawl FSII at localhost
 	 
@@ -36,12 +40,17 @@ USAGE
 	
 	minimal arguments to specify for UNIX (bash)
 	
-	<<<ss-crawler.sh crawler \<full url to ContentServer with querystring containing parameters for staring page\>>>>
+	<<<ss-crawler.sh crawler \<full url to ContentServer with querystring containing parameters for starting page\>>>>
 	
 	for instance: crawl FSII at localhost
 	 
 	<<<ss-crawler.sh crawler 'http://localhost:8080/cs/ContentServer?pagename=FSIIWrapper&cid=1118867611403&c=Page&p=1118867611403&childpagename=FirstSiteII/FSIILayout'>>>
-
+	
+* Starting URL
+  
+  The URL used as the starting point must be a raw ContentServer URL. It must contain pagename and all the name/value pairs to render the page. A 'pretty' url does not work.
+  
+  
 COMMAND LINE ARGUMENTS
 
 	usage: ss-crawler \<subcommand\> [options] [argument]
