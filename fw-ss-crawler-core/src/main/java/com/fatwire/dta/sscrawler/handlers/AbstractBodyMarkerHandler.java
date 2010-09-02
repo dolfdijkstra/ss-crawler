@@ -68,7 +68,7 @@ public abstract class AbstractBodyMarkerHandler extends AbstractBodyHandler {
                     final String v = URLDecoder.decode(value, "UTF-8");
                     map.addParameter(key, v);
                 } catch (final UnsupportedEncodingException e) {
-                    log.warn("can not urldecode '" + value + "'", e);
+                    log.warn("can not urldecode '" + value + "' from '" + x +"'", e);
                 }
 
             }
