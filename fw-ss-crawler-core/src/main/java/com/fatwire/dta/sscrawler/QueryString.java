@@ -24,12 +24,24 @@ public abstract class QueryString {
 
     private final Map<String, String> map = new TreeMap<String, String>();
 
+    
+    
     public void addParameter(final String key, final String value) {
         map.put(key, value);
     }
 
     public Map<String, String> getParameters() {
         return map;
+    }
+    public String get(String key) {
+        return map.get(key);
+    }
+
+    public boolean has(String key) {
+        return map.containsKey(key);
+    }
+    public String remove(String key) {
+        return map.remove(key);
     }
 
     public void clear() {

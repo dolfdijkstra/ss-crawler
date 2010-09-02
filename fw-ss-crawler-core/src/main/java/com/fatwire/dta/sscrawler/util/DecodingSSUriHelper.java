@@ -35,7 +35,7 @@ public class DecodingSSUriHelper extends SSUriHelper {
      * com.fatwire.dta.sscrawler.util.SSUriHelper#uriToQueryString(java.net.URI)
      */
     @Override
-    public Link uriToQueryString(final URI uri) {
+    public Link createLink(final URI uri) {
 
         if (log.isDebugEnabled()) {
             log.debug(uri.getRawQuery());

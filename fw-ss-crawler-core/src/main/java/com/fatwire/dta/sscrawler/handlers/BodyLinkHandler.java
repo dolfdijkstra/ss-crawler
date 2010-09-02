@@ -43,7 +43,7 @@ public class BodyLinkHandler extends AbstractBodyHandler {
         final Matcher m = linkPattern.matcher(page.getBody());
         while (m.find()) {
             log.debug(m.group());
-            final Link map = uriHelper.linkToMap(m.group());
+            final Link map = uriHelper.createLink(m.group());
             if (map.isOK()) {
                 page.addLink(map);
             }

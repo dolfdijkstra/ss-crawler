@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -50,9 +51,11 @@ public class SSUriHelper {
         super();
         this.path = path;
     }
-
+    public String toLink(final Link link) {
+        return toLink((QueryString)link);
+    }
     public String toLink(final QueryString uri) {
-        if (uri.getParameters().isEmpty()) {
+        if (!uri.isOK()) {
             return null;
         }
         try {
@@ -63,16 +66,19 @@ public class SSUriHelper {
             qs.append(path);
             // qs.append("ContentServer");
             qs.append("?");
+
             for (final Iterator<Map.Entry<String, String>> i = map.entrySet().iterator(); i.hasNext();) {
                 final Map.Entry<String, String> entry = i.next();
+                if (log.isTraceEnabled())
+                    log.trace(entry.toString());
                 qs.append(urlCodec.encode(entry.getKey()));
                 qs.append("=");
                 final String v = entry.getValue();
                 if (v != null && v.startsWith(HelperStrings.SSURI_START)) {
 
-                    final QueryString inner = linkToMap(v);
+                    final Link inner = createLink(v);
                     qs.append(urlCodec.encode(toLink(inner)));
-                } else {
+                } else if (v != null) {
                     qs.append(urlCodec.encode(v));
                 }
                 if (i.hasNext()) {
@@ -90,35 +96,72 @@ public class SSUriHelper {
 
     }
 
-    public final Link linkToMap(final String link) {
+    public final Link createLink(final String link) {
 
-        return uriToQueryString(URI.create(StringEscapeUtils.unescapeXml(link)));
+        return createLink(URI.create(StringEscapeUtils.unescapeXml(link)));
 
     }
 
-    public Link uriToQueryString(final URI uri) {
-        final String qs = uri.getQuery();
+    public Link createLink(final URI uri) {
+        final String qs = uri.getRawQuery();
         if (log.isDebugEnabled()) {
             log.debug(qs);
         }
-        final Link map = new Link();
+        final Link link = new Link();
         if (qs == null) {
-            return map;
+            return link;
         }
-        final String[] val = uri.getQuery().split("&");
+        final String[] val = qs.split("&");
 
         for (final String v : val) {
-            if (!v.startsWith(SSURI_PREFIX)) {
+            if (!v.startsWith(SSURI_PREFIX)) { //in case a link is inside a link (for instance a forwardpage=... case).
                 final int t = v.indexOf('=');
-                map.addParameter(v.substring(0, t), v.substring(t + 1, v.length()));
+ 
+                try {
+                    link.addParameter(urlCodec.decode(v.substring(0, t)), urlCodec.decode(v.substring(t + 1, v.length())));
+                } catch (DecoderException e) {
+                    log.warn(e + " for " + qs, e);
+                    return null;
+
+                }
             } else {
                 if (SSURI_BLOBSERVER.equals(v)) {
-                    map.clear();
+                    link.clear();
                     break;
                 }
             }
         }
-        return map;
+
+        if (link.has("childpagename")) {
+            final String packedargs = link.remove("packedargs");
+            //special case if there is a childpagename, in that case packedargs contain all the non c/cid/p/rendermode args.
+            //decode them correctly
+
+            if (packedargs != null) {
+                log.trace("packedargs with childpagename: " + packedargs);
+                String[] pv;
+                try {
+                    pv = urlCodec.decode(packedargs).split("&");
+                    for (String v : pv) {
+                        String[] nv = v.split("=");
+                        if (nv.length == 2) {
+                            link.addParameter(nv[0], nv[1]);
+                        } else if (nv.length == 1) {
+                            link.addParameter(nv[0], "");
+                        }
+
+                    }
+
+                } catch (DecoderException e) {
+                    log.warn(e + " for packedargs: " + packedargs + " on " + qs, e);
+                    return null;
+
+                }
+            }
+
+        }
+
+        return link;
 
     }
 

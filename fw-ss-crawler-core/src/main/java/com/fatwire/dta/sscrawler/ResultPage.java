@@ -48,7 +48,7 @@ public class ResultPage {
     public ResultPage(final QueryString uri) {
         super();
         this.uri = uri;
-        pageName = uri.getParameters().get(HelperStrings.PAGENAME);
+        pageName = uri.get(HelperStrings.PAGENAME);
         links = new ArrayList<QueryString>();
         markers = new ArrayList<QueryString>();
     }

@@ -223,11 +223,11 @@ public class URLReaderService {
         private String checkUri(final QueryString ssuri) {
             final String uri = uriHelper.toLink(ssuri);
             if (requestPageData) {
-                if (ssuri.getParameters().containsKey(HelperStrings.SS_PAGEDATA_REQUEST) == false) {
+                if (ssuri.has(HelperStrings.SS_PAGEDATA_REQUEST) == false) {
                     return uri + "&" + HelperStrings.SS_PAGEDATA_REQUEST + "=true";
                 }
             } else {
-                if (ssuri.getParameters().containsKey(HelperStrings.SS_CLIENT_INDICATOR) == false) {
+                if (ssuri.has(HelperStrings.SS_CLIENT_INDICATOR) == false) {
                     return uri + "&" + HelperStrings.SS_CLIENT_INDICATOR + "=true";
                 }
 

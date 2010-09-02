@@ -54,7 +54,7 @@ public class Crawler {
     public void work() {
 
         final RenderCommand command = new RenderCommand(hostConfig, maxPages, executor);
-        command.addStartUri(uriHelper.uriToQueryString(startUri));
+        command.addStartUri(uriHelper.createLink(startUri));
         command.setUriHelper(uriHelper);
         command.setHandler(new BodyHandler(uriHelper));
 
