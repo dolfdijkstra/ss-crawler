@@ -6,7 +6,7 @@ reporting section on the reports provided.
 
 USAGE:
 minimal arguments to specify for windows
-ss-crawler.bat <full url to ContentServer with querystring containing parameters for staring page>
+ss-crawler.bat crawler <full url to ContentServer with querystring containing parameters for staring page>
 
 for instance: crawl FSII at localhost 
 ss-crawler.bat crawler "http://localhost:8080/cs/ContentServer?pagename=FSIIWrapper&cid=1118867611403&c=Page&p=1118867611403&childpagename=FirstSiteII/FSIILayout"
