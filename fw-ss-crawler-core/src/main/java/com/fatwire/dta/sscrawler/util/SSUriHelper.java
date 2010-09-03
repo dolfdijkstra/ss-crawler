@@ -16,6 +16,7 @@
 
 package com.fatwire.dta.sscrawler.util;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.Map;
@@ -51,9 +52,11 @@ public class SSUriHelper {
         super();
         this.path = path;
     }
+
     public String toLink(final Link link) {
-        return toLink((QueryString)link);
+        return toLink((QueryString) link);
     }
+
     public String toLink(final QueryString uri) {
         if (!uri.isOK()) {
             return null;
@@ -71,15 +74,15 @@ public class SSUriHelper {
                 final Map.Entry<String, String> entry = i.next();
                 if (log.isTraceEnabled())
                     log.trace(entry.toString());
-                qs.append(urlCodec.encode(entry.getKey()));
+                qs.append(encode(entry.getKey()));
                 qs.append("=");
                 final String v = entry.getValue();
                 if (v != null && v.startsWith(HelperStrings.SSURI_START)) {
 
                     final Link inner = createLink(v);
-                    qs.append(urlCodec.encode(toLink(inner)));
+                    qs.append(encode(toLink(inner)));
                 } else if (v != null) {
-                    qs.append(urlCodec.encode(v));
+                    qs.append(encode(v));
                 }
                 if (i.hasNext()) {
                     qs.append("&");
@@ -114,11 +117,13 @@ public class SSUriHelper {
         final String[] val = qs.split("&");
 
         for (final String v : val) {
-            if (!v.startsWith(SSURI_PREFIX)) { //in case a link is inside a link (for instance a forwardpage=... case).
+            if (!v.startsWith(SSURI_PREFIX)) { // in case a link is inside a
+                // link (for instance a
+                // forwardpage=... case).
                 final int t = v.indexOf('=');
- 
+
                 try {
-                    link.addParameter(urlCodec.decode(v.substring(0, t)), urlCodec.decode(v.substring(t + 1, v.length())));
+                    link.addParameter(decode(v.substring(0, t)), decode(v.substring(t + 1, v.length())));
                 } catch (DecoderException e) {
                     log.warn(e + " for " + qs, e);
                     return null;
@@ -131,42 +136,32 @@ public class SSUriHelper {
                 }
             }
         }
-
-        if (link.has("childpagename")) {
-            final String packedargs = link.remove("packedargs");
-            //special case if there is a childpagename, in that case packedargs contain all the non c/cid/p/rendermode args.
-            //decode them correctly
-
-            if (packedargs != null) {
-                log.trace("packedargs with childpagename: " + packedargs);
-                String[] pv;
-                try {
-                    pv = urlCodec.decode(packedargs).split("&");
-                    for (String v : pv) {
-                        String[] nv = v.split("=");
-                        if (nv.length == 2) {
-                            link.addParameter(nv[0], nv[1]);
-                        } else if (nv.length == 1) {
-                            link.addParameter(nv[0], "");
-                        }
-
-                    }
-
-                } catch (DecoderException e) {
-                    log.warn(e + " for packedargs: " + packedargs + " on " + qs, e);
-                    return null;
-
-                }
-            }
-
-        }
-
         return link;
-
     }
 
     protected String getCharSet() {
         return UTF8;
+    }
+
+    protected String decode(String value) throws DecoderException {
+        try {
+            return urlCodec.decode(value, getCharSet());
+        } catch (UnsupportedEncodingException e) {
+            DecoderException t = new DecoderException(e.getMessage());
+            t.initCause(e);
+            throw t;
+        }
+    }
+
+    protected String encode(String value) throws EncoderException {
+        try {
+            return urlCodec.encode(value, getCharSet());
+        } catch (UnsupportedEncodingException e) {
+            EncoderException t = new EncoderException(e.getMessage());
+            t.initCause(e);
+            throw t;
+        }
+
     }
 
 }

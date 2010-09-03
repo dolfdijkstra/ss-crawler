@@ -20,12 +20,17 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * 
+ * A class to add and remove parameters on a query string to be used to contruct a {@link URI}.
+ * 
+ * @author Dolf Dijkstra
+ * 
+ */
 public abstract class QueryString {
 
     private final Map<String, String> map = new TreeMap<String, String>();
 
-    
-    
     public void addParameter(final String key, final String value) {
         map.put(key, value);
     }
@@ -33,6 +38,7 @@ public abstract class QueryString {
     public Map<String, String> getParameters() {
         return map;
     }
+
     public String get(String key) {
         return map.get(key);
     }
@@ -40,6 +46,7 @@ public abstract class QueryString {
     public boolean has(String key) {
         return map.containsKey(key);
     }
+
     public String remove(String key) {
         return map.remove(key);
     }
@@ -92,6 +99,9 @@ public abstract class QueryString {
         return true;
     }
 
+    /**
+     * Prints the name/value pairs in an unencoded form
+     */
     @Override
     public String toString() {
         final StringBuilder qs = new StringBuilder();

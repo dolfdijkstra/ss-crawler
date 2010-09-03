@@ -21,7 +21,7 @@ public class SSUriHelperTest extends TestCase {
         Link link = helper.createLink(uri);
         Assert
                 .assertEquals(
-                        "c=Page&childpagename=IS/Page/ThreeColumnPage&cid=1268294297498&pagename=IS/Wrapper/Wrapper&section=example",
+                        "c=Page&childpagename=IS/Page/ThreeColumnPage&cid=1268294297498&packedargs=section=example&pagename=IS/Wrapper/Wrapper",
                         link.toString());
 
     }
