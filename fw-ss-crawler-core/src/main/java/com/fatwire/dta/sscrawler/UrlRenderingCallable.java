@@ -16,14 +16,12 @@
 
 package com.fatwire.dta.sscrawler;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -62,25 +60,33 @@ public class UrlRenderingCallable implements Callable<ResultPage> {
             log.debug("downloading " + uri);
         }
         final long startTime = System.currentTimeMillis();
+        
         final ResultPage page = new ResultPage(qs);
+        page.setStartTime(startTime);
         final GetMethod httpGet = new GetMethod(uri);
         httpGet.setFollowRedirects(true);
 
         try {
             final int responseCode = httpClientService.get().executeMethod(httpGet);
+            page.setTimeToFirstByte(System.currentTimeMillis() - startTime);
             page.setResponseCode(responseCode);
-            // log.info(iGetResultCode);
+
+            page.setRequestHeaders(httpGet.getRequestHeaders());
+            page.setStatusLine(httpGet.getStatusLine());
             page.setResponseHeaders(httpGet.getResponseHeaders());
+
             if (responseCode == 200) {
                 final String charSet = httpGet.getResponseCharSet();
-                // log.info(charSet);
-
                 final InputStream in = httpGet.getResponseBodyAsStream();
                 if (in != null) {
-                    final Reader reader = new InputStreamReader(in, Charset.forName(charSet));
-                    final String responseBody = copy(reader);
-                    in.close();
+                    byte[] b = IOUtils.toByteArray(in);
                     page.setReadTime(System.currentTimeMillis() - startTime);
+                    IOUtils.closeQuietly(in);
+
+                    page.setPageLength(b.length);
+
+                    final String responseBody = new String(b, Charset.forName(charSet));
+
                     if (responseBody != null) {
                         if (log.isTraceEnabled()) {
                             log.trace(responseBody);
@@ -101,22 +107,6 @@ public class UrlRenderingCallable implements Callable<ResultPage> {
             httpGet.releaseConnection();
         }
         return page;
-    }
-
-    /**
-     * @param builder
-     * @param reader
-     * @throws IOException
-     */
-    private String copy(final Reader reader) throws IOException {
-        final StringBuilder builder = new StringBuilder();
-        final char[] c = new char[1024];
-        int s;
-        while ((s = reader.read(c)) != -1) {
-            builder.append(c, 0, s);
-
-        }
-        return builder.toString();
     }
 
     /**

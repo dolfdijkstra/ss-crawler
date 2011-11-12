@@ -21,11 +21,14 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.StatusLine;
 
 import com.fatwire.dta.sscrawler.util.HelperStrings;
 
 public class ResultPage {
 
+    
+    private long startTime;
     private final QueryString uri;
 
     private String body;
@@ -37,10 +40,15 @@ public class ResultPage {
     private final List<QueryString> markers;
 
     private long readTime = -1;
+    private long timeToFirstByte = -1;
 
     private final String pageName;
 
     private int responseCode = -1;
+    private Header[] requestHeaders;
+    private StatusLine statusLine;
+    private int pageLength;
+    private long connectTime=-1;
 
     /**
      * @param uri
@@ -195,6 +203,80 @@ public class ResultPage {
      */
     public void setResponseCode(final int responseCode) {
         this.responseCode = responseCode;
+    }
+
+    public void setTimeToFirstByte(long l) {
+        timeToFirstByte=l;
+        
+    }
+
+    /**
+     * @return the timeToFirstByte
+     */
+    public long getTimeToFirstByte() {
+        return timeToFirstByte;
+    }
+
+    /**
+     * @return the startTime
+     */
+    public long getStartTime() {
+        return startTime;
+    }
+
+    /**
+     * @param startTime the startTime to set
+     */
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setRequestHeaders(Header[] requestHeaders) {
+        this.requestHeaders=requestHeaders;
+        
+    }
+
+    /**
+     * @return the requestHeaders
+     */
+    public Header[] getRequestHeaders() {
+        return requestHeaders;
+    }
+
+    public void setStatusLine(StatusLine statusLine) {
+        this.statusLine=statusLine;
+        
+    }
+
+    /**
+     * @return the statusLine
+     */
+    public StatusLine getStatusLine() {
+        return statusLine;
+    }
+
+    public void setPageLength(int length) {
+        pageLength=length;
+        
+    }
+
+    /**
+     * @return the pageLength
+     */
+    public int getPageLength() {
+        return pageLength;
+    }
+
+    public void setConnectTime(long l) {
+        connectTime=l;
+        
+    }
+
+    /**
+     * @return the connectTime
+     */
+    public long getConnectTime() {
+        return connectTime;
     }
 
 }

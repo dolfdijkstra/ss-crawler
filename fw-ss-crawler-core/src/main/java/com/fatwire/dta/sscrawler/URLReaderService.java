@@ -96,7 +96,7 @@ public class URLReaderService {
 
     }
 
-    interface HttpClientService {
+    public interface HttpClientService {
         HttpClient get();
     }
 
