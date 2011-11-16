@@ -26,9 +26,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.commons.httpclient.Header;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.Header;
 
 import com.fatwire.dta.sscrawler.ResultPage;
 import com.fatwire.dta.sscrawler.reporting.Reporter;
@@ -71,7 +71,8 @@ public class PageCollectingReporter implements Reporter {
             writer.write(PageCollectingReporter.CRLF);
             final Header[] headers = page.getResponseHeaders();
             for (final Header header : headers) {
-                writer.write(header.toExternalForm());
+                writer.write(header.getName() + ": " + header.getValue());
+                writer.write(PageCollectingReporter.CRLF);
             }
             writer.write(PageCollectingReporter.CRLF);
             writer.write(page.getBody());

@@ -24,35 +24,7 @@ public interface ProgressMonitor {
      * @param name
      * @param totalWork
      */
-    void beginTask(String name, int totalWork);
-
-    /**
-     *Notifies that the work is done; that is, either the main task is
-     * completed or the user canceled it.
-     * 
-     */
-    void done();
-
-    /**
-     *Internal method to handle scaling correctly.
-     * 
-     * @param work
-     */
-    void internalWorked(double work);
-
-    /**
-     *Returns whether cancellation of current operation has been requested.
-     * 
-     * @return true is operation is canceled.
-     */
-    boolean isCanceled();
-
-    /**
-     * Sets the cancel state to the given value.
-     * 
-     * @param value
-     */
-    void setCanceled(boolean value);
+    void beginTask(String name);
 
     /**
      * Sets the task name to the given value.

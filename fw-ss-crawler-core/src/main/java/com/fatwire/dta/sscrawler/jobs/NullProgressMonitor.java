@@ -18,44 +18,24 @@ package com.fatwire.dta.sscrawler.jobs;
 
 public class NullProgressMonitor implements ProgressMonitor {
 
-    public void beginTask(final String name, final int totalWork) {
+    public void beginTask(String name) {
         // TODO Auto-generated method stub
-
+        
     }
 
-    public void done() {
+    public void setTaskName(String name) {
         // TODO Auto-generated method stub
-
+        
     }
 
-    public void internalWorked(final double work) {
+    public void subTask(String name) {
         // TODO Auto-generated method stub
-
+        
     }
 
-    public boolean isCanceled() {
+    public void worked(int work) {
         // TODO Auto-generated method stub
-        return false;
-    }
-
-    public void setCanceled(final boolean value) {
-        // TODO Auto-generated method stub
-
-    }
-
-    public void setTaskName(final String name) {
-        // TODO Auto-generated method stub
-
-    }
-
-    public void subTask(final String name) {
-        // TODO Auto-generated method stub
-
-    }
-
-    public void worked(final int work) {
-        // TODO Auto-generated method stub
-
+        
     }
 
 }

@@ -19,12 +19,16 @@ package com.fatwire.dta.sscrawler.handlers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.fatwire.dta.sscrawler.ResultPage;
 import com.fatwire.dta.sscrawler.util.SSUriHelper;
 
 public class BodyHandler implements Visitor<ResultPage> {
 
     private final List<Visitor<ResultPage>> visitors = new ArrayList<Visitor<ResultPage>>();
+    final Log log = LogFactory.getLog(getClass());
 
     /**
      * @param uriHelper
@@ -49,9 +53,12 @@ public class BodyHandler implements Visitor<ResultPage> {
             return; // bail out
         }
         for (final Visitor<ResultPage> visitor : visitors) {
+            long t = System.nanoTime();
+            
             visitor.visit(page);
+            log.debug("Visiting page " + page.getUri() + " with " + visitor.getClass().getName() + " took "
+                    + ((System.nanoTime() - t) / 1000) + "us for " + page.getPageLength() +" bytes.");
         }
 
     }
-
 }

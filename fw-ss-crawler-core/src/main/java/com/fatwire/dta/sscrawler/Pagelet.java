@@ -25,4 +25,9 @@ public class Pagelet extends QueryString {
         super();
     }
 
+    public Pagelet(Pagelet copy){
+        super(copy);
+    }
+  
+
 }

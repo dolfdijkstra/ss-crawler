@@ -18,37 +18,14 @@ package com.fatwire.dta.sscrawler.jobs;
 
 public class StdOutProgressMonitor implements ProgressMonitor {
 
-    private String taskName;
+    public void beginTask(final String name) {
 
-    private boolean cancelled;
-
-    public void beginTask(final String name, final int totalWork) {
-        taskName = name;
         System.out.println(name);
 
     }
 
-    public void done() {
-        System.out.println(taskName + " is finished");
-
-    }
-
-    public void internalWorked(final double work) {
-        System.out.print("#");
-
-    }
-
-    public boolean isCanceled() {
-        return cancelled;
-    }
-
-    public void setCanceled(final boolean value) {
-        cancelled = value;
-
-    }
-
     public void setTaskName(final String name) {
-        taskName = name;
+
         System.out.println(name);
 
     }

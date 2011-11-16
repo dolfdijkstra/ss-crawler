@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.StatusLine;
+import org.apache.http.Header;
+import org.apache.http.StatusLine;
 
 import com.fatwire.dta.sscrawler.util.HelperStrings;
 
@@ -49,6 +49,7 @@ public class ResultPage {
     private StatusLine statusLine;
     private int pageLength;
     private long connectTime=-1;
+    private String mimetype;
 
     /**
      * @param uri
@@ -255,13 +256,19 @@ public class ResultPage {
         return statusLine;
     }
 
+    /**
+     * 
+     * @param length
+     */
     public void setPageLength(int length) {
         pageLength=length;
         
     }
 
     /**
-     * @return the pageLength
+     * Returns the size of the HTTP entity in bytes.
+     * 
+     * @return the pageLength in bytes
      */
     public int getPageLength() {
         return pageLength;
@@ -277,6 +284,18 @@ public class ResultPage {
      */
     public long getConnectTime() {
         return connectTime;
+    }
+
+    public void setMimetype(String value) {
+        mimetype=value;
+        
+    }
+
+    /**
+     * @return the mimetype
+     */
+    public String getMimetype() {
+        return mimetype;
     }
 
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2008 FatWire Corporation. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.fatwire.dta.sscrawler.har;
 
 import java.io.IOException;
@@ -6,7 +22,7 @@ import java.net.InetAddress;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.httpclient.Header;
+import org.apache.http.Header;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
@@ -36,7 +52,7 @@ public class HarLog {
 
         g.writeStartObject();
 
-        g.writeObjectFieldStart("log");
+        g.writeObjectFieldStart("harLog");
         g.writeStringField("version", "1.2");
         g.writeStringField("comment", "ss-crawler created");
         g.writeObjectFieldStart("creator");
@@ -72,7 +88,7 @@ public class HarLog {
 
             g.writeStringField("method", "GET");
             g.writeStringField("url", entry.getUri().toASCIIString());
-            g.writeStringField("httpVersion", entry.getStatusLine().getHttpVersion());
+            g.writeStringField("httpVersion", entry.getStatusLine().getProtocolVersion().toString());
             g.writeArrayFieldStart("cookies");
             g.writeEndArray();
             g.writeArrayFieldStart("headers");
@@ -97,7 +113,7 @@ public class HarLog {
             g.writeObjectFieldStart("response");
             g.writeNumberField("status", entry.getStatusLine().getStatusCode());
             g.writeStringField("statusText", entry.getStatusLine().getReasonPhrase());
-            g.writeStringField("httpVersion", entry.getStatusLine().getHttpVersion());
+            g.writeStringField("httpVersion", entry.getStatusLine().getProtocolVersion().toString());
             g.writeArrayFieldStart("cookies");
             g.writeEndArray();
             g.writeArrayFieldStart("headers");

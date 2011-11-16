@@ -16,11 +16,18 @@
 
 package com.fatwire.dta.sscrawler.domain;
 
-import com.fatwire.dta.sscrawler.EasySSLProtocolSocketFactory;
+import java.net.URI;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
 
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.ProxyHost;
-import org.apache.commons.httpclient.protocol.Protocol;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.Credentials;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.conn.ssl.TrustStrategy;
 
 /**
  * Describing the host we connect to
@@ -33,42 +40,27 @@ public class HostConfig {
 
     private long id;
 
-    private String hostname;
-
-    private int port;
-
     private String domain;
 
-    private Protocol protocol;
     private Credentials proxyCredentials;
-    private ProxyHost proxyHost;
+    private HttpHost proxyHost;
+
+    private Scheme scheme;
+
+    private HttpHost target;
+
+    public HostConfig(URI uri) {
+        target = new HttpHost(uri.getHost(), uri.getPort(), uri.getScheme());
+
+        domain = uri.getHost();
+        setProtocol(uri.getScheme());
+    }
 
     /**
      * @return the domain
      */
     public String getDomain() {
         return domain;
-    }
-
-    /**
-     * @param domain the domain to set
-     */
-    public void setDomain(String domain) {
-        this.domain = domain;
-    }
-
-    /**
-     * @return the hostname
-     */
-    public String getHostname() {
-        return hostname;
-    }
-
-    /**
-     * @param hostname the hostname to set
-     */
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
     }
 
     /**
@@ -85,20 +77,6 @@ public class HostConfig {
         this.id = id;
     }
 
-    /**
-     * @return the port
-     */
-    public int getPort() {
-        return port;
-    }
-
-    /**
-     * @param port the port to set
-     */
-    public void setPort(int port) {
-        this.port = port;
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -106,23 +84,34 @@ public class HostConfig {
      */
     @Override
     public String toString() {
-        return hostname + ":" + port + domain;
-    }
-
-    public Protocol getProtocol() {
-        return protocol;
+        return target.getHostName() + ":" + target.getPort();
     }
 
     /**
      * @param protocol the protocol to set
      */
-    @SuppressWarnings("deprecation")
-    public void setProtocol(String protocol) {
+
+    private void setProtocol(String protocol) {
         if (protocol.equalsIgnoreCase("https")) {
-            this.protocol = new Protocol("https", new EasySSLProtocolSocketFactory(), 443);
-        } else {
-            this.protocol = Protocol.getProtocol(protocol);
+
+            TrustStrategy trustStrategy = new TrustSelfSignedStrategy();
+            SSLSocketFactory sslSocketFactory;
+            try {
+                sslSocketFactory = new SSLSocketFactory(trustStrategy);
+
+                scheme = new Scheme("https", 443, sslSocketFactory);
+            } catch (KeyManagementException e) {
+                throw new RuntimeException(e);
+            } catch (UnrecoverableKeyException e) {
+                throw new RuntimeException(e);
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            } catch (KeyStoreException e) {
+                throw new RuntimeException(e);
+            }
+
         }
+
     }
 
     public void setProxyCredentials(Credentials credentials) {
@@ -136,15 +125,24 @@ public class HostConfig {
     /**
      * @return the proxyHost
      */
-    public ProxyHost getProxyHost() {
+    public HttpHost getProxyHost() {
         return proxyHost;
     }
 
     /**
      * @param proxyHost the proxyHost to set
      */
-    public void setProxyHost(ProxyHost proxyHost) {
+    public void setProxyHost(HttpHost proxyHost) {
         this.proxyHost = proxyHost;
+    }
+
+    public HttpHost getTargetHost() {
+
+        return target;
+    }
+
+    public Scheme getScheme() {
+        return scheme;
     }
 
 }

@@ -14,33 +14,26 @@
  * limitations under the License.
  */
 
-package com.fatwire.dta.sscrawler;
-
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+package com.fatwire.dta.sscrawler.jmx;
 
 import com.fatwire.dta.sscrawler.URLReaderService.Scheduler;
 
-public class ReaderService implements ReaderServiceMBean {
+public class ReaderService implements ReaderServiceMXBean {
 
     private final Scheduler service;
-    private final MultiThreadedHttpConnectionManager connectionManager;
 
     /**
      * @param service
      * @param connectionManager
      */
-    public ReaderService(final Scheduler service, final MultiThreadedHttpConnectionManager connectionManager) {
+    public ReaderService(final Scheduler service) {
         super();
         this.service = service;
-        this.connectionManager = connectionManager;
+
     }
 
     public int getCount() {
         return service.getCount();
-    }
-
-    public int getConnectionsInPool() {
-        return connectionManager.getConnectionsInPool();
     }
 
     public int getScheduledCount() {

@@ -31,8 +31,12 @@ public class HelperStrings {
     public static final String RENDERMODE = "rendermode";
 
     public static final String CS_TO_SS_RESPONSE_HEADER_PREFIX = "com.futuretense.contentserver.pagedata.field.";
-    public static final String SS_CACHEINFO_HEADER = CS_TO_SS_RESPONSE_HEADER_PREFIX + "sscacheinfocache-disabled";
-    public static final String CS_CACHEINFO_HEADER = CS_TO_SS_RESPONSE_HEADER_PREFIX + "cscacheinfocache-disabled";
+ 
+    public static final String SS_CACHE_INFO = CS_TO_SS_RESPONSE_HEADER_PREFIX + "sscacheinfostring";
+
+    public static final String CS_CACHE_INFO = CS_TO_SS_RESPONSE_HEADER_PREFIX + "cscacheinfostring";
+    public static final String SS_CACHE_INFO_DISABLED = CS_TO_SS_RESPONSE_HEADER_PREFIX + "sscacheinfocache-disabled";
+    public static final String CS_CACHE_INFO_DISABLED = CS_TO_SS_RESPONSE_HEADER_PREFIX + "cscacheinfocache-disabled";
 
     public static final String PAGE_CRITERIA_HEADER = CS_TO_SS_RESPONSE_HEADER_PREFIX + "pagecriteria";
 

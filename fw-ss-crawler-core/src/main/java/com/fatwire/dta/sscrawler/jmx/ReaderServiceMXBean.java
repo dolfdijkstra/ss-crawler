@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package com.fatwire.dta.sscrawler;
+package com.fatwire.dta.sscrawler.jmx;
 
-public interface ReaderServiceMBean {
+public interface ReaderServiceMXBean {
 
     int getCount();
 
     int getScheduledCount();
 
     int getCompleteCount();
-
-    int getConnectionsInPool();
 
 }

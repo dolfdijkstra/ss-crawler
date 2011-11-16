@@ -16,16 +16,20 @@
 
 package com.fatwire.dta.sscrawler;
 
-import java.io.InputStream;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.concurrent.Callable;
 
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.fatwire.dta.sscrawler.URLReaderService.HttpClientService;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.protocol.ExecutionContext;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 
 /**
  * Callable that downloads the pagelet
@@ -37,9 +41,9 @@ import com.fatwire.dta.sscrawler.URLReaderService.HttpClientService;
 public class UrlRenderingCallable implements Callable<ResultPage> {
     private static final Log log = LogFactory.getLog(UrlRenderingCallable.class);
 
-    private final HttpClientService httpClientService;
-
-    private final String uri;
+    private final HttpClient client;
+    private final HttpContextHolder contextHolder;
+    private final URI uri;
 
     private final QueryString qs;
 
@@ -48,11 +52,13 @@ public class UrlRenderingCallable implements Callable<ResultPage> {
      * @param uri
      * @param qs
      */
-    public UrlRenderingCallable(final HttpClientService httpClientService, final String uri, final QueryString qs) {
+    public UrlRenderingCallable(final HttpClient httpClient, HttpContextHolder contextHolder, final URI uri,
+            final QueryString qs) {
         super();
-        this.httpClientService = httpClientService;
+        this.client = httpClient;
         this.uri = uri;
         this.qs = qs;
+        this.contextHolder = contextHolder;
     }
 
     public ResultPage call() throws Exception {
@@ -60,41 +66,45 @@ public class UrlRenderingCallable implements Callable<ResultPage> {
             log.debug("downloading " + uri);
         }
         final long startTime = System.currentTimeMillis();
-        
+
         final ResultPage page = new ResultPage(qs);
         page.setStartTime(startTime);
-        final GetMethod httpGet = new GetMethod(uri);
-        httpGet.setFollowRedirects(true);
 
+        final HttpGet httpGet = new HttpGet(uri);
+        HttpEntity entity = null;
         try {
-            final int responseCode = httpClientService.get().executeMethod(httpGet);
+            HttpContext ctx = contextHolder.getContext();
+
+            final HttpResponse responseCode = client.execute(httpGet, ctx);
             page.setTimeToFirstByte(System.currentTimeMillis() - startTime);
-            page.setResponseCode(responseCode);
+            page.setResponseCode(responseCode.getStatusLine().getStatusCode());
+            entity = responseCode.getEntity();
+            HttpUriRequest req = (HttpUriRequest) ctx.getAttribute(ExecutionContext.HTTP_REQUEST);
+//            HttpConnection con =(HttpConnection) ctx.getAttribute(ExecutionContext.HTTP_CONNECTION);//
+//            HttpConnectionMetrics metrics=con.getMetrics();
+//            metrics.getMetric(metricName)
 
-            page.setRequestHeaders(httpGet.getRequestHeaders());
-            page.setStatusLine(httpGet.getStatusLine());
-            page.setResponseHeaders(httpGet.getResponseHeaders());
+            page.setRequestHeaders(req.getAllHeaders());
+            page.setStatusLine(responseCode.getStatusLine());
+            page.setResponseHeaders(responseCode.getAllHeaders());
 
-            if (responseCode == 200) {
-                final String charSet = httpGet.getResponseCharSet();
-                final InputStream in = httpGet.getResponseBodyAsStream();
-                if (in != null) {
-                    byte[] b = IOUtils.toByteArray(in);
-                    page.setReadTime(System.currentTimeMillis() - startTime);
-                    IOUtils.closeQuietly(in);
+            page.setMimetype(entity.getContentType().getValue());
+            if (responseCode.getStatusLine().getStatusCode() == 200) {
+                final String charSet = EntityUtils.getContentCharSet(entity);
+                byte[] b = EntityUtils.toByteArray(entity);
+                page.setReadTime(System.currentTimeMillis() - startTime);
 
-                    page.setPageLength(b.length);
+                page.setPageLength(b.length);
 
-                    final String responseBody = new String(b, Charset.forName(charSet));
+                final String responseBody = new String(b, Charset.forName(charSet));
 
-                    if (responseBody != null) {
-                        if (log.isTraceEnabled()) {
-                            log.trace(responseBody);
-                        }
-                        page.setBody(responseBody);
+                if (responseBody != null) {
+                    if (log.isTraceEnabled()) {
+                        log.trace(responseBody);
                     }
-
+                    page.setBody(responseBody);
                 }
+
             } else {
 
                 page.setReadTime(System.currentTimeMillis() - startTime);
@@ -104,7 +114,7 @@ public class UrlRenderingCallable implements Callable<ResultPage> {
             httpGet.abort();
             throw e;
         } finally {
-            httpGet.releaseConnection();
+            EntityUtils.consume(entity);
         }
         return page;
     }
@@ -112,7 +122,7 @@ public class UrlRenderingCallable implements Callable<ResultPage> {
     /**
      * @return the uri
      */
-    public String getUri() {
+    public URI getUri() {
         return uri;
     }
 

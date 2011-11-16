@@ -22,7 +22,8 @@ import java.util.TreeMap;
 
 /**
  * 
- * A class to add and remove parameters on a query string to be used to contruct a {@link URI}.
+ * A class to add and remove parameters on a query string to be used to
+ * construct a {@link URI}.
  * 
  * @author Dolf Dijkstra
  * 
@@ -30,6 +31,14 @@ import java.util.TreeMap;
 public abstract class QueryString {
 
     private final Map<String, String> map = new TreeMap<String, String>();
+
+    public QueryString(QueryString copy) {
+        map.putAll(copy.map);
+    }
+
+    public QueryString() {
+        // default
+    }
 
     public void addParameter(final String key, final String value) {
         map.put(key, value);

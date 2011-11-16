@@ -18,6 +18,7 @@ package com.fatwire.dta.sscrawler;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,13 +36,12 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.httpclient.ProxyHost;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.xml.DOMConfigurator;
 
 import com.fatwire.dta.sscrawler.domain.HostConfig;
+import com.fatwire.dta.sscrawler.handlers.BodyHandler;
+import com.fatwire.dta.sscrawler.jobs.NullProgressMonitor;
 import com.fatwire.dta.sscrawler.reporting.Reporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.DefaultArgumentsAsPageCriteriaReporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.InnerLinkReporter;
@@ -74,21 +74,22 @@ public class App {
 
         options.addOption("h", "help", false, "print this message.");
 
-        final Option reportDir = OptionBuilder.withArgName("dir").hasArg().withDescription(
-                "Directory where reports are stored").withLongOpt("reportDir").create("d");
+        final Option reportDir = OptionBuilder.withArgName("dir").hasArg()
+                .withDescription("Directory where reports are stored").withLongOpt("reportDir").create("d");
         options.addOption(reportDir);
 
-        final Option max = OptionBuilder.withArgName("num").hasArg().withDescription(
-                "Maximum number of pages, default is unlimited").withLongOpt("max").create("m");
+        final Option max = OptionBuilder.withArgName("num").hasArg()
+                .withDescription("Maximum number of pages, default is unlimited").withLongOpt("max").create("m");
         options.addOption(max);
 
-        final Option uriHelperFactory = OptionBuilder.withArgName("classname").hasArg().withDescription(
-                "Class for constructing urls").withLongOpt("uriHelperFactory").create("f");
+        final Option uriHelperFactory = OptionBuilder.withArgName("classname").hasArg()
+                .withDescription("Class for constructing urls").withLongOpt("uriHelperFactory").create("f");
         uriHelperFactory.setType(UriHelperFactory.class);
         options.addOption(uriHelperFactory);
 
-        final Option threads = OptionBuilder.withArgName("num").hasArg().withDescription(
-                "Number of concurrent threads that are reading from ContentServer").withLongOpt("threads").create("t");
+        final Option threads = OptionBuilder.withArgName("num").hasArg()
+                .withDescription("Number of concurrent threads that are reading from ContentServer")
+                .withLongOpt("threads").create("t");
         options.addOption(threads);
 
         final Option proxyUsername = OptionBuilder.withArgName("username").hasArg().withDescription("Proxy Username")
@@ -158,70 +159,24 @@ public class App {
 
     }
 
-    private HostConfig createHostConfig(final URI uri) {
-        final HostConfig hostConfig = new HostConfig();
-
-        hostConfig.setHostname(uri.getHost());
-
-        hostConfig.setPort(uri.getPort() == -1 ? 80 : uri.getPort());
-        hostConfig.setDomain(uri.getPath());
-        hostConfig.setProtocol(uri.getScheme());
-
-        return hostConfig;
-
-    }
-
     protected void doWork(final CommandLine cmd) throws Exception {
-        final Crawler crawler = new Crawler();
-
-        URI startUri = null;
-
-        startUri = URI.create(cmd.getArgs()[1]);
-        if (cmd.hasOption('m')) {
-            crawler.setMaxPages(Integer.parseInt(cmd.getOptionValue('m')));
-        }
-
-        final int threads = Integer.parseInt(cmd.getOptionValue('t', "5"));
-
-        if (startUri == null) {
+        if (cmd.getArgs()[1] == null) {
             throw new IllegalArgumentException("startUri is not set");
         }
-        final int t = startUri.toASCIIString().indexOf("/ContentServer");
-        if (t == -1) {
-            throw new IllegalArgumentException("/ContentServer is not found on the startUri.");
-        }
-
-        crawler.setStartUri(new URI(null, null, null, -1, startUri.getRawPath(), startUri.getRawQuery(), startUri
-                .getFragment()));
-        final HostConfig hc = createHostConfig(URI.create(startUri.toASCIIString().substring(0, t)));
-
-        final String proxyUsername = cmd.getOptionValue("pu");
-        final String proxyPassword = cmd.getOptionValue("pw");
-        final String proxyHost = cmd.getOptionValue("ph");
-        final int proxyPort = Integer.parseInt(cmd.getOptionValue("", "8080"));
-
-        if (StringUtils.isNotBlank(proxyUsername) && StringUtils.isNotBlank(proxyUsername)) {
-            hc.setProxyCredentials(new UsernamePasswordCredentials(proxyUsername, proxyPassword));
-        }
-
-        if (StringUtils.isNotBlank(proxyHost)) {
-            hc.setProxyHost(new ProxyHost(proxyHost, proxyPort));
-        } else if (StringUtils.isNotBlank(System.getProperty("http.proxyhost"))
-                && StringUtils.isNotBlank(System.getProperty("http.proxyport"))) {
-            hc.setProxyHost(new ProxyHost(System.getProperty("http.proxyhost"), Integer.parseInt(System
-                    .getProperty("http.proxyport"))));
-
-        }
-        crawler.setHostConfig(hc);
+        Configurator configurator = new Configurator();
+        final HostConfig hc = createHostConfig(cmd, configurator);
+        URI startUri = URI.create(cmd.getArgs()[1]);
 
         SSUriHelper helper = null;
 
         if (cmd.hasOption('f')) {
             final UriHelperFactory f = (UriHelperFactory) Class.forName(cmd.getOptionValue('f')).newInstance();
-            helper = f.create(crawler.getStartUri().getPath());
+            helper = f.create(startUri.getPath());
         } else {
-            helper = new SSUriHelper(crawler.getStartUri().getPath());
+            helper = new SSUriHelper(startUri.getPath());
         }
+
+        final int threads = Integer.parseInt(cmd.getOptionValue('t', "5"));
         final ThreadPoolExecutor readerPool = new RenderingThreadPool(threads);
         final MBeanServer platform = java.lang.management.ManagementFactory.getPlatformMBeanServer();
         try {
@@ -230,7 +185,20 @@ public class App {
             LogFactory.getLog(App.class).error(x.getMessage(), x);
         }
 
-        crawler.setExecutor(readerPool);
+        configurator.initConnectionManager(hc);
+        DefaultHttpReaderTemplate template = new DefaultHttpReaderTemplate(hc.getTargetHost(), helper,
+                configurator.initClient(hc), configurator.createContextHolder(hc.getTargetHost()));
+
+        final URLReaderService reader = new URLReaderService(readerPool, template);
+
+        reader.setHandler(new BodyHandler(helper));
+
+        if (cmd.hasOption('m')) {
+            reader.setMaxPages(Integer.parseInt(cmd.getOptionValue('m')));
+        }
+
+        final Crawler crawler = new Crawler(reader);
+
         File path = null;
         if (cmd.hasOption('d')) {
             path = new File(cmd.getOptionValue("d"));
@@ -242,11 +210,12 @@ public class App {
             path = new File(path, df.format(new Date()));
             path.mkdirs();
         }
-        crawler.setReporters(createReporters(path, helper));
-        crawler.setUriHelper(helper);
+        crawler.addReporters(createReporters(path, helper));
+        crawler.setStartUri(helper.createLink(startUri));
         try {
-            crawler.work();
+            crawler.execute(new NullProgressMonitor());
         } finally {
+            configurator.shutdown();
             readerPool.shutdown();
             try {
                 platform.unregisterMBean(new ObjectName("com.fatwire.crawler:name=readerpool"));
@@ -254,6 +223,33 @@ public class App {
                 LogFactory.getLog(App.class).error(x.getMessage(), x);
             }
         }
+    }
+
+    /**
+     * @param cmd
+     * @param startUri
+     * @return
+     * @throws IllegalArgumentException
+     * @throws NumberFormatException
+     * @throws URISyntaxException
+     */
+    protected HostConfig createHostConfig(final CommandLine cmd, Configurator conf) throws IllegalArgumentException,
+            NumberFormatException, URISyntaxException {
+
+        URI startUri = URI.create(cmd.getArgs()[1]);
+
+        final int t = startUri.getPath().indexOf("/ContentServer");
+        if (t == -1) {
+            throw new IllegalArgumentException("/ContentServer is not found on the startUri.");
+        }
+
+        final String proxyUsername = cmd.getOptionValue("pu");
+        final String proxyPassword = cmd.getOptionValue("pw");
+        final String proxyHost = cmd.getOptionValue("ph");
+        final int proxyPort = Integer.parseInt(cmd.getOptionValue("", "8080"));
+
+        final HostConfig hc = conf.createHostConfig(startUri, proxyUsername, proxyPassword, proxyHost, proxyPort);
+        return hc;
     }
 
     protected File getOutputDir() {

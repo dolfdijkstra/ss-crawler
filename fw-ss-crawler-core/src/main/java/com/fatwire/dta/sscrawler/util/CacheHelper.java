@@ -16,27 +16,32 @@
 
 package com.fatwire.dta.sscrawler.util;
 
-import org.apache.commons.httpclient.Header;
+import org.apache.http.Header;
 
 public class CacheHelper {
-    // com.futuretense.contentserver.pagedata.field.sscacheinfocache-disabled:
-    // false
-    // com.futuretense.contentserver.pagedata.field.cscacheinfocache-disabled:
-    // false
-    public static final String SS_CACHE_INFO = HelperStrings.CS_TO_SS_RESPONSE_HEADER_PREFIX + "sscacheinfostring";
-
-    public static final String CS_CACHE_INFO = HelperStrings.CS_TO_SS_RESPONSE_HEADER_PREFIX + "cscacheinfostring";
-
-    // com.futuretense.contentserver.pagedata.field.sscacheinfostring: true
-    // com.futuretense.contentserver.pagedata.field.cscacheinfostring: true
 
     public static boolean shouldCache(final Header[] headers) {
         int i = 0;
         int j = 0;
         for (final Header h : headers) {
-            if (SS_CACHE_INFO.equals(h.getName()) || CS_CACHE_INFO.equals(h.getName())) {
+            if (HelperStrings.SS_CACHE_INFO.equals(h.getName()) || HelperStrings.CS_CACHE_INFO.equals(h.getName())) {
                 j++;
                 if ("false".equals(h.getValue())) {
+                    i++;
+                }
+            }
+        }
+        return j == 2 && i == 0;
+    }
+
+    public static boolean isCacheDefaultEnabled(final Header[] headers) {
+        int i = 0;
+        int j = 0;
+        for (final Header h : headers) {
+            if (HelperStrings.SS_CACHE_INFO_DISABLED.equals(h.getName())
+                    || HelperStrings.CS_CACHE_INFO_DISABLED.equals(h.getName())) {
+                j++;
+                if ("true".equals(h.getValue())) {
                     i++;
                 }
             }

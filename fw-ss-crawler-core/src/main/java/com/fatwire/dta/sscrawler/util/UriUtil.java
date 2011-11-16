@@ -25,6 +25,9 @@ import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.fatwire.dta.sscrawler.Link;
+import com.fatwire.dta.sscrawler.Pagelet;
+import com.fatwire.dta.sscrawler.QueryString;
 import com.fatwire.dta.sscrawler.handlers.BodyLinkHandler;
 
 public class UriUtil {
@@ -73,5 +76,24 @@ public class UriUtil {
 
         }
         return map;
+    }
+
+    public static QueryString checkForFtss(SSUriHelper uriHelper, QueryString ssuri, boolean requestPageData) {
+        final QueryString uri = ssuri instanceof Pagelet? new Pagelet((Pagelet) ssuri): new Link((Link) ssuri);
+        if (requestPageData) {
+            if (ssuri.has(HelperStrings.SS_PAGEDATA_REQUEST) == false) {
+                uri.addParameter(HelperStrings.SS_PAGEDATA_REQUEST, Boolean.TRUE.toString());
+            }
+        } else {
+            if (ssuri.has(HelperStrings.SS_CLIENT_INDICATOR) == false) {
+                uri.addParameter(HelperStrings.SS_CLIENT_INDICATOR, Boolean.TRUE.toString());
+            }
+
+        }
+        return uri;
+    }
+    
+    public static URI normalize(URI uri){
+        return uri.normalize();
     }
 }

@@ -27,6 +27,8 @@ public class Link extends QueryString {
     public Link() {
     }
 
-
+    public Link(Link ssuri) {
+        super(ssuri);
+    }
 
 }

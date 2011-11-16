@@ -32,6 +32,10 @@ import org.apache.commons.logging.LogFactory;
 import com.fatwire.dta.sscrawler.Link;
 import com.fatwire.dta.sscrawler.QueryString;
 
+/**
+ * @author dolf
+ *
+ */
 public class SSUriHelper {
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -105,6 +109,11 @@ public class SSUriHelper {
 
     }
 
+    /**
+     * Creates a new Link object from the URI's querystring.
+     * @param uri
+     * @return
+     */
     public Link createLink(final URI uri) {
         final String qs = uri.getRawQuery();
         if (log.isDebugEnabled()) {

@@ -32,6 +32,8 @@ public class NotCachedReporter extends ReportDelegatingReporter {
     private final Set<String> pages = new TreeSet<String>();
     private final AtomicInteger count = new AtomicInteger();
 
+    private boolean checkedGlobalStatus = false;
+
     public NotCachedReporter(final Report report) {
         super(report);
 
@@ -41,20 +43,25 @@ public class NotCachedReporter extends ReportDelegatingReporter {
         return count.get() > 1 ? Verdict.RED : Verdict.GREEN;
     }
 
-    public synchronized void addToReport(final ResultPage page) {
+    public void addToReport(final ResultPage page) {
         if (page.getResponseCode() != 200) {
             return; // bail out
         }
-
+        if (checkedGlobalStatus == false) {
+            checkedGlobalStatus = true;
+            if (CacheHelper.isCacheDefaultEnabled(page.getResponseHeaders()) == false) {
+                report.addRow("Caching globally disabled.");
+            }
+        }
         if (CacheHelper.shouldCache(page.getResponseHeaders())) {
             if (page.getBody().endsWith(HelperStrings.STATUS_NOTCACHED)) {
                 count.incrementAndGet();
                 report.addRow("not caching while we should", page.getUri().toString());
-            } else {
-                // report.addRow("caching as expected\t" + page.getUri());
             }
         } else {
-            pages.add(page.getPageName());
+            synchronized (pages) {
+                pages.add(page.getPageName());
+            }
         }
 
     }
@@ -67,9 +74,11 @@ public class NotCachedReporter extends ReportDelegatingReporter {
      * #endCollecting()
      */
     @Override
-    public synchronized void endCollecting() {
-        for (final String p : pages) {
-            report.addRow("not caching as per SiteCatalog", p);
+    public void endCollecting() {
+        synchronized (pages) {
+            for (final String p : pages) {
+                report.addRow("not caching as per SiteCatalog", p);
+            }
         }
         super.endCollecting();
     }
