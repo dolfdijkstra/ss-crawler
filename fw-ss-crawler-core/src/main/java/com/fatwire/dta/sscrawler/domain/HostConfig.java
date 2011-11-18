@@ -17,17 +17,9 @@
 package com.fatwire.dta.sscrawler.domain;
 
 import java.net.URI;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
 
 import org.apache.http.HttpHost;
 import org.apache.http.auth.Credentials;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.conn.ssl.TrustStrategy;
 
 /**
  * Describing the host we connect to
@@ -45,15 +37,12 @@ public class HostConfig {
     private Credentials proxyCredentials;
     private HttpHost proxyHost;
 
-    private Scheme scheme;
-
     private HttpHost target;
 
     public HostConfig(URI uri) {
         target = new HttpHost(uri.getHost(), uri.getPort(), uri.getScheme());
-
         domain = uri.getHost();
-        setProtocol(uri.getScheme());
+
     }
 
     /**
@@ -87,33 +76,6 @@ public class HostConfig {
         return target.getHostName() + ":" + target.getPort();
     }
 
-    /**
-     * @param protocol the protocol to set
-     */
-
-    private void setProtocol(String protocol) {
-        if (protocol.equalsIgnoreCase("https")) {
-
-            TrustStrategy trustStrategy = new TrustSelfSignedStrategy();
-            SSLSocketFactory sslSocketFactory;
-            try {
-                sslSocketFactory = new SSLSocketFactory(trustStrategy);
-
-                scheme = new Scheme("https", 443, sslSocketFactory);
-            } catch (KeyManagementException e) {
-                throw new RuntimeException(e);
-            } catch (UnrecoverableKeyException e) {
-                throw new RuntimeException(e);
-            } catch (NoSuchAlgorithmException e) {
-                throw new RuntimeException(e);
-            } catch (KeyStoreException e) {
-                throw new RuntimeException(e);
-            }
-
-        }
-
-    }
-
     public void setProxyCredentials(Credentials credentials) {
         this.proxyCredentials = credentials;
     }
@@ -139,10 +101,6 @@ public class HostConfig {
     public HttpHost getTargetHost() {
 
         return target;
-    }
-
-    public Scheme getScheme() {
-        return scheme;
     }
 
 }

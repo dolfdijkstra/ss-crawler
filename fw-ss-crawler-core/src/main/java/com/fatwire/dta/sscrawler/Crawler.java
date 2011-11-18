@@ -25,7 +25,6 @@ import com.fatwire.dta.sscrawler.events.PageletRenderingListener;
 import com.fatwire.dta.sscrawler.jobs.Command;
 import com.fatwire.dta.sscrawler.jobs.ProgressMonitor;
 import com.fatwire.dta.sscrawler.reporting.Reporter;
-import com.fatwire.dta.sscrawler.reporting.ReportingListener;
 
 /**
  * 
@@ -35,14 +34,13 @@ import com.fatwire.dta.sscrawler.reporting.ReportingListener;
  */
 public class Crawler implements Command {
 
-    final URLReaderService reader;
+    final CrawlerService reader;
 
     private Link startUri;
 
     final private List<Reporter> reporters = new LinkedList<Reporter>();
-    final ReportingListener reportingListener = new ReportingListener();
 
-    public Crawler(URLReaderService reader) {
+    public Crawler(CrawlerService reader) {
         super();
         this.reader = reader;
     }
@@ -53,7 +51,9 @@ public class Crawler implements Command {
         final PageletRenderingListener readerListener = new PageletRenderingListener() {
 
             public void renderPerformed(final PageletRenderedEvent event) {
-                reportingListener.renderPerformed(event);
+                for (Reporter r : getReporters()) {
+                    r.addToReport(event.getPage());
+                }
                 monitor.worked(1);
             }
 
@@ -103,9 +103,6 @@ public class Crawler implements Command {
     public void addReporters(final List<Reporter> reporters) {
         this.reporters.addAll(reporters);
 
-        for (final Reporter reporter : reporters) {
-            reportingListener.addReporter(reporter);
-        }
     }
 
 }

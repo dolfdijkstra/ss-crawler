@@ -24,6 +24,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.protocol.HttpContext;
 
 import com.fatwire.dta.sscrawler.Configurator;
+import com.fatwire.dta.sscrawler.CrawlerConfigurator;
 import com.fatwire.dta.sscrawler.HttpContextHolder;
 import com.fatwire.dta.sscrawler.QueryString;
 import com.fatwire.dta.sscrawler.ResultPage;
@@ -35,7 +36,7 @@ import com.fatwire.dta.sscrawler.util.SSUriHelper;
 import com.fatwire.dta.sscrawler.util.UriUtil;
 
 public class HarProducer implements HttpContextHolder {
-    Configurator conf = new Configurator();
+    Configurator conf = new CrawlerConfigurator();
     // private SingleClientConnManager connectionManager;
     private HttpHost target;
     private HttpClient httpClient;
@@ -84,7 +85,7 @@ public class HarProducer implements HttpContextHolder {
 
         HostConfig hostConfig = conf.createHostConfig(uri, null, null, null, -1);
         target = hostConfig.getTargetHost();
-        httpClient = conf.initClient(hostConfig);
+        httpClient = conf.initClient();
         bodyLinkHandler = new BodyLinkHandler(uriHelper);
         bodyMarkerHandler = new BodyMarkerHandler(uriHelper);
     }

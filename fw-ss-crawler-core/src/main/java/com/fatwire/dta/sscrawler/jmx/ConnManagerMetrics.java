@@ -35,7 +35,7 @@ public class ConnManagerMetrics {
      * @return
      * @see org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager#getConnectionsInPool()
      */
-    int getConnectionsInPool() {
+    public int getConnectionsInPool() {
         return connectionsInPool;
     }
 
@@ -43,7 +43,7 @@ public class ConnManagerMetrics {
      * @return
      * @see org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager#getMaxTotal()
      */
-    int getMaxTotal() {
+    public int getMaxTotal() {
         return maxTotal;
     }
 
@@ -51,7 +51,7 @@ public class ConnManagerMetrics {
      * @return
      * @see org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager#getDefaultMaxPerRoute()
      */
-    int getDefaultMaxPerRoute() {
+    public int getDefaultMaxPerRoute() {
         return defaultMaxPerRoute;
     }
 }

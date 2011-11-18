@@ -20,12 +20,17 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.cli.CommandLine;
+
 import com.fatwire.dta.sscrawler.reporting.Reporter;
 import com.fatwire.dta.sscrawler.reporting.reporters.PageletTimingsStatisticsReporter;
 import com.fatwire.dta.sscrawler.reporting.reports.StdOutReport;
-import com.fatwire.dta.sscrawler.util.SSUriHelper;
 
-public class CacheWarmer extends App {
+public class CacheWarmerConfigurator extends CrawlerConfigurator {
+
+    public CacheWarmerConfigurator(CommandLine cmd) {
+        super(cmd);
+    }
 
     /*
      * (non-Javadoc)
@@ -34,7 +39,7 @@ public class CacheWarmer extends App {
      * com.fatwire.dta.sscrawler.util.SSUriHelper)
      */
     @Override
-    protected List<Reporter> createReporters(final File outputDir, final SSUriHelper helper) {
+    protected List<Reporter> createReporters(final File outputDir) {
         final List<Reporter> reporters = new ArrayList<Reporter>();
         reporters.add(new PageletTimingsStatisticsReporter(new StdOutReport()));
 

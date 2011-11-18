@@ -126,4 +126,16 @@ public class UrlRenderingCallable implements Callable<ResultPage> {
         return uri;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("UrlRenderingCallable [uri=");
+        builder.append(uri);
+        builder.append("]");
+        return builder.toString();
+    }
+
 }

@@ -16,7 +16,7 @@
 
 package com.fatwire.dta.sscrawler.jmx;
 
-import com.fatwire.dta.sscrawler.URLReaderService.Scheduler;
+import com.fatwire.dta.sscrawler.CrawlerService.Scheduler;
 
 public class ReaderService implements ReaderServiceMXBean {
 

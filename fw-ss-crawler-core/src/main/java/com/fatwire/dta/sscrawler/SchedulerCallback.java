@@ -16,10 +16,12 @@
 
 package com.fatwire.dta.sscrawler;
 
-public interface SchedulerCallback {
+import java.util.concurrent.Callable;
 
-    void pageComplete(ResultPage page);
+public interface SchedulerCallback<T> {
 
-    void taskFinished();
+    void pageComplete(T page);
+
+    void handleFailure(Throwable t, Callable<T> context);
 
 }
