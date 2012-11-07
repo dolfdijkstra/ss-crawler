@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.fatwire.gst</groupId>
     <artifactId>gst-parent</artifactId>
-    <version>10-SNAPSHOT</version>
+    <version>15</version>
   </parent>
   <groupId>com.fatwire.dta.ss-crawler</groupId>
   <artifactId>gst-ss-crawler</artifactId>
