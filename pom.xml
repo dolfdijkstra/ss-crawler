@@ -23,7 +23,7 @@
     </developer>
   </developers>
   <scm>
-    <connection>scm:git:git@github.com:dolfdijkstra/ss-crawler.git</connection>
+    <connection>scm:git:git://github.com:dolfdijkstra/ss-crawler.git</connection>
     <developerConnection>scm:git:git@github.com:dolfdijkstra/ss-crawler.git</developerConnection>
     <url>https://github.com/dolfdijkstra/ss-crawler.git</url>
   </scm>
