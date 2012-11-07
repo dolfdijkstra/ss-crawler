@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.fatwire.gst</groupId>
 		<artifactId>gst-parent</artifactId>
-		<version>4</version>
+		<version>10-SNAPSHOT</version>
 	</parent>
 	<groupId>com.fatwire.dta.ss-crawler</groupId>
 	<artifactId>gst-ss-crawler</artifactId>
@@ -113,31 +113,9 @@
 	</build>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <download_link_windows>http://www.nl.fatwire.com/maven2/com/fatwire/dta/ss-crawler/${pom.artifactId}/${pom.version}/gst-ss-crawler-${pom.version}-bin.zip</download_link_windows>
-        <download_link_unix>http://www.nl.fatwire.com/maven2/com/fatwire/dta/ss-crawler/${pom.artifactId}/${pom.version}/gst-ss-crawler-${pom.version}-bin.tar.gz</download_link_unix>
+                <download_link_windows>http://www.nl.fatwire.com/maven2/com/fatwire/dta/ss-crawler/${pom.artifactId}/${pom.version}/gst-ss-crawler-${pom.version}-bin.zip</download_link_windows>
+                <download_link_unix>http://www.nl.fatwire.com/maven2/com/fatwire/dta/ss-crawler/${pom.artifactId}/${pom.version}/gst-ss-crawler-${pom.version}-bin.tar.gz</download_link_unix>
 	</properties>
-	<repositories>
-		<repository>
-			<id>nl.fatwire.com</id>
-			<url>http://www.nl.fatwire.com/maven2</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</repository>
-		<repository>
-			<id>snapshot.nl.fatwire.com</id>
-			<url>http://www.nl.fatwire.com/snapshot-repo</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</repository>
-	</repositories>
 	<distributionManagement>
 		<site>
 			<id>website</id>

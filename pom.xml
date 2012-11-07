@@ -18,35 +18,20 @@
         <developer>
             <id>dolf.dijkstra</id>
             <name>Dolf Dijkstra</name>
-            <email>dolf.dijkstra@fatwire.com</email>
-            <organization>FatWire</organization>
-            <organizationUrl>http://www.fatwire.com</organizationUrl>
         </developer>
     </developers>
     <licenses>
-        <license>
-            <name>FATWIRE SOFTWARE LICENSE AGREEMENT</name>
-            <url>http://d670-1.nl.fatwire.com/fatwire-license.txt</url>
-            <distribution>repo</distribution>
-        </license>
+   <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
     </licenses>
     <scm>
         <connection>scm:svn:http://www.nl.fatwire.com/svn/dta/ss-crawler/trunk</connection>
         <developerConnection>scm:svn:http://www.nl.fatwire.com/svn/dta/ss-crawler/trunk</developerConnection>
         <url>http://www.nl.fatwire.com/viewvc/dta/ss-crawler/trunk</url>
     </scm>
-    <organization>
-        <name>fatWire</name>
-        <url>http://www.fatwire.com</url>
-    </organization>
     <build>
-        <!--
-            <sourceDirectory>src/main/java</sourceDirectory>
-            <scriptSourceDirectory>src/main/scripts</scriptSourceDirectory>
-            <testSourceDirectory>src/test/java</testSourceDirectory>
-            <outputDirectory>target/classes</outputDirectory>
-            <testOutputDirectory>target/test-classes</testOutputDirectory>
-        -->
         <extensions>
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
@@ -60,8 +45,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
+                    <source>1.6</source>
+                    <target>1.6</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -94,13 +79,8 @@
     </build>
     <modules>
         <module>fw-ss-crawler-core</module>
-<!--
-        <module>plugins</module>
--->
       </modules>
-    
     <reporting>
-        <outputDirectory>target/site</outputDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -108,11 +88,6 @@
                 <configuration>
                     <aggregate>true</aggregate>
                     <debug>true</debug>
-                    <links>
-                        <link>http://java.sun.com/javaee/5/docs/api</link>
-                        <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
-                        <link>http://hc.apache.org/httpclient-3.x/apidocs</link>
-                    </links>
                 </configuration>
             </plugin>
             <plugin>
@@ -133,42 +108,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <!--
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>project-team</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-                -->
             </plugin>
-            <!--
-                <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clover-plugin</artifactId>
-                <configuration>
-                </configuration>
-                </plugin>
-            -->
             <plugin>
                 <artifactId>maven-checkstyle-plugin</artifactId>
             </plugin>
-            <!--
-                <plugin>
-                <artifactId>maven-pmd-plugin</artifactId>
-                </plugin>
-            -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>changelog-maven-plugin</artifactId>
             </plugin>
-            <!--
-                <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>changes-maven-plugin</artifactId>
-                </plugin>
-            -->
         </plugins>
     </reporting>
     <dependencyManagement>
@@ -195,31 +142,7 @@
             <name>repository.codehaus.org</name>
             <url>http://repository.codehaus.org</url>
         </repository>
-        <repository>
-            <id>nl.fatwire.com</id>
-            <name>FatWire Repository for Maven</name>
-            <url>http://www.nl.fatwire.com/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>nl.fatwire.com-snapshots</id>
-            <name>FatWire Repository for Maven</name>
-            <url>http://www.nl.fatwire.com/snapshot-repo</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>codehaus-mojo-snapshots</id>
-            <name>Codehaus Snapshots</name>
-            <url>http://snapshots.repository.codehaus.org/</url>
-        </pluginRepository>
-    </pluginRepositories>
     <distributionManagement>
         <site>
             <id>website</id>
@@ -248,6 +171,6 @@
     </dependencies>
     <properties>
         <ss-crawler-version>1.1-SNAPSHOT</ss-crawler-version>
-        <junit-version>3.8.1</junit-version>
+        <junit-version>4.10</junit-version>
     </properties>
 </project>
